@@ -5,14 +5,31 @@
 
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
-
+  /* background-color: #242424; */
+  /* Quitamos el fondo acá para pasarlo a body */
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
+body {
+  margin: 0;
+  width: 100vw;        /* Ocupa todo el ancho visible */
+  min-height: 100vh;
+  background-color: #242424; /* Fondo negro que cubre todo */
+  color: rgba(255, 255, 255, 0.87);
+}
+
+#root {
+  max-width: 1580px;  /* Limita ancho contenido */
+  margin: 0 auto;     /* Centra horizontal */
+  padding: 2rem;
+  text-align: center;
+  /* No poner background aquí */
+}
+
+/* links, botones, etc. igual que antes */
 a {
   font-weight: 500;
   color: #646cff;
@@ -20,14 +37,6 @@ a {
 }
 a:hover {
   color: #535bf2;
-}
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
 }
 
 h1 {
@@ -57,7 +66,10 @@ button:focus-visible {
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
+  }
+  body {
     background-color: #ffffff;
+    color: #213547;
   }
   a:hover {
     color: #747bff;

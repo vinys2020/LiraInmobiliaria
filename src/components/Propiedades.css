@@ -1,0 +1,83 @@
+.productos-container {
+    padding: 0 1rem;
+  }
+  
+  .productos-titulo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .productos-buscador {
+    max-width: 500px;
+  }
+  
+  .productos-item {
+    display: flex;
+  }
+  
+  .productos-card {
+    border-radius: 8px;
+    transition: box-shadow 0.3s ease;
+  }
+  
+  .productos-card:hover {
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  }
+  
+  .productos-img {
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+    width: 100%;
+    object-fit: cover;
+    height: 180px;
+  }
+  
+  .productos-sin-img {
+    height: 180px;
+    background-color: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #aaa;
+    font-style: italic;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+  }
+  
+  .productos-nombre {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #222;
+  }
+  
+  .productos-marca {
+    font-size: 0.9rem;
+    font-style: italic;
+  }
+  
+  .productos-precio {
+    font-size: 0.95rem;
+  }
+  
+  .productos-precio-valor {
+    color: #1a73e8;
+    font-size: 1.15rem;
+  }
+  
+  .productos-boton {
+    background-color: #1a73e8;
+    border: none;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+  }
+  
+  .productos-boton:hover:not(:disabled) {
+    background-color: #155ab6;
+  }
+  
+  .productos-boton:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    color: #666;
+  }

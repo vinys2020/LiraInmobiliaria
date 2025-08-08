@@ -1,0 +1,44 @@
+.footer {
+    background-color: #212529;
+    color: #ffffff;
+    width: 100vw;
+    padding-bottom: 20px;
+  }
+  
+  .footer-link {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease-in-out;
+  }
+  
+  .footer-link:hover {
+    color: white;
+    text-decoration: underline;
+  }
+  
+  
+  .social-icon {
+    font-size: 1.8rem;
+    color: #ffffff;
+    transition: transform 0.3s ease-in-out, color 0.3s ease-in-out;
+  }
+  
+  .social-icon:hover {
+    transform: scale(1.2);
+    color: #fed802;
+  }
+  
+  hr {
+    border-color: rgba(255, 255, 255, 0.2);
+  }
+  
+  @media (max-width: 768px) {
+    .footer-link {
+      font-size: 0.9rem;
+    }
+  
+    .social-icon {
+      font-size: 1.5rem;
+    }
+  }
