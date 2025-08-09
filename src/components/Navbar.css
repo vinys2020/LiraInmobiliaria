@@ -185,3 +185,58 @@
     padding: 8px 12px;
     transition: width 0.3s ease-in-out;
   }
+
+  /* Sidebar móvil */
+.sidebar-mobile {
+    position: fixed;
+    top: 0;
+    left: -260px; /* oculto a la izquierda */
+    width: 260px;
+    height: 100vh;
+    background-color: #979495; /* color rojo bootstrap */
+    color: black;
+    transition: left 0.3s ease;
+    z-index: 1050;
+    overflow-y: auto;
+    padding-top: 70px; /* espacio para header */
+  }
+  
+  .sidebar-mobile.open {
+    left: 0;
+  }
+  
+  /* Links sidebar */
+  .sidebar-mobile .nav-link {
+    color: white;
+    font-weight: 600;
+    padding: 10px 15px;
+  }
+  
+  .sidebar-mobile .nav-link:hover {
+    background-color: #b02a37;
+    color: white;
+  }
+  
+  /* Fondo oscuro detrás del sidebar */
+  .backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1040;
+  }
+  
+  /* Botón hamburguesa para que esté sobre el backdrop */
+  .navbar-toggler {
+    z-index: 1100;
+  }
+  
+  /* Ajustes logo móvil */
+  .logo.logo-splash.d-lg-none img {
+    display: block;
+    margin-left: 10px;
+    margin-top: 5px;
+  }
+  

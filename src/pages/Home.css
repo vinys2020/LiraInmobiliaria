@@ -106,14 +106,15 @@ body {
   
   /* Dropdown menu con fondo rojo y texto blanco */
   .dropdown-menu {
-    background-color: #dc3545 !important;
+    background-color: #f7f6f6 !important;
     max-height: 200px;
     overflow-y: auto;
+    color: black;
   }
   
   .dropdown-item {
-    background-color: #dc3545 !important;
-    color: white;
+    background-color: #f3ecec !important;
+    color: black;
     cursor: pointer;
   }
   
