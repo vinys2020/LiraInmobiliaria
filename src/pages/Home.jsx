@@ -45,7 +45,13 @@ function Home() {
       {/* Sección con video de fondo */}
 
       <section className="home-container">
-        <img src={fondoGif} alt="fondo animado" className="background-video" />
+      <img
+  src={fondoGif}
+  alt="fondo animado"
+  className="background-video"
+  decoding="async"
+  fetchpriority="high"
+/>
 
         <div className="content-overlay container py-5 mt-5">
           <header className="text-center mb-4 mt-5 text-white">
