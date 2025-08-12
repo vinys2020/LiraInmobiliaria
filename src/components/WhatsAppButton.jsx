@@ -21,8 +21,22 @@ const ScrollTopWhatsAppToggle = () => {
   }, []);
 
   const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    const start = window.scrollY;
+    const duration = 10; // ms - ajusta según la velocidad deseada
+    const startTime = performance.now();
+  
+    const animate = (time) => {
+      const progress = Math.min((time - startTime) / duration, 1);
+      // Easing suave pero rápido
+      const ease = 1 - Math.pow(1 - progress, 3);
+      window.scrollTo(0, start * (1 - ease));
+  
+      if (progress < 1) requestAnimationFrame(animate);
+    };
+  
+    requestAnimationFrame(animate);
   };
+  
 
   // Ambos botones ocupan la misma posición fija
   const buttonStyle = {

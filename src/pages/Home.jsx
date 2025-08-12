@@ -53,7 +53,7 @@ function Home() {
   fetchpriority="high"
 />
 
-        <div className="content-overlay container py-5 mt-5">
+        <div className="content-overlay container py-5 mt-lg-3 mt-4">
           <header className="text-center mb-4 mt-5 text-white">
             <h2 className="banner-title">
               Más de 30 años de experiencia en el sector inmobiliario.
@@ -317,8 +317,8 @@ function Home() {
           <div>
   <hr className="bg-dark" />
 
-  <div className="container py-4">
-  <div className="row g-4">
+  <div className="container py-5">
+  <div className="row g-5">
     {/* Primer ítem */}
     <div className="col-12 col-md-4 d-flex flex-column align-items-center text-center">
       <div className="mb-3">
@@ -516,7 +516,7 @@ function Home() {
           </div>
 
           <div className="text-center mt-4">
-            <a href="#" className="btn btn-danger">VER MÁS PROPIEDADES EN VENTA</a>
+            <a href="#" className="btn btn-danger mb-5">VER MÁS PROPIEDADES EN VENTA</a>
           </div>
         </div>
       </section>
