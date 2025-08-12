@@ -11,7 +11,6 @@ import PreFooter from "./components/PreFooter";
 function App() {
   return (
     <>
-      <Preloader />
       <Navbar />
       <Home />
       <WhatsAppButton />

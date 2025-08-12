@@ -1,30 +1,74 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
 .preloader {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(235, 57, 57); /* Fondo blanco */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(235, 57, 57);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+  text-align: center;
+  font-family: 'Poppins', sans-serif;
+}
+
+.preloader-welcome {
+  font-size: 2.5rem;
+  color: white;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  animation: fadeSlideDown 1s ease forwards;
+  user-select: none;
+}
+
+.preloader-welcome span {
+  color: #fff200;
+  font-weight: 700;
+}
+
+.preloader-logo {
+  width: 180px;
+  height: auto;
+  animation: fadeInPulse 2s ease-in-out infinite;
+  user-select: none;
+}
+
+/* Animación texto: baja y aparece */
+@keyframes fadeSlideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-10px);
   }
-  
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Animación logo: suave pulso */
+@keyframes fadeInPulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+
+/* Responsive para móviles */
+@media (max-width: 576px) {
+  .preloader-welcome {
+    font-size: 1.8rem;
+  }
   .preloader-logo {
-    width: 180px;
-    height: auto;
-    animation: fadeIn 0.8s ease-in-out;
+    width: 130px;
   }
-  
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-      transform: scale(0.9);
-    }
-    to {
-      opacity: 1;
-      transform: scale(1);
-    }
-  }
-  
+}
