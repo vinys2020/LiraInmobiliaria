@@ -1,0 +1,10 @@
+.scroll-top {
+    transition: opacity 0.3s ease;
+    opacity: 1;
+  }
+  
+  .scroll-top.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+  

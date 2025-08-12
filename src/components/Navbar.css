@@ -1,53 +1,63 @@
-.navbar-nav .nav-link {
-    color: white !important;
-  }
+
   
-  .navbar-nav .nav-link:hover {
-    color: yellow !important;
-  }
+.navbar {
+  position: relative;
+  z-index: 1030;
+  backface-visibility: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 1rem;
+}
   
-  .navbar-brand {
-    color: white !important;
-  }
-  
-  
-  .navbar-brand:hover {
-    color: rgb(255, 230, 0) !important;
-  }
-  
-  .navbar {
-    z-index: 1030;
-    transition: top 0.3s ease-in-out;
-    will-change: top;
-    backface-visibility: hidden;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-  }
+
   
   
-  .navbar-hidden {
-    top: -110px;
-  }
+header#header-section {
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  background-color: transparent !important;
+  box-shadow: none !important;
+  padding: 1.5rem 5rem;
+}
+
   
-  .navbar-visible {
-    top: 0px;
-  }
-  
-  header#header-section {
-    width: 100%;
-    background-color: #242424; /* mismo fondo oscuro */
-    padding: 0.5rem 1rem;
-    z-index: 9999;
-  }
   
   .navbar-nav .nav-link {
     color: white;
+    font-weight: 800; /* más grueso */
+
+
   }
   
   .navbar-nav .nav-link:hover {
-    color: #646cff;
+    color: #ffffff;
+    font-weight: 800;
+    background-color: rgba(128, 128, 128, 0.1); /* fondo gris transparente más suave */
+    background-image: radial-gradient(
+      circle,
+      rgba(255, 255, 255, 0.15) 0.1px,
+      transparent 1.5px
+    );
+    background-size: 10px 10px; /* tamaño del patrón de puntos */
+    transition: background-color 0.3s ease, background-image 0.3s ease;
+    border-radius: 6px;
   }
   
+  header.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  
+  header.visible {
+    opacity: 1;
+    pointer-events: auto;
+    transition: opacity 0.3s ease;
+  }
+  
+  
+
   .btn-phone-number {
     color: white;
   }
@@ -84,24 +94,8 @@
     white-space: nowrap;
   }
   
-  .nav-item.dropdown .dropdown-menu .dropdown-item:hover {
-    background-color: #f8c300;
-    color: #333;
-  }
-  
-  .navbar .nav-link.dropdown-toggle {
-    color: #fff;
-  }
-  
-  .navbar .nav-link.dropdown-toggle:hover {
-    color: #f8c300;
-  }
-  
-  .list-group-item:hover {
-    background-color: #f8c300;
-    color: #212529;
-    font-weight: 500;
-  }
+
+
   
   .floating-cart {
     position: absolute;
@@ -140,6 +134,10 @@
       font-size: 16px;
       padding: 8px;
       width: 100%;
+    }
+    header#header-section {
+
+      padding: 1rem 1rem;
     }
   
   
@@ -193,7 +191,7 @@
     left: -260px; /* oculto a la izquierda */
     width: 260px;
     height: 100vh;
-    background-color: #979495; /* color rojo bootstrap */
+    background-color: #f3f3f3; /* color rojo bootstrap */
     color: black;
     transition: left 0.3s ease;
     z-index: 1050;
@@ -207,14 +205,16 @@
   
   /* Links sidebar */
   .sidebar-mobile .nav-link {
-    color: white;
+    color: rgb(29, 28, 28);
     font-weight: 600;
     padding: 10px 15px;
+    border-radius: 10px;
   }
   
   .sidebar-mobile .nav-link:hover {
     background-color: #b02a37;
     color: white;
+    border-radius: 10px;
   }
   
   /* Fondo oscuro detrás del sidebar */
@@ -239,4 +239,5 @@
     margin-left: 10px;
     margin-top: 5px;
   }
+  
   

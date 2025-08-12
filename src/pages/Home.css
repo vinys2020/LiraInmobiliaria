@@ -1,7 +1,7 @@
 body {
-    background-color: #f8f9fa; /* Fondo gris claro */
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
+    background-color: #660707; /* Fondo gris claro */
+    font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
   
   h1.display-4 {
     color: #212529;
@@ -46,19 +46,21 @@ body {
   
   .home-container {
     position: relative;
-    min-height: 100vh;
+    height: 800px; /* o la altura que quieras para la sección */
     overflow: hidden;
+    margin-top: 0px;
+    z-index: inherit;
   }
   
   .background-video {
-    position: fixed; /* o absolute, pero fixed es mejor para fullscreen */
+    position: absolute; /* cambiar fixed a absolute */
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 800px; /* misma altura que el contenedor */
     object-fit: cover;
     z-index: -1;
-    filter: brightness(0.6); /* oscurece un poco para mejor contraste */
+    filter: brightness(0.6);
   }
   
   .content-overlay {
@@ -137,10 +139,9 @@ body {
   
   /* Contenedor del form centrado con ancho máximo */
   .home-container form {
-    max-width: 400px; /* un poco más ancho para que no se sienta muy comprimido */
+    max-width: 450px; /* un poco más ancho para que no se sienta muy comprimido */
     margin: 0 auto;   /* centrado horizontal */
   }
-
   
   /* Botón buscar igual alto que input */
   .home-container form .btn-secondary {
@@ -168,4 +169,44 @@ body {
     color: #f8f9fa;
     opacity: 1;
   }
+  
+  .banner-title {
+    font-family: 'Prata', serif;
+    font-size: 2.5rem; /* Desktop */
+    font-weight: 400; /* Prata es una fuente serif elegante, usualmente no muy bold */
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: #ffffff; /* o el color que quieras */
+    margin-top: 12rem;
+  }
+  
+  @media (max-width: 576px) {
+    .banner-title {
+      font-size: 1.8rem; /* Celular */
+      margin-top: 5.8rem;
+    }
+  }
+  
+  
+
+  /* Contenedor para la sección con video */
+.hero-section {
+  position: relative;
+  width: 100%;
+  height: 60vh; /* o el alto que quieras para esa sección */
+  overflow: hidden;
+}
+
+/* Video de fondo SOLO dentro de .hero-section */
+.hero-section .background-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+  filter: brightness(0.6);
+}
+
   
