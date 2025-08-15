@@ -7,6 +7,8 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   padding: 1rem;
+  will-change: transform, opacity;
+  transform: translateZ(0);
 }
   
 
@@ -185,23 +187,25 @@ header#header-section {
   }
 
   /* Sidebar móvil */
-.sidebar-mobile {
+  .sidebar-mobile {
     position: fixed;
     top: 0;
-    left: -260px; /* oculto a la izquierda */
+    left: 0; /* sigue anclado a la izquierda */
     width: 260px;
     height: 100vh;
     background-color: #f3f3f3; /* color rojo bootstrap */
     color: black;
-    transition: left 0.3s ease;
+    transform: translateX(-100%); /* oculto fuera de la vista */
+    transition: transform 0.25s ease-out;
+    will-change: transform;
     z-index: 1050;
     overflow-y: auto;
     padding-top: 70px; /* espacio para header */
-  }
+}
   
-  .sidebar-mobile.open {
-    left: 0;
-  }
+.sidebar-mobile.open {
+  transform: translateX(0); /* entra suavemente */
+}
   
   /* Links sidebar */
   .sidebar-mobile .nav-link {
@@ -209,7 +213,7 @@ header#header-section {
     font-weight: 600;
     padding: 10px 15px;
     border-radius: 10px;
-  }
+}
   
   .sidebar-mobile .nav-link:hover {
     background-color: #b02a37;
@@ -226,8 +230,7 @@ header#header-section {
     height: 100vh;
     background-color: rgba(0,0,0,0.5);
     z-index: 1040;
-  }
-  
+}
   /* Botón hamburguesa para que esté sobre el backdrop */
   .navbar-toggler {
     z-index: 1100;

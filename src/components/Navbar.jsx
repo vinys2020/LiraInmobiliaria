@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FaPhoneAlt, FaBars, FaTimes } from "react-icons/fa";
+import { useAuth } from "../context/AuthContext"; // <-- importamos tu AuthContext
 import "./navbar.css"; // si tienes estilos propios adicionales
 
 const Navbar = () => {
@@ -9,21 +10,22 @@ const Navbar = () => {
   const [isTop, setIsTop] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
 
-
-
+  const { user, logout } = useAuth(); // <-- obtenemos user y logout
+  const navigate = useNavigate();
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
 
-
+  const handleLogout = async () => {
+    await logout();
+    setMenuOpen(false);
+    navigate("/login");
+  };
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        navbarRef.current &&
-        !navbarRef.current.contains(event.target)
-      ) {
+      if (navbarRef.current && !navbarRef.current.contains(event.target)) {
         setMenuOpen(false);
       }
     };
@@ -31,7 +33,6 @@ const Navbar = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Bloquear scroll body cuando el menú esté abierto
   useEffect(() => {
     if (menuOpen) {
       document.body.style.overflow = "hidden";
@@ -40,63 +41,48 @@ const Navbar = () => {
     }
   }, [menuOpen]);
 
-
   useEffect(() => {
     let lastScrollY = window.scrollY;
-  
+
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-  
+
       if (currentScrollY === 0) {
-        // Llegaste arriba → mostrar navbar
         setIsTop(true);
         setIsVisible(true);
-      } else if (currentScrollY > 0) {
-        // Bajaste más de 100px → ocultar navbar
+      } else if (currentScrollY > 100) {
         setIsTop(false);
         setIsVisible(false);
       } else {
-        // Entre 1 y 100 px (no arriba ni más de 100) → navbar visible
         setIsTop(false);
         setIsVisible(true);
       }
-  
+
       lastScrollY = currentScrollY;
     };
-  
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
-  
-
 
   return (
-<header
-  id="header-section"
-  className={`header-desktop header-v4 bg-transparent ${isTop ? "" : "scrolled"}`}
-  style={{
-    position: "fixed",
-    top: 0,
-    width: "100%",
-    zIndex: 1000,
-    backgroundColor: isTop ? "transparent" : "#000",
-    transition: "background-color 0.3s ease, opacity 0.3s ease",
-    opacity: isVisible ? 1 : 0,
-    pointerEvents: isVisible ? "auto" : "none",
-  }}
->
-
-
-
-
-
+    <header
+      id="header-section"
+      className={`header-desktop header-v4 bg-transparent ${isTop ? "" : "scrolled"}`}
+      style={{
+        position: "fixed",
+        top: 0,
+        width: "100%",
+        zIndex: 1000,
+        backgroundColor: isTop ? "transparent" : "#000",
+        transition: "background-color 0.3s ease, opacity 0.3s ease",
+        opacity: isVisible ? 1 : 0,
+        pointerEvents: isVisible ? "auto" : "none",
+      }}
+    >
       <div className="container-fluid">
         <div className="header-inner-wrap">
-          <div
-            className="navbar d-flex align-items-center justify-content-between"
-            ref={navbarRef}
-          >
+          <div className="navbar d-flex align-items-center justify-content-between" ref={navbarRef}>
             {/* Logo desktop */}
             <div className="logo logo-splash d-none d-lg-block">
               <Link to="/">
@@ -123,12 +109,7 @@ const Navbar = () => {
 
             {/* Menu Desktop */}
             <nav className="main-nav navbar-expand-lg d-none d-lg-flex flex-grow-1 justify-content-end">
-
               <ul id="main-nav" className="navbar-nav">
-
-                <li className="nav-item">
-                  <Link className="nav-link" to="/" onClick={() => setMenuOpen(false)}>Inicio</Link>
-                </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/alquileres" onClick={() => setMenuOpen(false)}>Alquileres</Link>
                 </li>
@@ -144,7 +125,32 @@ const Navbar = () => {
                 <li className="nav-item">
                   <Link className="nav-link" to="/contacto" onClick={() => setMenuOpen(false)}>Contacto</Link>
                 </li>
-                {/* Número de teléfono como opción del menú desktop */}
+
+                {/* Indicador de usuario logeado */}
+                {user ? (
+                  <>
+                    <li className="nav-item">
+                      <button className="nav-link btn" onClick={handleLogout}>Cerrar sesión</button>
+                    </li>
+                    <li className="nav-item align-items-center">
+                      <Link className="nav-link d-flex align-items-center" to="/perfil" onClick={() => setMenuOpen(false)}>
+                        <img
+                          src={user.photoURL || "https://via.placeholder.com/40"}
+                          alt="Avatar"
+                          className="avatar-img me-2 mb-0 align-items-top"
+                          style={{ width: "28px", height: "28px", borderRadius: "50%" }}
+                        />
+                        {user.displayName || user.email}
+                      </Link>
+                    </li>
+                  </>
+                ) : (
+                  <li className="nav-item">
+                    <Link className="nav-link" to="/login" onClick={() => setMenuOpen(false)}>Iniciar sesión</Link>
+                  </li>
+                )}
+
+                {/* Número de teléfono */}
                 <li className="nav-item d-flex align-items-center">
                   <a href="tel:+5493834523097" className="nav-link d-flex align-items-center">
                     <FaPhoneAlt className="me-1" /> +549-3834 52-3097
@@ -152,8 +158,6 @@ const Navbar = () => {
                 </li>
               </ul>
             </nav>
-
-
 
             {/* Botón hamburguesa para móvil */}
             <button
@@ -163,20 +167,13 @@ const Navbar = () => {
               aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
               aria-expanded={menuOpen}
             >
-              {menuOpen ? (
-                <FaTimes color="white" size={24} />
-              ) : (
-                <FaBars color="white" size={24} />
-              )}
+              {menuOpen ? <FaTimes color="white" size={24} /> : <FaBars color="white" size={24} />}
             </button>
           </div>
 
           {/* Sidebar móvil */}
           <div className={`sidebar-mobile d-lg-none ${menuOpen ? "open" : ""}`} ref={navbarRef}>
             <ul className="navbar-nav flex-column p-3">
-              <li className="nav-item">
-                <Link className="nav-link" to="/" onClick={() => setMenuOpen(false)}>Inicio</Link>
-              </li>
               <li className="nav-item">
                 <Link className="nav-link" to="/alquileres" onClick={() => setMenuOpen(false)}>Alquileres</Link>
               </li>
@@ -192,6 +189,31 @@ const Navbar = () => {
               <li className="nav-item">
                 <Link className="nav-link" to="/contacto" onClick={() => setMenuOpen(false)}>Contacto</Link>
               </li>
+
+              {/* Indicador de usuario logeado en móvil */}
+              {user ? (
+                <>
+                  <li className="nav-item">
+                    <button className="nav-link btn" onClick={handleLogout}>Cerrar sesión</button>
+                  </li>
+                  <li className="nav-item align-items-center">
+                    <Link className="nav-link d-flex align-items-center" to="/perfil" onClick={() => setMenuOpen(false)}>
+                      <img
+                        src={user.photoURL || "https://via.placeholder.com/40"}
+                        alt="Avatar"
+                        className="avatar-img me-2 mb-0 align-items-top"
+                        style={{ width: "28px", height: "28px", borderRadius: "50%" }}
+                      />
+                      {user.displayName || user.email}
+                    </Link>
+                  </li>
+                </>
+              ) : (
+                <li className="nav-item">
+                  <Link className="nav-link" to="/login" onClick={() => setMenuOpen(false)}>Iniciar sesión</Link>
+                </li>
+              )}
+
               {/* Número teléfono móvil */}
               <li className="nav-item mt-3">
                 <a
@@ -203,52 +225,29 @@ const Navbar = () => {
                   <span>+54 9 3834 52 3097</span>
                 </a>
               </li>
-
             </ul>
 
-{/* Logo al final */}
-<div
-  className="sidebar-logo text-center py-4"
-  style={{
-    color: "#555",
-    fontSize: "12px",
-    lineHeight: "1.5",
-    padding: "0 1rem",
-  }}
->
-  <Link to="/" onClick={() => setMenuOpen(false)}>
-    <img
-      src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755019332/zqrmoousswdjxrzpzchx.png"
-      alt="Logo Lira"
-      style={{
-        height: "40px",
-        width: "auto",
-        maxWidth: "140px",
-        marginTop: "40px",
-        marginBottom: "10px",
-        display: "inline-block",
-      }}
-    />
-  </Link>
-
-  <p
-    style={{
-      margin: "0 0 12px 0",
-      fontWeight: "700",
-      color: "#333",
-    }}
-  >
-    San Martín 579, San Fernando del Valle de Catamarca, Argentina
-  </p>
-
-</div>
-
-
-
-
+            {/* Logo al final */}
+            <div className="sidebar-logo text-center py-4">
+              <Link to="/" onClick={() => setMenuOpen(false)}>
+                <img
+                  src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755019332/zqrmoousswdjxrzpzchx.png"
+                  alt="Logo Lira"
+                  style={{
+                    height: "40px",
+                    width: "auto",
+                    maxWidth: "140px",
+                    marginTop: "40px",
+                    marginBottom: "10px",
+                    display: "inline-block",
+                  }}
+                />
+              </Link>
+              <p style={{ margin: "0 0 12px 0", fontWeight: "700", color: "#333" }}>
+                San Martín 579, San Fernando del Valle de Catamarca, Argentina
+              </p>
+            </div>
           </div>
-
-
 
           {/* Fondo oscurecido cuando sidebar está abierto */}
           {menuOpen && <div className="backdrop" onClick={() => setMenuOpen(false)}></div>}
