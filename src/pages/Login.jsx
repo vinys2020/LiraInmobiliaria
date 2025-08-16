@@ -1,23 +1,32 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import './login.css'; // Asegúrate de tener login.css en la misma carpeta
+import "./login.css"; // Mantiene tu estilo
 
 const Login = () => {
-  const { login, rol } = useAuth(); // Obtenemos rol desde AuthContext
+  const { login, rol, user } = useAuth(); // obtenemos rol y usuario del contexto
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
+
+  // 🔹 Si el usuario ya está logueado y el rol está definido, redirigimos
+  useEffect(() => {
+    if (user && rol) {
+      if (rol === "admin") {
+        navigate("/admin");
+      } else if (rol === "empleado") {
+        navigate("/empleado");
+      }
+    }
+  }, [user, rol, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
 
     try {
-      await login(email, password);
-      // Redirigir según el rol definido en AuthContext
-      navigate(rol === "admin" ? "/admin" : "/empleado");
+      await login(email, password); // no redirigimos aquí, sino en el useEffect
     } catch (err) {
       console.error(err);
       setError("Credenciales incorrectas");
@@ -33,7 +42,9 @@ const Login = () => {
 
         <form onSubmit={handleLogin}>
           <div className="mb-3">
-            <label htmlFor="email" className="form-label">Correo electrónico</label>
+            <label htmlFor="email" className="form-label">
+              Correo electrónico
+            </label>
             <input
               type="email"
               id="email"
@@ -46,7 +57,9 @@ const Login = () => {
           </div>
 
           <div className="mb-4">
-            <label htmlFor="password" className="form-label">Contraseña</label>
+            <label htmlFor="password" className="form-label">
+              Contraseña
+            </label>
             <input
               type="password"
               id="password"
@@ -58,7 +71,9 @@ const Login = () => {
             />
           </div>
 
-          <button type="submit" className="btn btn-primary w-100">Ingresar</button>
+          <button type="submit" className="btn btn-primary w-100">
+            Ingresar
+          </button>
         </form>
       </div>
     </div>

@@ -1,95 +1,86 @@
 import React, { useState, useEffect } from "react";
 
 const ScrollTopWhatsAppToggle = () => {
-  const [showScrollTop, setShowScrollTop] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const [atBottom, setAtBottom] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
       const scrollPosition = window.scrollY + window.innerHeight;
-      const nearBottom = scrollPosition >= document.body.offsetHeight - 50;
-
-      setVisible(window.scrollY > 50);
-      setShowScrollTop(nearBottom);
+      const docHeight = document.documentElement.scrollHeight;
+      const nearBottom = scrollPosition >= docHeight - 10; // margen de 10px del final
+      setAtBottom(nearBottom);
     };
 
     window.addEventListener("scroll", handleScroll);
-    // Chequeo inicial
-    handleScroll();
+    handleScroll(); // chequeo inicial
 
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToTop = () => {
-    const start = window.scrollY;
-    const duration = 10; // ms - ajusta según la velocidad deseada
-    const startTime = performance.now();
-  
-    const animate = (time) => {
-      const progress = Math.min((time - startTime) / duration, 1);
-      // Easing suave pero rápido
-      const ease = 1 - Math.pow(1 - progress, 3);
-      window.scrollTo(0, start * (1 - ease));
-  
-      if (progress < 1) requestAnimationFrame(animate);
-    };
-  
-    requestAnimationFrame(animate);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
-  
 
-  // Ambos botones ocupan la misma posición fija
-  const buttonStyle = {
+  const wspStyle = {
     position: "fixed",
     bottom: "20px",
     right: "20px",
-    borderRadius: "50%",
     width: "60px",
     height: "60px",
-    boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-    cursor: "pointer",
-    border: "none",
-    zIndex: 1050,
-    opacity: visible ? 1 : 0,
-    transition: "opacity 0.3s ease",
-    pointerEvents: visible ? "auto" : "none",
+    borderRadius: "50%",
+    backgroundColor: "#25D366",
+    color: "white",
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+    textDecoration: "none",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+    zIndex: 1050,
+    transition: "opacity 0.3s ease",
+  };
+
+  const scrollStyle = {
+    position: "fixed",
+    bottom: "20px",
+    right: "20px",
+    width: "60px",
+    height: "60px",
+    borderRadius: "50%",
+    backgroundColor: "red",
+    color: "white",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    border: "none",
+    cursor: "pointer",
+    boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
+    zIndex: 1100,
+    transition: "opacity 0.3s ease",
   };
 
   return (
     <>
-      {!showScrollTop && (
+      {!atBottom && (
         <a
           href="https://api.whatsapp.com/send?phone=5493834523097"
           target="_blank"
           rel="noopener noreferrer"
-          aria-label="Envíanos un WhatsApp!"
-          style={{
-            ...buttonStyle,
-            backgroundColor: "#25D366", // verde WhatsApp
-            color: "white",
-            textDecoration: "none",
-          }}
+          style={wspStyle}
           title="Envíanos un WhatsApp!"
+          aria-label="Envíanos un WhatsApp!"
         >
-          <i className="bi bi-whatsapp fs-3" aria-hidden="true"></i>
+          <i className="bi bi-whatsapp fs-3"></i>
         </a>
       )}
 
-      {showScrollTop && (
+      {atBottom && (
         <button
           onClick={scrollToTop}
-          aria-label="Subir al inicio"
-          style={{
-            ...buttonStyle,
-            backgroundColor: "red", // azul Bootstrap para scroll top
-            color: "white",
-          }}
+          style={scrollStyle}
           title="Subir al inicio"
+          aria-label="Subir al inicio"
         >
-          <i className="bi bi-arrow-up fs-3" aria-hidden="true"></i>
+          <i className="bi bi-arrow-up fs-3"></i>
         </button>
       )}
     </>

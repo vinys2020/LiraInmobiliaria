@@ -2,3 +2,177 @@
     margin-top: 110px;
   }
   
+  /* ----------------- Body y contenedor ----------------- */
+
+
+
+
+/* ----------------- Sidebar ----------------- */
+.list-group-item {
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  color: black;
+}
+
+.list-group-item.active {
+  background-color: #1590d3;
+  color: #ffffff;
+  border-color: #ffc107;
+}
+
+.list-group-item:hover:not(.active) {
+  background-color: #8ad2ff;
+}
+
+/* ----------------- Cards de propiedades ----------------- */
+.card {
+  border-radius: 0.75rem;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 0.75rem 1.5rem rgba(0, 0, 0, 0.2);
+}
+
+.card-img-top {
+  transition: transform 0.3s ease;
+}
+
+.card-img-top:hover {
+  transform: scale(1.05);
+  cursor: pointer;
+}
+
+/* ----------------- Botones ----------------- */
+
+
+
+
+.btn-success {
+  background-color: #28a745;
+  border-color: #28a745;
+  transition: all 0.3s ease;
+}
+
+.btn-success:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+  background-color: #c82333;
+  border-color: #bd2130;
+}
+
+/* ----------------- Modal ----------------- */
+.modal-content {
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  border-bottom: none;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.modal-body {
+  scrollbar-width: thin;
+  scrollbar-color: #ffc107 #f1f1f1;
+}
+
+.modal-body::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-body::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+.modal-body::-webkit-scrollbar-thumb {
+  background-color: #ffc107;
+  border-radius: 4px;
+}
+
+/* ----------------- Carrusel ----------------- */
+.carousel-inner img {
+  border-radius: 0.75rem;
+  transition: transform 0.3s ease;
+}
+
+.carousel-inner img:hover {
+  transform: scale(1.03);
+  cursor: zoom-in;
+}
+
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  filter: drop-shadow(0 0 2px rgba(0, 0, 0, 0.5));
+}
+
+/* ----------------- Fullscreen ----------------- */
+.fullscreen-img img {
+  max-height: 98vh;
+  max-width: 98vw;
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease;
+}
+
+.fullscreen-img img:hover {
+  transform: scale(1.02);
+}
+
+.fullscreen-btn {
+  background-color: rgba(0, 0, 0, 0.6);
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  transition: all 0.3s ease;
+}
+
+.fullscreen-btn:hover {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* ----------------- Inputs y formularios ----------------- */
+.form-control {
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+}
+
+.form-control:focus {
+  border-color: #ffc107;
+  box-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+}
+
+/* ----------------- Checkboxes ----------------- */
+.form-check-input:checked {
+  background-color: #ffc107;
+  border-color: #ffc107;
+}
+
+/* ----------------- Imágenes previas en form ----------------- */
+.img-preview {
+  width: 150px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.img-preview:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}

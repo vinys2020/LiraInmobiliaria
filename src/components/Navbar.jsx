@@ -10,7 +10,7 @@ const Navbar = () => {
   const [isTop, setIsTop] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
 
-  const { user, logout } = useAuth(); // <-- obtenemos user y logout
+  const { user, rol, logout } = useAuth(); // 🔹 obtenemos usuario, rol y logout
   const navigate = useNavigate();
 
   const toggleMenu = () => {
@@ -133,15 +133,20 @@ const Navbar = () => {
                       <button className="nav-link btn" onClick={handleLogout}>Cerrar sesión</button>
                     </li>
                     <li className="nav-item align-items-center">
-                      <Link className="nav-link d-flex align-items-center" to="/perfil" onClick={() => setMenuOpen(false)}>
-                        <img
-                          src={user.photoURL || "https://via.placeholder.com/40"}
-                          alt="Avatar"
-                          className="avatar-img me-2 mb-0 align-items-top"
-                          style={{ width: "28px", height: "28px", borderRadius: "50%" }}
-                        />
-                        {user.displayName || user.email}
-                      </Link>
+                    <Link
+  className="nav-link d-flex align-items-center"
+  to={rol === "admin" ? "/admin" : "/empleado"}
+  onClick={() => setMenuOpen(false)}
+>
+  <img
+    src={user.photoURL || "https://via.placeholder.com/40"}
+    alt="Avatar"
+    className="avatar-img me-2 mb-0 align-items-top"
+    style={{ width: "28px", height: "28px", borderRadius: "50%" }}
+  />
+  {user.displayName || user.email}
+</Link>
+
                     </li>
                   </>
                 ) : (
