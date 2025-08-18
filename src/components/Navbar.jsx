@@ -139,13 +139,17 @@ const Navbar = () => {
   onClick={() => setMenuOpen(false)}
 >
   <img
-    src={user.photoURL || "https://via.placeholder.com/40"}
+    src={
+      user.photoURL ||
+      "https://cdn-icons-png.flaticon.com/512/847/847969.png" // logo usuario
+    }
     alt="Avatar"
     className="avatar-img me-2 mb-0 align-items-top"
-    style={{ width: "28px", height: "28px", borderRadius: "50%" }}
+    style={{ width: "28px", height: "25px", borderRadius: "50%" }}
   />
   {user.displayName || user.email}
 </Link>
+
 
                     </li>
                   </>

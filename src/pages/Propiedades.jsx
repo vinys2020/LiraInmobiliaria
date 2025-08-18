@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "../config/firebase"; // tu configuración de Firebase
 import AgregarPropiedadModal from "../components/AgregarPropiedadModal";
+import MapaPropiedades from "../components/MapaPropiedades";
+
 import {
   FaBath,
   FaBed,
@@ -23,6 +25,8 @@ export default function Propiedades() {
   const [fullscreenIndex, setFullscreenIndex] = useState(null);
   const [modalNuevaPropiedad, setModalNuevaPropiedad] = useState(false);
   const [subfiltro, setSubfiltro] = useState(null);
+  const [mostrarMapa, setMostrarMapa] = useState(false);
+
 
 
 
@@ -76,6 +80,10 @@ export default function Propiedades() {
     // Solo filtro principal
     return normalize(p.propiedadEn) === normalize(filtro);
   });
+
+  const ubicaciones = propiedades
+  .filter((p) => p.ubicacionGeo?.lat && p.ubicacionGeo?.lng)
+  .map((p) => `${p.ubicacionGeo.lat},${p.ubicacionGeo.lng}`);
 
 
     
@@ -142,7 +150,19 @@ export default function Propiedades() {
               + Agregar Propiedad
             </button>
           </div>
+          <div className="mb-3">
+
+</div>
+
+
+
+
+
+
+
         </aside>
+
+        
 
 
 {/* Contenido principal */}
@@ -376,7 +396,28 @@ export default function Propiedades() {
   </div>
 </main>
 
+
+
       </div>
+
+      {/* Sección de mapa de propiedades */}
+<section className="container mb-5 mt-5 p-0">
+  <div className="d-flex justify-content-center">
+    <button
+      className="btn btn-outline-danger mb-3"
+      onClick={() => setMostrarMapa(!mostrarMapa)}
+    >
+      {mostrarMapa ? "Ocultar Mapa" : "Ver todas las ubicaciones"}
+    </button>
+  </div>
+
+  {mostrarMapa && (
+    <div className="mapa-propiedades-container">
+      <MapaPropiedades propiedades={propiedadesFiltradas} />
+    </div>
+  )}
+</section>
+
 
       {propiedadSeleccionada && (
         <div

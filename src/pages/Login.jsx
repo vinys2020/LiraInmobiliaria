@@ -7,6 +7,7 @@ const Login = () => {
   const { login, rol, user } = useAuth(); // obtenemos rol y usuario del contexto
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false); // 👈 estado para el ojo
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
@@ -60,15 +61,29 @@ const Login = () => {
             <label htmlFor="password" className="form-label">
               Contraseña
             </label>
-            <input
-              type="password"
-              id="password"
-              className="form-control"
-              placeholder="********"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
+            <div className="input-group">
+              <input
+                type={showPassword ? "text" : "password"} // 👈 cambia tipo
+                id="password"
+                className="form-control"
+                placeholder="********"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+<button
+  type="button"
+  className="btn btn-outline-secondary"
+  onClick={() => setShowPassword(!showPassword)}
+>
+  {showPassword ? (
+    <i className="bi bi-eye-slash"></i>
+  ) : (
+    <i className="bi bi-eye"></i>
+  )}
+</button>
+
+            </div>
           </div>
 
           <button type="submit" className="btn btn-primary w-100">
