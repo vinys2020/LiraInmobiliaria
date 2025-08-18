@@ -9,6 +9,8 @@ import Login from "./pages/Login";
 import EmpleadoDashboard from "./pages/EmpleadoDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Propiedades from "./pages/Propiedades";
+import AlquileresDisponibles from "./pages/AlquileresDisponibles";
+
 
 // Rutas protegidas
 import AdminRoute from "./routes/AdminRoute";
@@ -21,6 +23,8 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} /> {/* Ruta del login */}
+        <Route path="/alquileres" element={<AlquileresDisponibles />} />
+
 
         {/* Admin solo puede entrar si tiene rol admin */}
         <Route

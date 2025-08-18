@@ -81,9 +81,7 @@ export default function Propiedades() {
     return normalize(p.propiedadEn) === normalize(filtro);
   });
 
-  const ubicaciones = propiedades
-    .filter((p) => p.ubicacionGeo?.lat && p.ubicacionGeo?.lng)
-    .map((p) => `${p.ubicacionGeo.lat},${p.ubicacionGeo.lng}`);
+
 
 
 
@@ -400,23 +398,7 @@ export default function Propiedades() {
 
       </div>
 
-      {/* Sección de mapa de propiedades */}
-      <section className="container mb-5 mt-5 p-0">
-        <div className="d-flex justify-content-center">
-          <button
-            className="btn btn-outline-danger mb-3"
-            onClick={() => setMostrarMapa(!mostrarMapa)}
-          >
-            {mostrarMapa ? "Ocultar Mapa" : "Ver todas las ubicaciones"}
-          </button>
-        </div>
 
-        {mostrarMapa && (
-          <div className="mapa-propiedades-container">
-            <MapaPropiedades propiedades={propiedadesFiltradas} />
-          </div>
-        )}
-      </section>
 
 
       {propiedadSeleccionada && (
@@ -790,7 +772,14 @@ export default function Propiedades() {
                     />
                   </div>
 
-                  <button type="submit" className="btn btn-success mt-3" onClick={async (e) => {
+
+
+                </form>
+              </div>
+
+              {/* Footer */}
+              <div className="modal-footer">
+              <button type="submit" className="btn btn-success mt-1" onClick={async (e) => {
                     e.preventDefault();
 
                     try {
@@ -811,18 +800,14 @@ export default function Propiedades() {
                       }));
 
                       alert("Propiedad actualizada correctamente!");
+                      setPropiedadSeleccionada(false);
+
                     } catch (error) {
                       console.error("Error actualizando propiedad:", error);
                     }
                   }}>
                     Guardar Cambios
                   </button>
-
-                </form>
-              </div>
-
-              {/* Footer */}
-              <div className="modal-footer">
                 <button
                   type="button"
                   className="btn btn-danger"

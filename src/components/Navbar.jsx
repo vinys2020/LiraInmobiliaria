@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaPhoneAlt, FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext"; // <-- importamos tu AuthContext
+
 import "./navbar.css"; // si tienes estilos propios adicionales
 
 const Navbar = () => {
@@ -50,7 +51,7 @@ const Navbar = () => {
       if (currentScrollY === 0) {
         setIsTop(true);
         setIsVisible(true);
-      } else if (currentScrollY > 100) {
+      } else if (currentScrollY > 10) {
         setIsTop(false);
         setIsVisible(false);
       } else {
@@ -110,9 +111,15 @@ const Navbar = () => {
             {/* Menu Desktop */}
             <nav className="main-nav navbar-expand-lg d-none d-lg-flex flex-grow-1 justify-content-end">
               <ul id="main-nav" className="navbar-nav">
-                <li className="nav-item">
-                  <Link className="nav-link" to="/alquileres" onClick={() => setMenuOpen(false)}>Alquileres</Link>
-                </li>
+              <li className="nav-item">
+  <Link
+    className="nav-link"
+    to="/alquileres"
+    onClick={() => setMenuOpen(false)}
+  >
+    Alquileres
+  </Link>
+</li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/venta" onClick={() => setMenuOpen(false)}>Venta</Link>
                 </li>
