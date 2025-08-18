@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
-
-
-
+import MapaPropiedades from "../components/MapaPropiedades"; 
+import { collection, onSnapshot } from "firebase/firestore";
+import { db } from "../config/firebase"; // Ajusta la ruta
 import "./Home.css";
-
 import fondoGif from "../assets/slider-lira.gif";
 
 
@@ -13,6 +12,10 @@ import fondoGif from "../assets/slider-lira.gif";
 function Home() {
   const [tiposSeleccionados, setTiposSeleccionados] = useState([]);
   const [estadoSeleccionado, setEstadoSeleccionado] = useState("");
+  const [mostrarMapa, setMostrarMapa] = useState(false);
+  const [propiedades, setPropiedades] = useState([]);
+
+
 
   const tipos = [
     "Casa",
@@ -34,10 +37,33 @@ function Home() {
     }
   };
 
+  useEffect(() => {
+    const propiedadesRef = collection(db, "Propiedades");
+    const unsubscribe = onSnapshot(propiedadesRef, (snapshot) => {
+      const props = snapshot.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+      setPropiedades(props);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+    // Filtrado de propiedades para el mapa
+    const propiedadesFiltradas = propiedades.filter((p) => {
+      // Filtrar por estado seleccionado
+      if (estadoSeleccionado === "alquiler") return p.propiedadEn === "alquiler";
+      if (estadoSeleccionado === "en-venta") return p.propiedadEn === "venta";
+      return true; // "Todos"
+    });
+
   const tiposTexto =
     tiposSeleccionados.length === 0
       ? "Tipo"
       : tiposSeleccionados.join(", ");
+
+  
 
 
   return (
@@ -181,6 +207,33 @@ function Home() {
           </form>
         </div>
       </section>
+
+      {/* Sección de Mapa */}
+
+
+      <section className=" py-5 p-lg-5 p-3 bg-white">
+  <div className="text-center mb-4">
+    <h2 className="text-danger">Explorá nuestras propiedades</h2>
+    <p className="text-muted mb-3">
+      Descubrí todas las ubicaciones de nuestras propiedades en un mapa interactivo. 
+    </p>
+    <button
+      className="btn btn-outline-danger btn-lg"
+      onClick={() => setMostrarMapa(!mostrarMapa)}
+    >
+      {mostrarMapa ? "Ocultar Mapa" : "Ver todas las ubicaciones"}
+    </button>
+  </div>
+
+  {mostrarMapa && (
+    <div className="mapa-propiedades-container shadow-sm rounded mb-5 w-80">
+      <MapaPropiedades propiedades={propiedadesFiltradas} />
+    </div>
+  )}
+</section>
+
+
+
 
       {/* Nueva sección con fondo blanco */}
       <section style={{ backgroundColor: "white", padding: "30px 0" }}>

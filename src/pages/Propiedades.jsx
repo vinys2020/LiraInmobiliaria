@@ -82,11 +82,11 @@ export default function Propiedades() {
   });
 
   const ubicaciones = propiedades
-  .filter((p) => p.ubicacionGeo?.lat && p.ubicacionGeo?.lng)
-  .map((p) => `${p.ubicacionGeo.lat},${p.ubicacionGeo.lng}`);
+    .filter((p) => p.ubicacionGeo?.lat && p.ubicacionGeo?.lng)
+    .map((p) => `${p.ubicacionGeo.lat},${p.ubicacionGeo.lng}`);
 
 
-    
+
   return (
     <div className="container-fluid min-vh-100 p-4 bg-light ">
       <div className="row">
@@ -152,7 +152,7 @@ export default function Propiedades() {
           </div>
           <div className="mb-3">
 
-</div>
+          </div>
 
 
 
@@ -162,261 +162,261 @@ export default function Propiedades() {
 
         </aside>
 
-        
-
-
-{/* Contenido principal */}
-<main className="col-12 col-md-8 col-lg-9">
-  <h2 className="mb-4">
-    Propiedades {filtro !== "todos" && `- ${filtro.charAt(0).toUpperCase() + filtro.slice(1)}`}
-  </h2>
-
-  <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-    {propiedadesFiltradas.map((prop) => {
-      const baths = prop["baños"] ?? prop.banos ?? prop.bathrooms ?? prop.bath ?? undefined;
-      const beds = prop.habitaciones ?? prop.rooms ?? undefined;
-      const metros = prop.m2 ?? prop.superficieCubierta ?? prop.superficie ?? undefined;
-      const cocheraCount = typeof prop.cochera === "number" ? prop.cochera : prop.cochera ? 1 : 0;
-
-      const estado = (prop.propiedadEn || "").toLowerCase();
-      const estadoLabel =
-        estado === "venta"
-          ? "En Venta"
-          : estado === "alquiler"
-            ? "En Alquiler"
-            : estado === "vendida"
-              ? "Vendida"
-              : estado === "alquilada"
-                ? "Alquilada"
-                : "";
-
-      const badgeColor =
-        estado === "venta"
-          ? "#0d6efd"
-          : estado === "alquiler"
-            ? "#198754"
-            : estado === "vendida"
-              ? "#dc3545"
-              : estado === "alquilada"
-                ? "#6c757d"
-                : "#6c757d";
-
-      const moneda = (prop.moneda || "").toUpperCase();
-      const symbol = moneda === "USD" ? "US$" : "$";
-      const precioFmt =
-        prop.precio != null && prop.precio !== ""
-          ? `${symbol}${Number(prop.precio).toLocaleString("es-AR")}${moneda && moneda !== "ARS" ? ` / ${moneda}` : ""}`
-          : "";
-
-      const ubicacion = [
-        prop?.direccion?.calle,
-        prop?.direccion?.localidad,
-        prop?.direccion?.provincia
-      ]
-        .filter(Boolean)
-        .join(", ") || prop.ubicacion || "";
-
-      return (
-        <div key={prop.id} className="col" id={prop.id}>
-          <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-shadow">
-            {/* Imagen + etiqueta */}
-            <div className="position-relative">
-              {prop.imagenes && prop.imagenes[0] && (
-                <img
-                  src={prop.imagenes[0]}
-                  alt={prop.titulo}
-                  className="card-img-top"
-                  style={{ objectFit: "cover", height: "200px" }}
-                />
-              )}
-
-              {estadoLabel && (
-                <span
-                  className="badge position-absolute top-0 end-0 m-2 px-3 py-2"
-                  style={{ backgroundColor: badgeColor }}
-                >
-                  {estadoLabel}
-                </span>
-              )}
-            </div>
-
-            {/* Cuerpo */}
-            <div className="card-body d-flex flex-column">
-              <h5 className="card-title text-truncate mb-2 ">{prop.titulo}</h5>
-
-
-              {precioFmt && (
-                <h6 className="fw-bold text-success mb-2">{moneda} {precioFmt}</h6>
-              )}
-
-              <p className="card-text text-muted small mb-1" style={{ minHeight: "2em" }}>
-                {prop.descripcion?.length > 120 ? prop.descripcion.slice(0, 120) + "…" : prop.descripcion}
-              </p>
-
-              {/* Métricas principales */}
-              <div className="d-flex flex-wrap gap-2 text-muted small mb-1">
-                {Number(beds) > 0 && (
-                  <span className="d-inline-flex align-items-center">
-                    <FaBed className="me-1" /> {beds} Hab.
-                  </span>
-                )}
-                {Number(baths) > 0 && (
-                  <span className="d-inline-flex align-items-center">
-                    <FaBath className="me-1" /> {baths} Baño{Number(baths) === 1 ? "" : "s"}
-                  </span>
-                )}
-                {Number(metros) > 0 && (
-                  <span className="d-inline-flex align-items-center">
-                    <FaRulerCombined className="me-1" /> {metros} m²
-                  </span>
-                )}
-                {Number(cocheraCount) > 0 && (
-                  <span className="d-inline-flex align-items-center">
-                    <FaCar className="me-1" /> {cocheraCount} Coch.
-                  </span>
-                )}
-              </div>
-
-              {/* Extras */}
-              <div className="d-flex flex-wrap gap-2 mb-3">
-                {prop.internet && (
-                  <span className="badge rounded-pill bg-light text-dark border">
-                    <FaWifi className="me-1" /> Internet
-                  </span>
-                )}
-                {prop.pileta && (
-                  <span className="badge rounded-pill bg-light text-dark border">
-                    <FaSwimmingPool className="me-1" /> Pileta
-                  </span>
-                )}
-                {prop.gasNatural && (
-                  <span className="badge rounded-pill bg-light text-dark border">
-                    <FaBurn className="me-1" /> Gas natural
-                  </span>
-                )}
-                {prop.patio && (
-                  <span className="badge rounded-pill bg-light text-dark border">
-                    <FaLeaf className="me-1" /> Patio
-                  </span>
-                )}
-              </div>
-
-{/* Ubicación */}
-{ubicacion && (
-  <div className="mb-3">
-{/* Primera línea: calle */}
-<div
-  className="text-muted small d-flex align-items-start"
-  style={{
-    display: "-webkit-box",
-    WebkitLineClamp: 2,       // máximo 2 líneas
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    minHeight: "3em",       // espacio para 2 líneas (aprox.)
-  }}
->
-  <FaMapMarkerAlt className="me-1 mt-1" />
-  {prop.direccion?.calle || ""}
-</div>
-
-
-    {/* Segunda línea: localidad, provincia y país + botón */}
-    <div
-      className="d-flex align-items-center justify-content-between"
-      style={{
-        display: "flex",
-        overflow: "hidden",
-        marginTop: "2px",
-      }}
-    >
-      {/* Texto de localidad, provincia y país */}
-      <div
-        className="text-muted small text-truncate"
-        style={{
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-          marginRight: "8px",
-        }}
-        title={`${prop.direccion?.localidad || ""}${prop.direccion?.provincia ? `, ${prop.direccion.provincia}` : ""}${prop.direccion?.pais ? `, ${prop.direccion.pais}` : ""}`}
-      >
-        {prop.direccion?.localidad || ""}
-        {prop.direccion?.provincia ? `, ${prop.direccion.provincia}` : ""}
-        {prop.direccion?.pais ? `, ${prop.direccion.pais}` : ""}
-      </div>
-
-      {/* Botón de Google Maps */}
-      <a
-  className="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
-  href={
-    prop.ubicacionGeo?.lat && prop.ubicacionGeo?.lng
-      ? `https://www.google.com/maps?q=${prop.ubicacionGeo.lat},${prop.ubicacionGeo.lng}`
-      : `https://www.google.com/maps?q=${encodeURIComponent(
-          `${prop.direccion?.calle || ""} ${prop.direccion?.localidad || ""} ${prop.direccion?.provincia || ""} ${prop.direccion?.pais || ""}`
-        )}`
-  }
-  target="_blank"
-  rel="noopener noreferrer"
-  title="Ver en Google Maps"
-  style={{
-    minWidth: "100px",
-    padding: "4px 8px",
-    gap: "6px",
-    whiteSpace: "nowrap",
-  }}
->
-  <img
-    src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755458272/r3kx7npz5muhzio5agq8.png"
-    alt="Google Maps"
-    style={{ width: "20px", height: "20px" }}
-  />
-  <span>Ver en Maps</span>
-</a>
-    </div>
-  </div>
-)}
 
 
 
+        {/* Contenido principal */}
+        <main className="col-12 col-md-8 col-lg-9">
+          <h2 className="mb-4">
+            Propiedades {filtro !== "todos" && `- ${filtro.charAt(0).toUpperCase() + filtro.slice(1)}`}
+          </h2>
+
+          <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+            {propiedadesFiltradas.map((prop) => {
+              const baths = prop["baños"] ?? prop.banos ?? prop.bathrooms ?? prop.bath ?? undefined;
+              const beds = prop.habitaciones ?? prop.rooms ?? undefined;
+              const metros = prop.m2 ?? prop.superficieCubierta ?? prop.superficie ?? undefined;
+              const cocheraCount = typeof prop.cochera === "number" ? prop.cochera : prop.cochera ? 1 : 0;
+
+              const estado = (prop.propiedadEn || "").toLowerCase();
+              const estadoLabel =
+                estado === "venta"
+                  ? "En Venta"
+                  : estado === "alquiler"
+                    ? "En Alquiler"
+                    : estado === "vendida"
+                      ? "Vendida"
+                      : estado === "alquilada"
+                        ? "Alquilada"
+                        : "";
+
+              const badgeColor =
+                estado === "venta"
+                  ? "#0d6efd"
+                  : estado === "alquiler"
+                    ? "#198754"
+                    : estado === "vendida"
+                      ? "#dc3545"
+                      : estado === "alquilada"
+                        ? "#6c757d"
+                        : "#6c757d";
+
+              const moneda = (prop.moneda || "").toUpperCase();
+              const symbol = moneda === "USD" ? "US$" : "$";
+              const precioFmt =
+                prop.precio != null && prop.precio !== ""
+                  ? `${symbol}${Number(prop.precio).toLocaleString("es-AR")}${moneda && moneda !== "ARS" ? ` / ${moneda}` : ""}`
+                  : "";
+
+              const ubicacion = [
+                prop?.direccion?.calle,
+                prop?.direccion?.localidad,
+                prop?.direccion?.provincia
+              ]
+                .filter(Boolean)
+                .join(", ") || prop.ubicacion || "";
+
+              return (
+                <div key={prop.id} className="col" id={prop.id}>
+                  <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-shadow">
+                    {/* Imagen + etiqueta */}
+                    <div className="position-relative">
+                      {prop.imagenes && prop.imagenes[0] && (
+                        <img
+                          src={prop.imagenes[0]}
+                          alt={prop.titulo}
+                          className="card-img-top"
+                          style={{ objectFit: "cover", height: "200px" }}
+                        />
+                      )}
+
+                      {estadoLabel && (
+                        <span
+                          className="badge position-absolute top-0 end-0 m-2 px-3 py-2"
+                          style={{ backgroundColor: badgeColor }}
+                        >
+                          {estadoLabel}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Cuerpo */}
+                    <div className="card-body d-flex flex-column">
+                      <h5 className="card-title text-truncate mb-2 ">{prop.titulo}</h5>
+
+
+                      {precioFmt && (
+                        <h6 className="fw-bold text-success mb-2">{moneda} {precioFmt}</h6>
+                      )}
+
+                      <p className="card-text text-muted small mb-1" style={{ minHeight: "2em" }}>
+                        {prop.descripcion?.length > 120 ? prop.descripcion.slice(0, 120) + "…" : prop.descripcion}
+                      </p>
+
+                      {/* Métricas principales */}
+                      <div className="d-flex flex-wrap gap-2 text-muted small mb-1">
+                        {Number(beds) > 0 && (
+                          <span className="d-inline-flex align-items-center">
+                            <FaBed className="me-1" /> {beds} Hab.
+                          </span>
+                        )}
+                        {Number(baths) > 0 && (
+                          <span className="d-inline-flex align-items-center">
+                            <FaBath className="me-1" /> {baths} Baño{Number(baths) === 1 ? "" : "s"}
+                          </span>
+                        )}
+                        {Number(metros) > 0 && (
+                          <span className="d-inline-flex align-items-center">
+                            <FaRulerCombined className="me-1" /> {metros} m²
+                          </span>
+                        )}
+                        {Number(cocheraCount) > 0 && (
+                          <span className="d-inline-flex align-items-center">
+                            <FaCar className="me-1" /> {cocheraCount} Coch.
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Extras */}
+                      <div className="d-flex flex-wrap gap-2 mb-3">
+                        {prop.internet && (
+                          <span className="badge rounded-pill bg-light text-dark border">
+                            <FaWifi className="me-1" /> Internet
+                          </span>
+                        )}
+                        {prop.pileta && (
+                          <span className="badge rounded-pill bg-light text-dark border">
+                            <FaSwimmingPool className="me-1" /> Pileta
+                          </span>
+                        )}
+                        {prop.gasNatural && (
+                          <span className="badge rounded-pill bg-light text-dark border">
+                            <FaBurn className="me-1" /> Gas natural
+                          </span>
+                        )}
+                        {prop.patio && (
+                          <span className="badge rounded-pill bg-light text-dark border">
+                            <FaLeaf className="me-1" /> Patio
+                          </span>
+                        )}
+                      </div>
+
+                      {/* Ubicación */}
+                      {ubicacion && (
+                        <div className="mb-3">
+                          {/* Primera línea: calle */}
+                          <div
+                            className="text-muted small d-flex align-items-start"
+                            style={{
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,       // máximo 2 líneas
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                              minHeight: "3em",       // espacio para 2 líneas (aprox.)
+                            }}
+                          >
+                            <FaMapMarkerAlt className="me-1 mt-1" />
+                            {prop.direccion?.calle || ""}
+                          </div>
+
+
+                          {/* Segunda línea: localidad, provincia y país + botón */}
+                          <div
+                            className="d-flex align-items-center justify-content-between"
+                            style={{
+                              display: "flex",
+                              overflow: "hidden",
+                              marginTop: "2px",
+                            }}
+                          >
+                            {/* Texto de localidad, provincia y país */}
+                            <div
+                              className="text-muted small text-truncate"
+                              style={{
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap",
+                                marginRight: "8px",
+                              }}
+                              title={`${prop.direccion?.localidad || ""}${prop.direccion?.provincia ? `, ${prop.direccion.provincia}` : ""}${prop.direccion?.pais ? `, ${prop.direccion.pais}` : ""}`}
+                            >
+                              {prop.direccion?.localidad || ""}
+                              {prop.direccion?.provincia ? `, ${prop.direccion.provincia}` : ""}
+                              {prop.direccion?.pais ? `, ${prop.direccion.pais}` : ""}
+                            </div>
+
+                            {/* Botón de Google Maps */}
+                            <a
+                              className="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
+                              href={
+                                prop.ubicacionGeo?.lat && prop.ubicacionGeo?.lng
+                                  ? `https://www.google.com/maps?q=${prop.ubicacionGeo.lat},${prop.ubicacionGeo.lng}`
+                                  : `https://www.google.com/maps?q=${encodeURIComponent(
+                                    `${prop.direccion?.calle || ""} ${prop.direccion?.localidad || ""} ${prop.direccion?.provincia || ""} ${prop.direccion?.pais || ""}`
+                                  )}`
+                              }
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Ver en Google Maps"
+                              style={{
+                                minWidth: "100px",
+                                padding: "4px 8px",
+                                gap: "6px",
+                                whiteSpace: "nowrap",
+                              }}
+                            >
+                              <img
+                                src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755458272/r3kx7npz5muhzio5agq8.png"
+                                alt="Google Maps"
+                                style={{ width: "20px", height: "20px" }}
+                              />
+                              <span>Ver en Maps</span>
+                            </a>
+                          </div>
+                        </div>
+                      )}
 
 
 
-              <button
-                className="btn btn-primary mt-auto"
-                onClick={() => setPropiedadSeleccionada(prop)}
-              >
-                Modificar Propiedad
-              </button>
-            </div>
+
+
+
+                      <button
+                        className="btn btn-primary mt-auto"
+                        onClick={() => setPropiedadSeleccionada(prop)}
+                      >
+                        Modificar Propiedad
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        </div>
-      );
-    })}
-  </div>
-</main>
+        </main>
 
 
 
       </div>
 
       {/* Sección de mapa de propiedades */}
-<section className="container mb-5 mt-5 p-0">
-  <div className="d-flex justify-content-center">
-    <button
-      className="btn btn-outline-danger mb-3"
-      onClick={() => setMostrarMapa(!mostrarMapa)}
-    >
-      {mostrarMapa ? "Ocultar Mapa" : "Ver todas las ubicaciones"}
-    </button>
-  </div>
+      <section className="container mb-5 mt-5 p-0">
+        <div className="d-flex justify-content-center">
+          <button
+            className="btn btn-outline-danger mb-3"
+            onClick={() => setMostrarMapa(!mostrarMapa)}
+          >
+            {mostrarMapa ? "Ocultar Mapa" : "Ver todas las ubicaciones"}
+          </button>
+        </div>
 
-  {mostrarMapa && (
-    <div className="mapa-propiedades-container">
-      <MapaPropiedades propiedades={propiedadesFiltradas} />
-    </div>
-  )}
-</section>
+        {mostrarMapa && (
+          <div className="mapa-propiedades-container">
+            <MapaPropiedades propiedades={propiedadesFiltradas} />
+          </div>
+        )}
+      </section>
 
 
       {propiedadSeleccionada && (
