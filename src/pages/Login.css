@@ -2,90 +2,94 @@
 
 /* Fondo general */
 body, html {
-    height: 100%;
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  /* Contenedor del login */
-  .login-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #b02a37, #e74c3c);
-    padding: 20px;
-  }
-  
-  /* Caja blanca del login */
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  -webkit-text-size-adjust: 100%; /* Evita zoom automático en iOS */
+}
+
+/* Contenedor del login */
+.login-container {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #b02a37, #e74c3c);
+  padding: 20px;
+}
+
+/* Caja blanca del login */
+.login-box {
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  padding: 2.5rem 2rem;
+  max-width: 400px;
+  width: 100%;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-box:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+}
+
+/* Título */
+.login-box h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #b02a37;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* Inputs */
+.login-box .form-control {
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  font-size: 1rem; /* 🔹 Aumentado para iOS, evita zoom */
+  border: 1px solid #ccc;
+  transition: border-color 0.2s;
+}
+
+.login-box .form-control:focus {
+  border-color: #b02a37;
+  box-shadow: 0 0 5px rgba(176,42,55,0.3);
+}
+
+/* Botón */
+.login-box .btn-primary {
+  background-color: #b02a37;
+  border-color: #b02a37;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.login-box .btn-primary:hover {
+  background-color: #e74c3c;
+  transform: translateY(-2px);
+}
+
+/* Alertas de error */
+.login-box .alert {
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
   .login-box {
-    background: #fff;
-    border-radius: 12px;
-    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    padding: 2.5rem 2rem;
-    max-width: 400px;
-    width: 100%;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .login-box:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 12px 25px rgba(0,0,0,0.2);
-  }
-  
-  /* Título */
-  .login-box h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: #b02a37;
-    font-weight: 700;
-    letter-spacing: 1px;
-  }
-  
-  /* Inputs */
-  .login-box .form-control {
-    border-radius: 8px;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
-    border: 1px solid #ccc;
-    transition: border-color 0.2s;
-  }
-  
-  .login-box .form-control:focus {
-    border-color: #b02a37;
-    box-shadow: 0 0 5px rgba(176,42,55,0.3);
-  }
-  
-  /* Botón */
-  .login-box .btn-primary {
-    background-color: #b02a37;
-    border-color: #b02a37;
-    padding: 0.75rem;
-    font-size: 1rem;
-    font-weight: 600;
-    border-radius: 8px;
-    transition: background-color 0.3s, transform 0.2s;
-  }
-  
-  .login-box .btn-primary:hover {
-    background-color: #e74c3c;
-    transform: translateY(-2px);
-  }
-  
-  /* Alertas de error */
-  .login-box .alert {
-    font-size: 0.9rem;
-    text-align: center;
-  }
-  
-  /* Responsive */
-  @media (max-width: 576px) {
-    .login-box {
       padding: 2rem 1.5rem;
-    }
-  
-    .login-box h2 {
-      font-size: 1.5rem;
-    }
   }
-  
+
+  .login-box h2 {
+      font-size: 1.5rem;
+  }
+
+  .login-box .form-control {
+      font-size: 1rem; /* 🔹 Asegura tamaño legible en móviles */
+  }
+}
