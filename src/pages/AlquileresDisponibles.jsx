@@ -14,8 +14,19 @@ import {
 } from "react-icons/fa";
 import "./AlquileresDisponibles.css";
 
-// Tarjeta de propiedad
+// Tarjeta de propiedad con carousel de imágenes
 const PropertyCard = ({ propiedad }) => {
+  const [imgIndex, setImgIndex] = useState(0);
+  const imagenes = propiedad.imagenes && propiedad.imagenes.length > 0 ? propiedad.imagenes : ["/images/placeholder.png"];
+
+  const handlePrev = () => {
+    setImgIndex((prev) => (prev === 0 ? imagenes.length - 1 : prev - 1));
+  };
+
+  const handleNext = () => {
+    setImgIndex((prev) => (prev === imagenes.length - 1 ? 0 : prev + 1));
+  };
+
   return (
     <article className="col-12 col-md-6 col-lg-4">
       <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-shadow">
@@ -23,9 +34,60 @@ const PropertyCard = ({ propiedad }) => {
           <img
             alt={propiedad.titulo}
             className="card-img-top"
-            src={propiedad.imagenes?.[0] || "/images/placeholder.png"}
+            src={imagenes[imgIndex]}
             style={{ objectFit: "cover", height: "180px" }}
           />
+
+{/* Botones de navegación de imágenes */}
+{imagenes.length > 1 && (
+  <>
+    <button
+      className="position-absolute top-50 start-0 translate-middle-y d-flex align-items-center justify-content-center mx-2"
+      onClick={handlePrev}
+      style={{
+        backgroundColor: "rgba(0,0,0,0.5)",
+        border: "none",
+        color: "#fff",
+        width: "32px",
+        height: "32px",
+        borderRadius: "50%",
+        opacity: 0.8,
+        cursor: "pointer",
+        transition: "all 0.2s",
+        zIndex: 10,
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.opacity = 1)}
+      onMouseLeave={(e) => (e.currentTarget.style.opacity = 0.8)}
+    >
+      &#8249;
+    </button>
+
+    <button
+      className="position-absolute top-50 end-0 translate-middle-y d-flex align-items-center justify-content-center mx-2"
+      onClick={handleNext}
+      style={{
+        backgroundColor: "rgba(0,0,0,0.5)",
+        border: "none",
+        color: "#fff",
+        width: "32px",
+        height: "32px",
+        borderRadius: "50%",
+        opacity: 0.8,
+        cursor: "pointer",
+        transition: "all 0.2s",
+        zIndex: 10,
+      }}
+      onMouseEnter={(e) => (e.currentTarget.style.opacity = 1)}
+      onMouseLeave={(e) => (e.currentTarget.style.opacity = 0.8)}
+    >
+      &#8250;
+    </button>
+  </>
+)}
+
+
+
+
           <span className="badge position-absolute top-0 end-0 m-2 px-3 py-2 bg-success">
             En Alquiler
           </span>
@@ -152,6 +214,7 @@ const PropertyCard = ({ propiedad }) => {
   );
 };
 
+
 // Sidebar con subfiltros + búsqueda desktop
 const Sidebar = ({ propiedades, subfiltro, onSetSubfiltro, searchTerm, setSearchTerm }) => {
   const subtipos = ["Casa", "Departamento", "Dúplex", "Galpón", "Local", "Oficinas"];
@@ -257,9 +320,9 @@ const AlquileresDisponibles = () => {
 
   return (
     <main className="alquileres-page">
-<section className="py-lg-5 py-3 bg-light">
-  <div className="mx-lg-5 mx-2">
-    <h2 className=" text-center text-danger mb-4 mx-1">Alquileres Disponibles</h2>
+<section className="py-5 bg-light">
+  <div className="mx-lg-5 mx-3">
+    <h2 className=" text-center text-danger mb-4 mx-lg-1">Alquileres Disponibles</h2>
 
 
 
