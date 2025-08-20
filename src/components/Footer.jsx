@@ -23,11 +23,11 @@ const Footer = () => {
             <h5 className="">Navegacion</h5>
             <ul className="list-unstyled d-flex justify-content-center justify-content-md-start flex-wrap">
               {[
-                { to: "/productos", label: "Inicio" },
-                { to: "/ofertas", label: "Alquileres" },
-                { to: "/mis-compras", label: "En Venta" },
-                { to: "/ayuda", label: "Lotes" },
-                { to: "/ingresa", label: "Sobre Nosotros" },
+                { to: "/", label: "Inicio" },
+                { to: "/alquileres", label: "Alquileres" },
+                { to: "/PropiedadesEnVenta", label: "En Venta" },
+                { to: "/LotesEnVenta", label: "Lotes" },
+                { to: "/SobreNosotros", label: "Sobre Nosotros" },
               ].map(({ to, label }) => (
                 <li key={to} className="mx-1 mb-1">
                   <Link to={to} className="">

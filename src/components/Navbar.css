@@ -1,5 +1,3 @@
-
-  
 .navbar {
   position: relative;
   z-index: 1030;
@@ -10,10 +8,10 @@
   will-change: transform, opacity;
   transform: translateZ(0);
 }
-  
 
-  
-  
+
+
+
 header#header-section {
   left: 0;
   width: 100%;
@@ -23,228 +21,248 @@ header#header-section {
   padding: 1.5rem 5rem;
 }
 
-  
-  
-  .navbar-nav .nav-link {
-    color: white;
 
 
+.navbar-nav .nav-link {
+  color: white;
+
+
+}
+
+.navbar-nav .nav-link.active {
+  color: #fff !important;
+  /* texto blanco */
+  font-weight: 600;
+  /* más bold */
+}
+
+
+.navbar-nav .nav-link:hover {
+  color: #ffffff;
+  background-color: rgba(128, 128, 128, 0.1);
+  /* fondo gris transparente más suave */
+  background-image: radial-gradient(circle,
+      rgba(255, 255, 255, 0.15) 0.1px,
+      transparent 1.5px);
+  background-size: 10px 10px;
+  /* tamaño del patrón de puntos */
+  transition: background-color 0.3s ease, background-image 0.3s ease;
+  border-radius: 10px;
+}
+
+header.hidden {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+header.visible {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+
+
+
+.btn-phone-number {
+  color: white;
+}
+
+.btn-phone-number:hover {
+  color: #646cff;
+}
+
+
+.nav-item.dropdown {
+  position: relative;
+}
+
+.nav-item.dropdown .dropdown-menu {
+  display: none;
+  background-color: #333;
+  border-color: #444;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  width: 200px;
+}
+
+.dropdown-menu.show {
+  display: block !important;
+}
+
+.nav-item.dropdown .dropdown-menu .dropdown-item {
+  color: #fff;
+}
+
+.navbar-nav .nav-link {
+  white-space: nowrap;
+}
+
+
+
+
+.floating-cart {
+  position: absolute;
+  top: 50px;
+  right: 10px;
+  z-index: 1000;
+}
+
+
+
+@media (max-width: 768px) {
+  .navbar .form-control {
+    font-size: 16px;
+    padding: 8px;
+  }
+
+  .navbar .navbar-toggler {
+    margin-left: 0px;
+  }
+
+
+  .navbar .list-group {
+    z-index: 1050;
+  }
+
+  .navbar .position-relative {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+}
+
+
+
+@media (max-width: 868px) {
+  .navbar .form-control {
+    font-size: 16px;
+    padding: 8px;
+    width: 100%;
+  }
+
+  header#header-section {
+
+    padding: 0.5rem 0.5rem;
   }
 
   .navbar-nav .nav-link.active {
-    color: #fff !important;   /* texto blanco */
-    font-weight: 600;         /* más bold */
-  }
-  
-  
-  .navbar-nav .nav-link:hover {
-    color: #ffffff;
-    background-color: rgba(128, 128, 128, 0.1); /* fondo gris transparente más suave */
-    background-image: radial-gradient(
-      circle,
-      rgba(255, 255, 255, 0.15) 0.1px,
-      transparent 1.5px
-    );
-    background-size: 10px 10px; /* tamaño del patrón de puntos */
-    transition: background-color 0.3s ease, background-image 0.3s ease;
-    border-radius: 10px;
-  }
-  
-  header.hidden {
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.3s ease;
-  }
-  
-  header.visible {
-    opacity: 1;
-    pointer-events: auto;
-    transition: opacity 0.3s ease;
-  }
-  
-  
-
-  .btn-phone-number {
-    color: white;
-  }
-  
-  .btn-phone-number:hover {
-    color: #646cff;
-  }
-  
-  
-  .nav-item.dropdown {
-    position: relative;
-  }
-  
-  .nav-item.dropdown .dropdown-menu {
-    display: none;
-    background-color: #333;
-    border-color: #444;
-    position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
-    width: 200px;
-  }
-  
-  .dropdown-menu.show {
-    display: block !important;
-  }
-  
-  .nav-item.dropdown .dropdown-menu .dropdown-item {
-    color: #fff;
-  }
-  
-  .navbar-nav .nav-link {
-    white-space: nowrap;
-  }
-  
-
-
-  
-  .floating-cart {
-    position: absolute;
-    top: 50px;
-    right: 10px;
-    z-index: 1000;
-  }
-  
-  
-  
-  @media (max-width: 768px) {
-    .navbar .form-control {
-      font-size: 16px;
-      padding: 8px;
-    }
-  
-    .navbar .navbar-toggler {
-      margin-left: 0px;
-    }
-  
-  
-    .navbar .list-group {
-      z-index: 1050;
-    }
-  
-    .navbar .position-relative {
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
-  }
-  
-  
-  
-  @media (max-width: 868px) {
-    .navbar .form-control {
-      font-size: 16px;
-      padding: 8px;
-      width: 100%;
-    }
-    header#header-section {
-
-      padding: 0.5rem 0.5rem;
-    }
-  
-  
-    .navbar-collapse {
-      position: absolute;
-      top: 100%;
-      right: 0;
-      left: 0;
-      background-color: #212529;
-      z-index: 1000;
-    }
-  
-  
-    .navbar .position-relative {
-      width: 10%;
-      margin-top: 10px;
-      margin-bottom: 10px;
-    }
-  
-    .list-group.position-absolute {
-      width: 92% !important;
-    }
-  }
-  
-  .navbar .navbar-toggler {
-    margin-left: 10px;
-  }
-  
-  .navbar .nav-link {
-    font-size: 16px;
-    padding: 10px 15px;
-  }
-  
-  .navbar-nav .nav-link {
-    white-space: nowrap;
-  }
-  
-  
-  .navbar .form-control {
-    width: 100%;
-    max-width: 400px;
-    font-size: 16px;
-    padding: 8px 12px;
-    transition: width 0.3s ease-in-out;
-  }
-
-  /* Sidebar móvil */
-  .sidebar-mobile {
-    position: fixed;
-    top: 0;
-    left: 0; /* sigue anclado a la izquierda */
-    width: 260px;
-    height: 100vh;
-    background-color: #f3f3f3; /* color rojo bootstrap */
-    color: black;
-    transform: translateX(-100%); /* oculto fuera de la vista */
-    transition: transform 0.25s ease-out;
-    will-change: transform;
-    z-index: 1050;
-    overflow-y: auto;
-    padding-top: 70px; /* espacio para header */
-}
-  
-.sidebar-mobile.open {
-  transform: translateX(0); /* entra suavemente */
-}
-  
-  /* Links sidebar */
-  .sidebar-mobile .nav-link {
-    color: rgb(29, 28, 28);
-    font-weight: 600;
-    padding: 10px 15px;
-    border-radius: 10px;
-}
-  
-  .sidebar-mobile .nav-link:hover {
     background-color: #b02a37;
     color: white;
     border-radius: 10px;
   }
-  
-  /* Fondo oscuro detrás del sidebar */
-  .backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 1040;
+
+  /* más bold */
 }
-  /* Botón hamburguesa para que esté sobre el backdrop */
-  .navbar-toggler {
-    z-index: 1100;
-  }
-  
-  /* Ajustes logo móvil */
-  .logo.logo-splash.d-lg-none img {
-    display: block;
-    margin-left: 10px;
-    margin-top: 5px;
-  }
-  
-  
+
+.navbar-nav :hover {
+  color: white !important;
+}
+
+
+.navbar-collapse {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  background-color: #212529;
+  z-index: 1000;
+}
+
+
+.navbar .position-relative {
+  width: 10%;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.list-group.position-absolute {
+  width: 92% !important;
+}
+
+
+.navbar .navbar-toggler {
+  margin-left: 10px;
+}
+
+.navbar .nav-link {
+  font-size: 16px;
+  padding: 10px 15px;
+}
+
+.navbar-nav .nav-link {
+  white-space: nowrap;
+}
+
+
+.navbar .form-control {
+  width: 100%;
+  max-width: 400px;
+  font-size: 16px;
+  padding: 8px 12px;
+  transition: width 0.3s ease-in-out;
+}
+
+/* Sidebar móvil */
+.sidebar-mobile {
+  position: fixed;
+  top: 0;
+  left: 0;
+  /* sigue anclado a la izquierda */
+  width: 260px;
+  height: 100vh;
+  background-color: #f3f3f3;
+  /* color rojo bootstrap */
+  color: black;
+  transform: translateX(-100%);
+  /* oculto fuera de la vista */
+  transition: transform 0.25s ease-out;
+  will-change: transform;
+  z-index: 1050;
+  overflow-y: auto;
+  padding-top: 70px;
+  /* espacio para header */
+}
+
+.sidebar-mobile.open {
+  transform: translateX(0);
+  /* entra suavemente */
+}
+
+/* Links sidebar */
+.sidebar-mobile .nav-link {
+  color: rgb(29, 28, 28);
+  padding: 10px 15px;
+  border-radius: 10px;
+  border-bottom: 1px  solid #ddd;
+}
+
+.sidebar-mobile .nav-link:hover {
+  background-color: #b02a37;
+  color: white;
+  border-radius: 10px;
+}
+
+/* Fondo oscuro detrás del sidebar */
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+/* Botón hamburguesa para que esté sobre el backdrop */
+.navbar-toggler {
+  z-index: 1100;
+}
+
+/* Ajustes logo móvil */
+.logo.logo-splash.d-lg-none img {
+  display: block;
+  margin-left: 10px;
+  margin-top: 5px;
+}

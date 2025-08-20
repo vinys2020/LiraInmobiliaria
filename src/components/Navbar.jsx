@@ -107,6 +107,15 @@ const Navbar = () => {
             {/* Menu Desktop */}
             <nav className="main-nav navbar-expand-lg d-none d-lg-flex flex-grow-1 justify-content-end">
               <ul id="main-nav" className="navbar-nav">
+              <li className="nav-item">
+                  <NavLink
+                    to="/"
+                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Inicio
+                  </NavLink>
+                </li>
                 <li className="nav-item">
                   <NavLink
                     to="/alquileres"
@@ -118,7 +127,7 @@ const Navbar = () => {
                 </li>
                 <li className="nav-item">
                   <NavLink
-                    to="/venta"
+                    to="/PropiedadesEnVenta"
                     className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
                     onClick={() => setMenuOpen(false)}
                   >
@@ -127,7 +136,7 @@ const Navbar = () => {
                 </li>
                 <li className="nav-item">
                   <NavLink
-                    to="/lotes"
+                    to="/LotesEnVenta"
                     className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
                     onClick={() => setMenuOpen(false)}
                   >
@@ -136,7 +145,7 @@ const Navbar = () => {
                 </li>
                 <li className="nav-item">
                   <NavLink
-                    to="/sobre-nosotros"
+                    to="/SobreNosotros"
                     className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
                     onClick={() => setMenuOpen(false)}
                   >
@@ -196,10 +205,11 @@ const Navbar = () => {
 
                 {/* Número de teléfono */}
                 <li className="nav-item d-flex align-items-center">
-                  <a href="tel:+5493834523097" className="nav-link d-flex align-items-center">
-                    <FaPhoneAlt className="me-1" /> +549-3834 52-3097
-                  </a>
-                </li>
+  <a href="tel:+5493834523097" className="nav-link d-flex align-items-center fw-bold">
+    <FaPhoneAlt className="me-1" /> +549-3834 52-3097
+  </a>
+</li>
+
               </ul>
             </nav>
 
@@ -304,7 +314,7 @@ const Navbar = () => {
               <li className="nav-item mt-3">
                 <a
                   href="tel:+5493834523097"
-                  className="btn btn-danger w-100 d-flex align-items-center justify-content-center border-0 gap-2"
+                  className="btn w-100 d-flex align-items-center justify-content-center border-0 gap-2" style={{ backgroundColor: "#b02a37", color: "#fff" }}
                   aria-label="Llamar al +54 9 3834 52 3097"
                 >
                   <FaPhoneAlt aria-hidden="true" />
@@ -329,8 +339,16 @@ const Navbar = () => {
                   }}
                 />
               </NavLink>
-              <p style={{ margin: "0 0 12px 0", fontWeight: "700", color: "#333" }}>
-                San Martín 579, San Fernando del Valle de Catamarca, Argentina
+              <p
+                style={{
+                  padding: "0 20px",
+                  margin: "0 0 12px 0",
+                  color: "grey",
+                  fontSize: "0.85rem",
+                  lineHeight: "1.2",
+                  whiteSpace: "pre-line",
+                }}
+              >                San Martín 579, San Fernando del Valle de Catamarca, Argentina
               </p>
             </div>
           </div>

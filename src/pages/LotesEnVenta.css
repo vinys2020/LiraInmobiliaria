@@ -1,0 +1,126 @@
+/* Padding top para la navbar */
+.lotes-venta-page {
+    margin-top: 110px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    width: 100%;
+  }
+  
+  /* Sidebar / Offcanvas */
+  .offcanvas {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: 60%;
+    max-width: 300px;
+    background-color: #fff;
+    box-shadow: -4px 0 12px rgba(0,0,0,0.2);
+    transform: translateX(100%);
+    opacity: 0;
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+    z-index: 1050;
+    overflow-y: auto;
+  }
+  
+  .offcanvas.show {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  
+  /* Fondo oscuro detrás del offcanvas */
+  .backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.4);
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    z-index: 1040;
+  }
+  
+  @media (min-width: 992px) {
+    .offcanvas { display: none; }
+    .backdrop { display: none; }
+  }
+  
+  .property-card {
+    border-radius: 15px;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .property-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+  }
+  
+  .property-card img {
+    width: 100%;
+    height: 250px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .property-card:hover img {
+    transform: scale(1.05);
+  }
+  
+  .property-badge {
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 0.4em 0.6em;
+  }
+  
+  .property-amenities .badge {
+    font-size: 0.75rem;
+    margin-right: 0.3rem;
+    margin-bottom: 0.3rem;
+  }
+  
+  .sidebar-tipos .list-group-item {
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  
+  .sidebar-tipos .list-group-item:hover {
+    background-color: #e9ecef;
+  }
+  
+  .pagination .page-link { color: #dc3545; }
+  
+  .pagination .page-item.active .page-link {
+    background-color: #dc3545;
+    border-color: #dc3545;
+  }
+  
+  @media (max-width: 768px) {
+    .property-card img { height: 180px; }
+    .lotes-venta-page {
+      margin-top: 80px;
+      background-color: #f8f9fa;
+      min-height: 100vh;
+      width: 100%;
+    }
+  }
+  
+  .list-group-item {
+    background-color: transparent !important;
+    border: 1px solid #ddd;
+    color: #333;
+    transition: background 0.2s ease;
+  }
+  
+  .list-group-item:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .list-group-item.active {
+    background-color: #dc3545 !important;
+    color: #fff !important;
+    font-weight: bold;
+  }
+  

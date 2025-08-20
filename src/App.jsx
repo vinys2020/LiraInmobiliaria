@@ -1,6 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 import Navbar from "./components/Navbar";
+import ScrollToTop from "./components/ScrollToTop";
 import Home from "./pages/Home";
 import WhatsAppButton from "./components/WhatsAppButton";
 import Footer from "./components/Footer";
@@ -10,7 +11,9 @@ import EmpleadoDashboard from "./pages/EmpleadoDashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Propiedades from "./pages/Propiedades";
 import AlquileresDisponibles from "./pages/AlquileresDisponibles";
-
+import PropiedadesEnVenta from "./pages/PropiedadesEnVenta";
+import LotesEnVenta from "./pages/LotesEnVenta";
+import SobreNosotros from "./pages/SobreNosotros";
 
 // Rutas protegidas
 import AdminRoute from "./routes/AdminRoute";
@@ -20,13 +23,15 @@ function App() {
   return (
     <>
       <Navbar />
+      <ScrollToTop smooth={true} />
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} /> {/* Ruta del login */}
+        <Route path="/login" element={<Login />} />
         <Route path="/alquileres" element={<AlquileresDisponibles />} />
+        <Route path="/PropiedadesEnVenta" element={<PropiedadesEnVenta />} />
+        <Route path="/LotesEnVenta" element={<LotesEnVenta />} />
+        <Route path="/SobreNosotros" element={<SobreNosotros />} />
 
-
-        {/* Admin solo puede entrar si tiene rol admin */}
         <Route
           path="/admin"
           element={
@@ -35,8 +40,6 @@ function App() {
             </AdminRoute>
           }
         />
-
-        {/* Empleado solo puede entrar si tiene rol empleado */}
         <Route
           path="/empleado"
           element={
@@ -45,7 +48,6 @@ function App() {
             </EmpleadoRoute>
           }
         />
-
         <Route path="/propiedades" element={<Propiedades />} />
       </Routes>
       <WhatsAppButton />

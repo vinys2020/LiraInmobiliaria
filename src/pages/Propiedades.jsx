@@ -199,12 +199,23 @@ export default function Propiedades() {
                         ? "#6c757d"
                         : "#6c757d";
 
-              const moneda = (prop.moneda || "").toUpperCase();
-              const symbol = moneda === "USD" ? "US$" : "$";
-              const precioFmt =
-                prop.precio != null && prop.precio !== ""
-                  ? `${symbol}${Number(prop.precio).toLocaleString("es-AR")}${moneda && moneda !== "ARS" ? ` / ${moneda}` : ""}`
-                  : "";
+// Normalizar moneda
+const moneda = (prop.moneda || "").toUpperCase();
+
+// Definir símbolo manual
+let symbol = "";
+if (moneda === "U$S") symbol = "";
+if (moneda === "ARS") symbol = "$";
+
+// Precio formateado (solo número, sin símbolo automático)
+const precioFmt =
+  prop.precio != null && prop.precio !== ""
+    ? `${symbol} ${Number(prop.precio).toLocaleString("es-AR")}`
+    : "";
+
+
+
+                        
 
               const ubicacion = [
                 prop?.direccion?.calle,
@@ -276,7 +287,7 @@ export default function Propiedades() {
                       </div>
 
                       {/* Extras */}
-                      <div className="d-flex flex-wrap gap-2 mb-3">
+                      <div className="d-flex flex-wrap gap-2 mb-2 mt-1">
                         {prop.internet && (
                           <span className="badge rounded-pill bg-light text-dark border">
                             <FaWifi className="me-1" /> Internet
@@ -577,14 +588,23 @@ export default function Propiedades() {
                     />
                   </div>
                   <div className="mb-3">
-                    <label className="form-label">Moneda</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      value={propiedadSeleccionada.moneda || ""}
-                      onChange={(e) => setPropiedadSeleccionada({ ...propiedadSeleccionada, moneda: e.target.value })}
-                    />
-                  </div>
+  <label className="form-label">Moneda</label>
+  <select
+    className="form-select"
+    value={propiedadSeleccionada.moneda || ""}
+    onChange={(e) =>
+      setPropiedadSeleccionada({
+        ...propiedadSeleccionada,
+        moneda: e.target.value,
+      })
+    }
+  >
+    <option value="">Seleccionar moneda</option>
+    <option value="ARS">ARS (Pesos Argentinos)</option>
+    <option value="U$S">U$S (Dólares)</option>
+  </select>
+</div>
+
 
                   {/* Características numéricas */}
                   {["habitaciones", "baños", "cochera", "m2", "superficieCubierta", "superficieTerreno"].map((campo) => (
@@ -739,24 +759,35 @@ export default function Propiedades() {
                     </div>
                   ))}
 
-                  {/* Ubicación geográfica */}
-                  <h4 className="mt-3">Ubicación Geográfica</h4>
-                  {["lat", "lng"].map((campo) => (
-                    <div className="mb-2 d-flex align-items-center gap-2" key={campo}>
-                      <label style={{ minWidth: "120px", fontWeight: "500" }}>{campo}:</label>
-                      <input
-                        type="text"
-                        className="form-control"
-                        value={propiedadSeleccionada.ubicacionGeo?.[campo] || ""}
-                        onChange={(e) =>
-                          setPropiedadSeleccionada({
-                            ...propiedadSeleccionada,
-                            ubicacionGeo: { ...propiedadSeleccionada.ubicacionGeo, [campo]: e.target.value },
-                          })
-                        }
-                      />
-                    </div>
-                  ))}
+{/* Ubicación geográfica */}
+<h4 className="mt-3">Ubicación Geográfica</h4>
+{["lat", "lng"].map((campo) => (
+  <div className="mb-2 d-flex align-items-center gap-2" key={campo}>
+    <label style={{ minWidth: "120px", fontWeight: "500" }}>{campo}:</label>
+    <input
+      type="text"
+      className="form-control"
+      value={propiedadSeleccionada.ubicacionGeo?.[campo] || ""}
+      onChange={(e) => {
+        const regex = /^-?\d{0,3}(\.\d+)?$/; 
+        const value = e.target.value;
+
+        // Validar que el valor cumpla con el formato de coordenada
+        if (value === "" || regex.test(value)) {
+          setPropiedadSeleccionada({
+            ...propiedadSeleccionada,
+            ubicacionGeo: {
+              ...propiedadSeleccionada.ubicacionGeo,
+              [campo]: value,
+            },
+          });
+        }
+      }}
+      placeholder={campo === "lat" ? "-28.4522681" : "-65.7375216"}
+    />
+  </div>
+))}
+
                   {/* Fecha de última actualización */}
                   <div className="mb-3">
                     <label className="form-label">Última Actualización</label>

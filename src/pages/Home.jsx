@@ -190,8 +190,9 @@ function Home() {
       {/* Sección Alquileres */}
       <section style={{ backgroundColor: "white", padding: "30px 0" }}>
         <div className="container">
-          <h2 className="text-danger mb-2 text-center">Alquileres Destacados</h2>
-          <p className="mb-5 text-center">
+        <h2 className="text-danger mb-2 text-center titulo-prata">
+  Alquileres Destacados
+</h2>          <p className="mb-5 text-center">
             Encontrá la propiedad ideal para vos.
           </p>
 
@@ -344,9 +345,9 @@ function Home() {
         </div>
       </section>
 
-      <section className=" container-fluid py-4 p-lg-5 p-3 bg-white">
+      <section className=" container-fluid py-4 p-lg-5 p-2 bg-white">
         <div className="text-center mb-4">
-          <h2 className="text-danger">Explorá nuestras propiedades</h2>
+          <h2 className="text-danger titulo-prata">Explorá nuestras propiedades</h2>
           <p className="text-muted mb-3">
             Descubrí todas las ubicaciones de nuestras propiedades en un mapa interactivo.
           </p>
@@ -364,6 +365,7 @@ function Home() {
           </div>
         )}
       </section>
+      
 
 
 
@@ -371,7 +373,8 @@ function Home() {
       {/* Sección Venta */}
       <section className="bg-white pt-2">
         <div className="container">
-          <h2 className="text-danger mb-2 text-center mt-5">Propiedades en Venta</h2>
+
+          <h2 className="text-danger mb-2 text-center mt-5 titulo-prata">Propiedades en Venta</h2>
           <p className="mb-5 fs-6 text-center">
             En Lira Inmobiliaria te asesoramos para que puedas tener el mejor rendimiento de tu venta o compra de un inmueble.
           </p>

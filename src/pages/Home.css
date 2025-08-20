@@ -187,6 +187,9 @@ body {
     }
   }
   
+  .titulo-prata {
+    font-family: 'Prata', serif;
+  }
   
 
   /* Contenedor para la sección con video */
