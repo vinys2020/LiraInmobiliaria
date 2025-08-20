@@ -228,6 +228,15 @@ const Navbar = () => {
           {/* Sidebar móvil */}
           <div className={`sidebar-mobile d-lg-none ${menuOpen ? "open" : ""}`} ref={navbarRef}>
             <ul className="navbar-nav flex-column p-3">
+            <li className="nav-item">
+                <NavLink
+                  to="/"
+                  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Inicio
+                </NavLink>
+              </li>
               <li className="nav-item">
                 <NavLink
                   to="/alquileres"
@@ -239,7 +248,7 @@ const Navbar = () => {
               </li>
               <li className="nav-item">
                 <NavLink
-                  to="/venta"
+                  to="/PropiedadesEnVenta"
                   className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
                   onClick={() => setMenuOpen(false)}
                 >
@@ -248,7 +257,7 @@ const Navbar = () => {
               </li>
               <li className="nav-item">
                 <NavLink
-                  to="/lotes"
+                  to="/LotesEnVenta"
                   className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
                   onClick={() => setMenuOpen(false)}
                 >
@@ -257,7 +266,7 @@ const Navbar = () => {
               </li>
               <li className="nav-item">
                 <NavLink
-                  to="/sobre-nosotros"
+                  to="/SobreNosotros"
                   className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
                   onClick={() => setMenuOpen(false)}
                 >

@@ -64,7 +64,7 @@ Nuestro equipo de profesionales altamente capacitados está comprometido a acomp
   </div>
 </section>
 
-<section className=" container-light administracion-section bg-white py-5">
+<section className=" container-light administracion-section bg-white py-lg-5">
   <div className="container mt-5">
     <div className="row align-items-center">
       {/* Columna texto */}
@@ -88,7 +88,7 @@ Nuestro equipo de profesionales altamente capacitados está comprometido a acomp
 </section>
 
 {/* Sección Tasaciones */}
-<section className="container-light tasaciones-section py-5 bg-white">
+<section className="container-light tasaciones-section py-lg-5 mt-5 mt-lg-0 bg-white">
   <div className="container">
     <div className="row align-items-center">
       {/* Columna imagen */}
@@ -115,7 +115,7 @@ Nuestro equipo de profesionales altamente capacitados está comprometido a acomp
   </div>
 </section>
 
-<section className=" container-light asesoramiento-section bg-white mb-lg-5">
+<section className=" container-light asesoramiento-section bg-white mb-lg-5 py-5">
   <div className="container">
     <div className="row align-items-center ">
       {/* Columna texto */}
