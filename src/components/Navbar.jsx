@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { FaPhoneAlt, FaBars, FaTimes } from "react-icons/fa";
-import { useAuth } from "../context/AuthContext"; // <-- importamos tu AuthContext
+import { useAuth } from "../context/AuthContext";
 
-import "./navbar.css"; // si tienes estilos propios adicionales
+import "./navbar.css";
 
 const Navbar = () => {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -11,7 +11,7 @@ const Navbar = () => {
   const [isTop, setIsTop] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
 
-  const { user, rol, logout } = useAuth(); // 🔹 obtenemos usuario, rol y logout
+  const { user, rol, logout } = useAuth();
   const navigate = useNavigate();
 
   const toggleMenu = () => {
@@ -43,8 +43,6 @@ const Navbar = () => {
   }, [menuOpen]);
 
   useEffect(() => {
-    let lastScrollY = window.scrollY;
-
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
 
@@ -58,8 +56,6 @@ const Navbar = () => {
         setIsTop(false);
         setIsVisible(true);
       }
-
-      lastScrollY = currentScrollY;
     };
 
     window.addEventListener("scroll", handleScroll);
@@ -86,83 +82,115 @@ const Navbar = () => {
           <div className="navbar d-flex align-items-center justify-content-between" ref={navbarRef}>
             {/* Logo desktop */}
             <div className="logo logo-splash d-none d-lg-block">
-              <Link to="/">
+              <NavLink to="/">
                 <img
                   src="https://lirainmobiliaria.com.ar/wp-content/uploads/2024/03/logo-lira-1.png"
                   alt="logo"
                   height="55"
                   width="220"
                 />
-              </Link>
+              </NavLink>
             </div>
 
             {/* Logo móvil */}
             <div className="logo logo-splash d-lg-none">
-              <Link to="/">
+              <NavLink to="/">
                 <img
                   src="https://lirainmobiliaria.com.ar/wp-content/uploads/2024/03/logo-lira-1.png"
                   alt="logo móvil"
                   height="40"
                   width="140"
                 />
-              </Link>
+              </NavLink>
             </div>
 
             {/* Menu Desktop */}
             <nav className="main-nav navbar-expand-lg d-none d-lg-flex flex-grow-1 justify-content-end">
               <ul id="main-nav" className="navbar-nav">
-              <li className="nav-item">
-  <Link
-    className="nav-link"
-    to="/alquileres"
-    onClick={() => setMenuOpen(false)}
-  >
-    Alquileres
-  </Link>
-</li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/venta" onClick={() => setMenuOpen(false)}>Venta</Link>
+                  <NavLink
+                    to="/alquileres"
+                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Alquileres
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/lotes" onClick={() => setMenuOpen(false)}>Lotes</Link>
+                  <NavLink
+                    to="/venta"
+                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Venta
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/sobre-nosotros" onClick={() => setMenuOpen(false)}>Sobre Nosotros</Link>
+                  <NavLink
+                    to="/lotes"
+                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Lotes
+                  </NavLink>
                 </li>
                 <li className="nav-item">
-                  <Link className="nav-link" to="/contacto" onClick={() => setMenuOpen(false)}>Contacto</Link>
+                  <NavLink
+                    to="/sobre-nosotros"
+                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Sobre Nosotros
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink
+                    to="/contacto"
+                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Contacto
+                  </NavLink>
                 </li>
 
                 {/* Indicador de usuario logeado */}
                 {user ? (
                   <>
                     <li className="nav-item">
-                      <button className="nav-link btn" onClick={handleLogout}>Cerrar sesión</button>
+                      <button className="nav-link btn" onClick={handleLogout}>
+                        Cerrar sesión
+                      </button>
                     </li>
                     <li className="nav-item align-items-center">
-                    <Link
-  className="nav-link d-flex align-items-center"
-  to={rol === "admin" ? "/admin" : "/empleado"}
-  onClick={() => setMenuOpen(false)}
->
-  <img
-    src={
-      user.photoURL ||
-      "https://cdn-icons-png.flaticon.com/512/847/847969.png" // logo usuario
-    }
-    alt="Avatar"
-    className="avatar-img me-2 mb-0 align-items-top"
-    style={{ width: "28px", height: "25px", borderRadius: "50%" }}
-  />
-  {user.displayName || user.email}
-</Link>
-
-
+                      <NavLink
+                        className={({ isActive }) =>
+                          `nav-link d-flex align-items-center ${isActive ? "active" : ""}`
+                        }
+                        to={rol === "admin" ? "/admin" : "/empleado"}
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <img
+                          src={
+                            user.photoURL ||
+                            "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                          }
+                          alt="Avatar"
+                          className="avatar-img me-2 mb-0 align-items-top"
+                          style={{ width: "28px", height: "25px", borderRadius: "50%" }}
+                        />
+                        {user.displayName || user.email}
+                      </NavLink>
                     </li>
                   </>
                 ) : (
                   <li className="nav-item">
-                    <Link className="nav-link" to="/login" onClick={() => setMenuOpen(false)}>Iniciar sesión</Link>
+                    <NavLink
+                      className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                      to="/login"
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      Iniciar sesión
+                    </NavLink>
                   </li>
                 )}
 
@@ -191,29 +219,66 @@ const Navbar = () => {
           <div className={`sidebar-mobile d-lg-none ${menuOpen ? "open" : ""}`} ref={navbarRef}>
             <ul className="navbar-nav flex-column p-3">
               <li className="nav-item">
-                <Link className="nav-link" to="/alquileres" onClick={() => setMenuOpen(false)}>Alquileres</Link>
+                <NavLink
+                  to="/alquileres"
+                  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Alquileres
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/venta" onClick={() => setMenuOpen(false)}>Venta</Link>
+                <NavLink
+                  to="/venta"
+                  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Venta
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/lotes" onClick={() => setMenuOpen(false)}>Lotes</Link>
+                <NavLink
+                  to="/lotes"
+                  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Lotes
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/sobre-nosotros" onClick={() => setMenuOpen(false)}>Sobre Nosotros</Link>
+                <NavLink
+                  to="/sobre-nosotros"
+                  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Sobre Nosotros
+                </NavLink>
               </li>
               <li className="nav-item">
-                <Link className="nav-link" to="/contacto" onClick={() => setMenuOpen(false)}>Contacto</Link>
+                <NavLink
+                  to="/contacto"
+                  className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                  onClick={() => setMenuOpen(false)}
+                >
+                  Contacto
+                </NavLink>
               </li>
 
-              {/* Indicador de usuario logeado en móvil */}
               {user ? (
                 <>
                   <li className="nav-item">
-                    <button className="nav-link btn" onClick={handleLogout}>Cerrar sesión</button>
+                    <button className="nav-link btn" onClick={handleLogout}>
+                      Cerrar sesión
+                    </button>
                   </li>
                   <li className="nav-item align-items-center">
-                    <Link className="nav-link d-flex align-items-center" to="/perfil" onClick={() => setMenuOpen(false)}>
+                    <NavLink
+                      to="/perfil"
+                      className={({ isActive }) =>
+                        `nav-link d-flex align-items-center ${isActive ? "active" : ""}`
+                      }
+                      onClick={() => setMenuOpen(false)}
+                    >
                       <img
                         src={user.photoURL || "https://via.placeholder.com/40"}
                         alt="Avatar"
@@ -221,16 +286,21 @@ const Navbar = () => {
                         style={{ width: "28px", height: "28px", borderRadius: "50%" }}
                       />
                       {user.displayName || user.email}
-                    </Link>
+                    </NavLink>
                   </li>
                 </>
               ) : (
                 <li className="nav-item">
-                  <Link className="nav-link" to="/login" onClick={() => setMenuOpen(false)}>Iniciar sesión</Link>
+                  <NavLink
+                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
+                    to="/login"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Iniciar sesión
+                  </NavLink>
                 </li>
               )}
 
-              {/* Número teléfono móvil */}
               <li className="nav-item mt-3">
                 <a
                   href="tel:+5493834523097"
@@ -245,7 +315,7 @@ const Navbar = () => {
 
             {/* Logo al final */}
             <div className="sidebar-logo text-center py-4">
-              <Link to="/" onClick={() => setMenuOpen(false)}>
+              <NavLink to="/" onClick={() => setMenuOpen(false)}>
                 <img
                   src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755019332/zqrmoousswdjxrzpzchx.png"
                   alt="Logo Lira"
@@ -258,14 +328,13 @@ const Navbar = () => {
                     display: "inline-block",
                   }}
                 />
-              </Link>
+              </NavLink>
               <p style={{ margin: "0 0 12px 0", fontWeight: "700", color: "#333" }}>
                 San Martín 579, San Fernando del Valle de Catamarca, Argentina
               </p>
             </div>
           </div>
 
-          {/* Fondo oscurecido cuando sidebar está abierto */}
           {menuOpen && <div className="backdrop" onClick={() => setMenuOpen(false)}></div>}
         </div>
       </div>
