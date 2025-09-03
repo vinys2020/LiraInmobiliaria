@@ -8,6 +8,7 @@ import "./Home.css";
 import { FaBed, FaBath, FaRulerCombined, FaCar, FaWifi, FaSwimmingPool, FaBurn, FaLeaf, FaMapMarkerAlt } from "react-icons/fa";
 import fondoGif from "../assets/slider-lira.gif";
 import { useNavigate } from "react-router-dom";
+import Card from "../components/Card"; // Ajusta la ruta según tu estructura
 
 
 function Home() {
@@ -47,22 +48,22 @@ function Home() {
     if (estadoSeleccionado === "alquiler" && p.propiedadEn !== "alquiler") return false;
     if (estadoSeleccionado === "en-venta" && p.propiedadEn !== "venta") return false;
     // Si estadoSeleccionado es "", mostramos todo
-  
+
     // Filtrado por tipos seleccionados (multiselección)
     if (tiposSeleccionados.length > 0 && !tiposSeleccionados.includes(p.tipoDePropiedad)) {
       return false;
     }
-  
+
     return true;
   });
-  
-  
+
+
 
   const tiposTexto = tiposSeleccionados.length === 0 ? "Tipo" : tiposSeleccionados.join(", ");
 
   const handleBuscar = (e) => {
     e.preventDefault();
-    
+
     if (estadoSeleccionado === "alquiler") {
       navigate("/alquileres", { state: { tipos: tiposSeleccionados } });
     } else if (estadoSeleccionado === "en-venta") {
@@ -72,20 +73,20 @@ function Home() {
       navigate("/TodasPropiedades", { state: { tipos: tiposSeleccionados } });
     }
   };
-  
-  
+
+
 
   return (
     <div>
       {/* Sección con video de fondo */}
       <section className="home-container">
-      <img
-  src={fondoGif}
-  alt="fondo animado"
-  className="background-video"
-  decoding="async"
-  fetchPriority="high"   // <-- Cambiar fetchpriority a fetchPriority
-/>
+        <img
+          src={fondoGif}
+          alt="fondo animado"
+          className="background-video"
+          decoding="async"
+          fetchPriority="high"   // <-- Cambiar fetchpriority a fetchPriority
+        />
         <div className="content-overlay container py-5 mt-lg-3 mt-4">
           <header className="text-center mb-4 mt-5 text-white">
             <h2 className="banner-title">
@@ -96,49 +97,49 @@ function Home() {
           <form className="mb-5 p-4" onSubmit={handleBuscar} autoComplete="off">
 
             {/* Tabs de estado */}
-{/* Tabs de estado */}
-<ul
-  className="nav nav-pills justify-content-center mb-3 bg-transparent rounded"
-  role="tablist"
->
-  {estados.map((estado) => {
-    const estadoMap = {
-      "Todos": "",         // <-- Para mostrar todas las propiedades
-      "En Alquiler": "alquiler",
-      "En Venta": "en-venta"
-    };
-    const val = estadoMap[estado] || "";
-    return (
-      <li className="nav-item" key={estado}>
-        <a
-          href="#"
-          className={`nav-link ${estadoSeleccionado === val ? " text-black" : "bg-danger text-white"}`}
-          style={{
-            cursor: "pointer",
-            color: "black",
-            backgroundColor: "white",
-            borderTopLeftRadius: "0.5rem",
-            borderTopRightRadius: "0.5rem",
-            borderBottomLeftRadius: 0,
-            borderBottomRightRadius: 0,
-          }}
-          onClick={(e) => {
-            e.preventDefault();
-            setEstadoSeleccionado(val); // <-- "" para Todos, "alquiler" o "en-venta"
-          }}
-        >
-          {estado}
-        </a>
-      </li>
-    );
-  })}
-  <input
-    type="hidden"
-    name="status[]"
-    id="search-tabs"
-    value={estadoSeleccionado}
-  />
-</ul>
+            {/* Tabs de estado */}
+            <ul
+              className="nav nav-pills justify-content-center mb-3 bg-transparent rounded"
+              role="tablist"
+            >
+              {estados.map((estado) => {
+                const estadoMap = {
+                  "Todos": "",         // <-- Para mostrar todas las propiedades
+                  "En Alquiler": "alquiler",
+                  "En Venta": "en-venta"
+                };
+                const val = estadoMap[estado] || "";
+                return (
+                  <li className="nav-item" key={estado}>
+                    <a
+                      href="#"
+                      className={`nav-link ${estadoSeleccionado === val ? " text-black" : "bg-danger text-white"}`}
+                      style={{
+                        cursor: "pointer",
+                        color: "black",
+                        backgroundColor: "white",
+                        borderTopLeftRadius: "0.5rem",
+                        borderTopRightRadius: "0.5rem",
+                        borderBottomLeftRadius: 0,
+                        borderBottomRightRadius: 0,
+                      }}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setEstadoSeleccionado(val); // <-- "" para Todos, "alquiler" o "en-venta"
+                      }}
+                    >
+                      {estado}
+                    </a>
+                  </li>
+                );
+              })}
+              <input
+                type="hidden"
+                name="status[]"
+                id="search-tabs"
+                value={estadoSeleccionado}
+              />
+            </ul>
 
 
             {/* Contenedor filtro y botón */}
@@ -210,189 +211,49 @@ function Home() {
 
 
 
-      {/* Sección Alquileres */}
-      <section style={{ backgroundColor: "white", padding: "30px 0" }}>
-        <div className="container">
-        <h2 className="text-danger mb-2 text-center titulo-prata">
-  Alquileres Destacados
-</h2>          <p className="mb-5 text-center">
-            Encontrá la propiedad ideal para vos.
-          </p>
+{/* Sección Alquileres */}
+<section className="py-5" style={{ backgroundColor: "white", padding: "30px 0" }}>
+  <div className="container">
+    <h2 className="text-danger mb-1 text-center titulo-prata">
+      Alquileres Destacados
+    </h2>
+    <p className="mb-3 text-center">
+      Encontrá la propiedad ideal para vos.
+    </p>
 
-          <div className="row g-4 justify-content-center">
-            {propiedades
-              .filter((p) => p.propiedadEn === "alquiler")
-              .map((prop) => (
-                <article key={prop.id} className="col-12 col-md-6 col-lg-4">
-                  <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-shadow">
-
-                    {/* Imagen + Badge */}
-                    <div className="position-relative">
-                      {prop.imagenes && prop.imagenes[0] && (
-                        <img
-                          src={prop.imagenes[0]}
-                          alt={prop.titulo}
-                          className="card-img-top"
-                          style={{ objectFit: "cover", height: "200px" }}
-                        />
-                      )}
-                      <span
-                        className="badge position-absolute top-0 end-0 m-2 px-3 py-2 bg-success"
-                      >
-                        En Alquiler
-                      </span>
-                    </div>
-
-                    {/* Cuerpo */}
-                    <div className="card-body d-flex flex-column">
-                      <h5 className="card-title text-truncate mb-2">{prop.titulo}</h5>
-                      <h6 className="fw-bold text-success mb-2">
-  {(() => {
-    const moneda = (prop.moneda || "").toUpperCase();
-
-    // Definir símbolo manual
-    let symbol = "";
-    if (moneda === "U$S" || moneda === "USD") symbol = "U$S";
-    else if (moneda === "ARS") symbol = "ARS $";
-
-    // Formatear precio
-    return prop.precio != null && prop.precio !== ""
-      ? `${symbol} ${Number(prop.precio).toLocaleString("es-AR")}`
-      : "";
-  })()}
-</h6>
-
-                      <p className="card-text text-muted small mb-1" style={{ minHeight: "2em" }}>
-                        {prop.descripcion?.length > 120
-                          ? prop.descripcion.slice(0, 120) + "…"
-                          : prop.descripcion}
-                      </p>
-
-{/* Iconos de métricas */}
-<div className="d-flex flex-wrap gap-2 text-muted small mb-1">
-  {Number(prop.habitaciones) > 0 && (
-    <span className="d-inline-flex align-items-center">
-      <FaBed className="me-1" /> {prop.habitaciones} Hab.
-    </span>
-  )}
-  {Number(prop.baños) > 0 && (
-    <span className="d-inline-flex align-items-center">
-      <FaBath className="me-1" /> {prop.baños} Baño{Number(prop.baños) > 1 ? "s" : ""}
-    </span>
-  )}
-  {Number(prop.m2) > 0 && (
-    <span className="d-inline-flex align-items-center">
-      <FaRulerCombined className="me-1" /> {prop.m2} m²
-    </span>
-  )}
-  {Number(prop.cochera) > 0 && (
-    <span className="d-inline-flex align-items-center">
-      <FaCar className="me-1" /> {prop.cochera} Coch.
-    </span>
-  )}
-</div>
-
-                      {/* Extras */}
-                      <div className="d-flex flex-wrap gap-2 mb-3">
-                        {prop.internet && (
-                          <span className="badge rounded-pill bg-light text-dark border">
-                            <FaWifi className="me-1" /> Internet
-                          </span>
-                        )}
-                        {prop.pileta && (
-                          <span className="badge rounded-pill bg-light text-dark border">
-                            <FaSwimmingPool className="me-1" /> Pileta
-                          </span>
-                        )}
-                        {prop.gasNatural && (
-                          <span className="badge rounded-pill bg-light text-dark border">
-                            <FaBurn className="me-1" /> Gas natural
-                          </span>
-                        )}
-                        {prop.patio && (
-                          <span className="badge rounded-pill bg-light text-dark border">
-                            <FaLeaf className="me-1" /> Patio
-                          </span>
-                        )}
-                      </div>
-
-                      {/* Ubicación */}
-                      {prop.direccion && (
-                        <div className="mb-3">
-                          <div
-                            className="text-muted small d-flex align-items-start"
-                            style={{
-                              display: "-webkit-box",
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              minHeight: "3em",
-                            }}
-                          >
-                            <FaMapMarkerAlt className="me-1 mt-1" />
-                            {prop.direccion.calle}
-                          </div>
-                          <div
-                            className="d-flex align-items-center justify-content-between"
-                            style={{ display: "flex", overflow: "hidden", marginTop: "2px" }}
-                          >
-                            <div
-                              className="text-muted small text-truncate"
-                              style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: "8px" }}
-                              title={`${prop.direccion.localidad}, ${prop.direccion.provincia}, ${prop.direccion.pais}`}
-                            >
-                              {prop.direccion.localidad}, {prop.direccion.provincia}, {prop.direccion.pais}
-                            </div>
-                            <a
-                              className="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
-                              href={
-                                prop.ubicacionGeo?.lat && prop.ubicacionGeo?.lng
-                                  ? `https://www.google.com/maps?q=${prop.ubicacionGeo.lat},${prop.ubicacionGeo.lng}`
-                                  : `https://www.google.com/maps?q=${encodeURIComponent(
-                                    `${prop.direccion.calle} ${prop.direccion.localidad} ${prop.direccion.provincia} ${prop.direccion.pais}`
-                                  )}`
-                              }
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title="Ver en Google Maps"
-                              style={{ minWidth: "100px", padding: "4px 8px", gap: "6px", whiteSpace: "nowrap" }}
-                            >
-                              <img
-                                src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755458272/r3kx7npz5muhzio5agq8.png"
-                                alt="Google Maps"
-                                style={{ width: "20px", height: "20px" }}
-                              />
-                              <span>Ver en Maps</span>
-                            </a>
-                          </div>
-                        </div>
-                      )}
-
-                    </div>
-                  </div>
-                </article>
-              ))}
+    <div className="row g-4 justify-content-center">
+      {propiedades
+        .filter((p) => p.propiedadEn === "alquiler")
+        .map((prop) => (
+          <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
+          <Card 
+              propiedad={prop} 
+              onClick={() => navigate("/detalle-propiedad", { state: { id: prop.id } })} 
+            />
           </div>
+        ))}
+    </div>
 
-          <div className="text-center mt-4 mb-0">
-            <a href="/alquileres" className="btn btn-danger">VER MÁS PROPIEDADES EN ALQUILER</a>
-          </div>
-        </div>
-      </section>
+    <div className="text-center mt-4 mb-0">
+      <a href="/alquileres" className="btn btn-danger">VER MÁS PROPIEDADES EN ALQUILER</a>
+    </div>
+  </div>
+</section>
+
+
 
       <section className=" container-fluid py-4 p-lg-5 p-2 bg-white">
         <div className="text-center mb-4">
-          <h2 className="text-danger titulo-prata">Explorá nuestras propiedades</h2>
+          <h2 className="text-danger titulo-prata mb-1">Explorá nuestras propiedades</h2>
           <p className="text-muted mb-3">
             Descubrí todas las ubicaciones de nuestras propiedades en un mapa interactivo.
           </p>
           <button
-  className="btn btn-outline-danger btn-lg"
-  onClick={() => setMostrarMapa(!mostrarMapa)}
->
-  {mostrarMapa ? "Ocultar Mapa" : "Ver todas las ubicaciones"}
-</button>
+            className="btn btn-outline-danger btn-lg"
+            onClick={() => setMostrarMapa(!mostrarMapa)}
+          >
+            {mostrarMapa ? "Ocultar Mapa" : "Ver todas las ubicaciones"}
+          </button>
         </div>
 
         {mostrarMapa && (
@@ -402,9 +263,9 @@ function Home() {
         )}
       </section>
 
-                  {/* Nueva sección de íconos */}
-                  <section className="py-2 bg-white">
-        <div className="container py-5">
+      {/* Nueva sección de íconos */}
+      <section className="py-4 bg-white">
+        <div className="container mt-5">
           <div className="row g-5">
 
             {/* Primer ítem */}
@@ -476,180 +337,43 @@ function Home() {
           </div>
         </div>
       </section>
-      
 
 
 
 
-      {/* Sección Venta */}
-      <section className="bg-white pt-2">
-        <div className="container">
 
-          <h2 className="text-danger mb-2 text-center mt-5 titulo-prata">Propiedades en Venta</h2>
-          <p className="mb-5 fs-6 text-center">
-            En Lira Inmobiliaria te asesoramos para que puedas tener el mejor rendimiento de tu venta o compra de un inmueble.
-          </p>
+{/* Sección Venta */}
+<section className="bg-white pt-2 py-5">
+  <div className="container">
+    <h2 className="text-danger mb-2 text-center mt-5 titulo-prata">
+      Propiedades en Venta
+    </h2>
+    <p className="mb-4 fs-6 text-center">
+      En Lira Inmobiliaria te asesoramos para que puedas tener el mejor rendimiento de tu venta o compra de un inmueble.
+    </p>
 
-          <div className="row g-4 justify-content-center">
-            {propiedades
-              .filter((p) => p.propiedadEn === "venta")
-              .map((prop) => (
-                <article key={prop.id} className="col-12 col-md-6 col-lg-4">
-                  <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-shadow">
-
-                    {/* Imagen + Badge */}
-                    <div className="position-relative">
-                      {prop.imagenes && prop.imagenes[0] && (
-                        <img
-                          src={prop.imagenes[0]}
-                          alt={prop.titulo}
-                          className="card-img-top"
-                          style={{ objectFit: "cover", height: "200px" }}
-                        />
-                      )}
-                      <span
-                        className="badge position-absolute top-0 end-0 m-2 px-3 py-2 bg-primary"
-                      >
-                        En Venta
-                      </span>
-                    </div>
-
-                    {/* Cuerpo */}
-                    <div className="card-body d-flex flex-column">
-                      <h5 className="card-title text-truncate mb-2">{prop.titulo}</h5>
-                      <h6 className="fw-bold text-success mb-2">
-  {(() => {
-    const moneda = (prop.moneda || "").toUpperCase();
-
-    // Definir símbolo manual
-    let symbol = "";
-    if (moneda === "U$S" || moneda === "USD") symbol = "U$S";
-    else if (moneda === "ARS") symbol = "ARS $";
-
-    // Formatear precio
-    return prop.precio != null && prop.precio !== ""
-      ? `${symbol} ${Number(prop.precio).toLocaleString("es-AR")}`
-      : "";
-  })()}
-</h6>
-                      <p className="card-text text-muted small mb-1" style={{ minHeight: "2em" }}>
-                        {prop.descripcion?.length > 120
-                          ? prop.descripcion.slice(0, 120) + "…"
-                          : prop.descripcion}
-                      </p>
-
-{/* Iconos de métricas */}
-<div className="d-flex flex-wrap gap-2 text-muted small mb-1">
-  {Number(prop.habitaciones) > 0 && (
-    <span className="d-inline-flex align-items-center">
-      <FaBed className="me-1" /> {prop.habitaciones} Hab.
-    </span>
-  )}
-  {Number(prop.baños) > 0 && (
-    <span className="d-inline-flex align-items-center">
-      <FaBath className="me-1" /> {prop.baños} Baño{Number(prop.baños) > 1 ? "s" : ""}
-    </span>
-  )}
-  {Number(prop.m2) > 0 && (
-    <span className="d-inline-flex align-items-center">
-      <FaRulerCombined className="me-1" /> {prop.m2} m²
-    </span>
-  )}
-  {Number(prop.cochera) > 0 && (
-    <span className="d-inline-flex align-items-center">
-      <FaCar className="me-1" /> {prop.cochera} Coch.
-    </span>
-  )}
+    <div className="row g-4">
+  {propiedades
+    .filter((p) => p.propiedadEn === "venta")
+    .map((prop) => (
+      <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
+        <Card 
+          propiedad={prop} 
+          onClick={() => navigate("/detalle-propiedad", { state: { id: prop.id } })} 
+        />
+      </div>
+    ))}
 </div>
 
-                      {/* Extras */}
-                      <div className="d-flex flex-wrap gap-2 mb-3">
-                        {prop.internet && (
-                          <span className="badge rounded-pill bg-light text-dark border">
-                            <FaWifi className="me-1" /> Internet
-                          </span>
-                        )}
-                        {prop.pileta && (
-                          <span className="badge rounded-pill bg-light text-dark border">
-                            <FaSwimmingPool className="me-1" /> Pileta
-                          </span>
-                        )}
-                        {prop.gasNatural && (
-                          <span className="badge rounded-pill bg-light text-dark border">
-                            <FaBurn className="me-1" /> Gas natural
-                          </span>
-                        )}
-                        {prop.patio && (
-                          <span className="badge rounded-pill bg-light text-dark border">
-                            <FaLeaf className="me-1" /> Patio
-                          </span>
-                        )}
-                      </div>
 
-                      {/* Ubicación */}
-                      {prop.direccion && (
-                        <div className="mb-3">
-                          <div
-                            className="text-muted small d-flex align-items-start"
-                            style={{
-                              display: "-webkit-box",
-                              WebkitLineClamp: 2,
-                              WebkitBoxOrient: "vertical",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                              minHeight: "3em",
-                            }}
-                          >
-                            <FaMapMarkerAlt className="me-1 mt-1" />
-                            {prop.direccion.calle}
-                          </div>
-                          <div
-                            className="d-flex align-items-center justify-content-between"
-                            style={{ display: "flex", overflow: "hidden", marginTop: "2px" }}
-                          >
-                            <div
-                              className="text-muted small text-truncate"
-                              style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", marginRight: "8px" }}
-                              title={`${prop.direccion.localidad}, ${prop.direccion.provincia}, ${prop.direccion.pais}`}
-                            >
-                              {prop.direccion.localidad}, {prop.direccion.provincia}, {prop.direccion.pais}
-                            </div>
-                            <a
-                              className="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
-                              href={
-                                prop.ubicacionGeo?.lat && prop.ubicacionGeo?.lng
-                                  ? `https://www.google.com/maps?q=${prop.ubicacionGeo.lat},${prop.ubicacionGeo.lng}`
-                                  : `https://www.google.com/maps?q=${encodeURIComponent(
-                                    `${prop.direccion.calle} ${prop.direccion.localidad} ${prop.direccion.provincia} ${prop.direccion.pais}`
-                                  )}`
-                              }
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title="Ver en Google Maps"
-                              style={{ minWidth: "100px", padding: "4px 8px", gap: "6px", whiteSpace: "nowrap" }}
-                            >
-                              <img
-                                src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755458272/r3kx7npz5muhzio5agq8.png"
-                                alt="Google Maps"
-                                style={{ width: "20px", height: "20px" }}
-                              />
-                              <span>Ver en Maps</span>
-                            </a>
-                          </div>
-                        </div>
-                      )}
+    <div className="text-center mt-4">
+      <a href="/PropiedadesEnVenta" className="btn btn-danger mb-5">
+        VER MÁS PROPIEDADES EN VENTA
+      </a>
+    </div>
+  </div>
+</section>
 
-                    </div>
-                  </div>
-                </article>
-              ))}
-          </div>
-
-          <div className="text-center mt-4">
-            <a href="/PropiedadesEnVenta" className="btn btn-danger mb-5">VER MÁS PROPIEDADES EN VENTA</a>
-          </div>
-        </div>
-      </section>
 
 
 

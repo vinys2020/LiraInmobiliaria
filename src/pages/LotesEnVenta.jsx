@@ -1,164 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../config/firebase";
-import { FaRulerCombined, FaMapMarkerAlt } from "react-icons/fa";
 import "./LotesEnVenta.css";
-
-// Tarjeta de lote
-const PropertyCard = ({ propiedad }) => {
-  const [imgIndex, setImgIndex] = useState(0);
-  const imagenes = propiedad.imagenes && propiedad.imagenes.length > 0 ? propiedad.imagenes : ["/images/placeholder.png"];
-
-  const handlePrev = () => setImgIndex((prev) => (prev === 0 ? imagenes.length - 1 : prev - 1));
-  const handleNext = () => setImgIndex((prev) => (prev === imagenes.length - 1 ? 0 : prev + 1));
-
-  return (
-    <article className="col-12 col-md-6 col-lg-4">
-      <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-shadow">
-        <div className="position-relative">
-          <img
-            alt={propiedad.titulo}
-            className="card-img-top"
-            src={imagenes[imgIndex]}
-            style={{ objectFit: "cover", height: "180px" }}
-          />
-
-          {imagenes.length > 1 && (
-            <>
-              <button
-                className="position-absolute top-50 start-0 translate-middle-y d-flex align-items-center justify-content-center mx-2"
-                onClick={handlePrev}
-                style={{
-                  backgroundColor: "rgba(0,0,0,0.5)",
-                  border: "none",
-                  color: "#fff",
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "50%",
-                  opacity: 0.8,
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                  zIndex: 10,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = 1)}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = 0.8)}
-              >
-                &#8249;
-              </button>
-
-              <button
-                className="position-absolute top-50 end-0 translate-middle-y d-flex align-items-center justify-content-center mx-2"
-                onClick={handleNext}
-                style={{
-                  backgroundColor: "rgba(0,0,0,0.5)",
-                  border: "none",
-                  color: "#fff",
-                  width: "32px",
-                  height: "32px",
-                  borderRadius: "50%",
-                  opacity: 0.8,
-                  cursor: "pointer",
-                  transition: "all 0.2s",
-                  zIndex: 10,
-                }}
-                onMouseEnter={(e) => (e.currentTarget.style.opacity = 1)}
-                onMouseLeave={(e) => (e.currentTarget.style.opacity = 0.8)}
-              >
-                &#8250;
-              </button>
-            </>
-          )}
-
-          <span className="badge position-absolute top-0 end-0 m-2 px-3 py-2 bg-primary">
-            En Venta
-          </span>
-        </div>
-
-        <div className="card-body d-flex flex-column">
-          <h5 className="card-title text-truncate mb-2">{propiedad.titulo}</h5>
-          <h6 className="fw-bold text-success mb-2">
-  {(() => {
-    // Definir símbolo manual
-    let symbol = "";
-    if (propiedad.moneda === "U$S" || propiedad.moneda === "USD") symbol = "U$S";
-    else if (propiedad.moneda === "ARS") symbol = "ARS $";
-
-    // Formatear precio
-    return propiedad.precio != null && propiedad.precio !== ""
-      ? `${symbol} ${Number(propiedad.precio).toLocaleString("es-AR")}`
-      : "Consultar precio";
-  })()}
-</h6>
-
-
-          <div className="d-flex flex-wrap gap-2 text-muted small mb-1">
-            {propiedad.m2 && (
-              <span className="d-inline-flex align-items-center">
-                <FaRulerCombined className="me-1" /> {propiedad.m2} m²
-              </span>
-            )}
-          </div>
-
-          {propiedad.direccion && (
-            <div className="mb-3 mt-auto">
-              <div
-                className="text-muted small d-flex align-items-start"
-                style={{
-                  display: "-webkit-box",
-                  WebkitLineClamp: 2,
-                  WebkitBoxOrient: "vertical",
-                  overflow: "hidden",
-                  textOverflow: "ellipsis",
-                  minHeight: "3em",
-                }}
-              >
-                <FaMapMarkerAlt className="me-1 mt-1" />
-                {propiedad.direccion.calle}
-              </div>
-
-              <div className="d-flex align-items-center justify-content-between mt-1" style={{ overflow: "hidden" }}>
-                <div
-                  className="text-muted small text-truncate"
-                  title={`${propiedad.direccion.localidad}, ${propiedad.direccion.provincia}, ${propiedad.direccion.pais}`}
-                  style={{
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                    marginRight: "8px",
-                  }}
-                >
-                  {propiedad.direccion.localidad}, {propiedad.direccion.provincia}, {propiedad.direccion.pais}
-                </div>
-
-                <a
-                  className="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
-                  href={
-                    propiedad.ubicacionGeo?.lat && propiedad.ubicacionGeo?.lng
-                      ? `https://www.google.com/maps?q=${propiedad.ubicacionGeo.lat},${propiedad.ubicacionGeo.lng}`
-                      : `https://www.google.com/maps?q=${encodeURIComponent(
-                          `${propiedad.direccion.calle} ${propiedad.direccion.localidad} ${propiedad.direccion.provincia} ${propiedad.direccion.pais}`
-                        )}`
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Ver en Google Maps"
-                  style={{ minWidth: "110px", padding: "4px 8px", gap: "6px", whiteSpace: "nowrap" }}
-                >
-                  <img
-                    alt="Google Maps"
-                    src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755458272/r3kx7npz5muhzio5agq8.png"
-                    style={{ width: "20px", height: "20px" }}
-                  />
-                  <span>Ver en Maps</span>
-                </a>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </article>
-  );
-};
+import Card from "../components/Card"; // ✅ Usamos el mismo componente que en PropiedadesEnVenta
 
 // Sidebar
 const Sidebar = ({ propiedades, subfiltro, onSetSubfiltro, searchTerm, setSearchTerm }) => {
@@ -285,27 +129,36 @@ const LotesEnVenta = () => {
               ) : propiedadesFiltradas.length === 0 ? (
                 <div className="alert alert-warning text-center">No se encontraron lotes disponibles.</div>
               ) : (
-                <div className="row">
+                <div className="row g-4">
                   {propiedadesFiltradas.map((prop) => (
-                    <PropertyCard key={prop.id} propiedad={prop} />
+                    <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
+                      <Card propiedad={prop} />
+                    </div>
                   ))}
                 </div>
               )}
             </section>
-
-
           </div>
         </div>
       </section>
 
       {showFilters && <div className="offcanvas-backdrop fade show" onClick={() => setShowFilters(false)}></div>}
-      <div className={`offcanvas offcanvas-end ${showFilters ? "show" : ""} d-lg-none`} style={{ visibility: showFilters ? "visible" : "hidden" }}>
+      <div
+        className={`offcanvas offcanvas-end ${showFilters ? "show" : ""} d-lg-none`}
+        style={{ visibility: showFilters ? "visible" : "hidden" }}
+      >
         <div className="offcanvas-header">
           <h5 className="offcanvas-title">Filtrar</h5>
           <button type="button" className="btn-close text-reset" onClick={() => setShowFilters(false)}></button>
         </div>
         <div className="offcanvas-body">
-          <Sidebar propiedades={propiedades} subfiltro={subfiltro} onSetSubfiltro={setSubfiltro} searchTerm={searchTerm} setSearchTerm={setSearchTerm} />
+          <Sidebar
+            propiedades={propiedades}
+            subfiltro={subfiltro}
+            onSetSubfiltro={setSubfiltro}
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+          />
         </div>
       </div>
     </main>

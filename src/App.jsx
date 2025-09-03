@@ -16,6 +16,8 @@ import LotesEnVenta from "./pages/LotesEnVenta";
 import SobreNosotros from "./pages/SobreNosotros";
 import Contactos from "./pages/Contactos";
 import TodasPropiedades from "./pages/TodasPropiedades";
+import DetallePropiedad from "./pages/DetallePropiedad";
+
 
 // Rutas protegidas
 import AdminRoute from "./routes/AdminRoute";
@@ -35,6 +37,8 @@ function App() {
         <Route path="/SobreNosotros" element={<SobreNosotros />} />
         <Route path="/contacto" element={<Contactos />} />
         <Route path="/todaspropiedades" element={<TodasPropiedades />} />
+        <Route path="/detalle-propiedad" element={<DetallePropiedad />} />
+
 
 
         <Route
