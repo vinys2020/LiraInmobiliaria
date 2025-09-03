@@ -197,23 +197,23 @@ export default function Propiedades() {
                         ? "#6c757d"
                         : "#6c757d";
 
-// Normalizar moneda
-const moneda = (prop.moneda || "").toUpperCase();
+              // Normalizar moneda
+              const moneda = (prop.moneda || "").toUpperCase();
 
-// Definir símbolo manual
-let symbol = "";
-if (moneda === "U$S") symbol = "";
-if (moneda === "ARS") symbol = "$";
+              // Definir símbolo manual
+              let symbol = "";
+              if (moneda === "U$S") symbol = "";
+              if (moneda === "ARS") symbol = "$";
 
-// Precio formateado (solo número, sin símbolo automático)
-const precioFmt =
-  prop.precio != null && prop.precio !== ""
-    ? `${symbol} ${Number(prop.precio).toLocaleString("es-AR")}`
-    : "";
+              // Precio formateado (solo número, sin símbolo automático)
+              const precioFmt =
+                prop.precio != null && prop.precio !== ""
+                  ? `${symbol} ${Number(prop.precio).toLocaleString("es-AR")}`
+                  : "";
 
 
 
-                        
+
 
               const ubicacion = [
                 prop?.direccion?.calle,
@@ -556,6 +556,69 @@ const precioFmt =
                     }
                   }}
                 >
+
+                  {/* Input para subir imágenes */}
+                  <h4 className="mt-3">Agregar / Modificar Imágenes</h4>
+                  <div className="mb-3">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="form-control mb-2"
+                      onChange={async (e) => {
+                        const files = Array.from(e.target.files);
+                        if (!files.length) return;
+
+                        // Subir a Cloudinary
+                        const uploadedUrls = await Promise.all(
+                          files.map(async (file) => {
+                            const formData = new FormData();
+                            formData.append("file", file);
+                            formData.append("upload_preset", "tu_upload_preset"); // reemplaza con tu preset
+
+                            const res = await fetch("https://api.cloudinary.com/v1_1/tu_cloud_name/image/upload", {
+                              method: "POST",
+                              body: formData,
+                            });
+                            const data = await res.json();
+                            return data.secure_url;
+                          })
+                        );
+
+                        setPropiedadSeleccionada({
+                          ...propiedadSeleccionada,
+                          imagenes: [...(propiedadSeleccionada.imagenes || []), ...uploadedUrls],
+                        });
+                      }}
+                    />
+                  </div>
+
+                  {/* Preview de imágenes actuales */}
+                  <div className="d-flex flex-wrap gap-2 mb-3">
+                    {(propiedadSeleccionada.imagenes || []).map((img, idx) => (
+                      <div key={idx} className="position-relative">
+                        <img
+                          src={img}
+                          alt={`Propiedad ${idx}`}
+                          style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px" }}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-danger position-absolute top-0 end-0"
+                          style={{ padding: "0 6px" }}
+                          onClick={() =>
+                            setPropiedadSeleccionada({
+                              ...propiedadSeleccionada,
+                              imagenes: propiedadSeleccionada.imagenes.filter((_, i) => i !== idx),
+                            })
+                          }
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
                   {/* Campos básicos */}
                   <div className="mb-3">
                     <label className="form-label">Título</label>
@@ -586,22 +649,22 @@ const precioFmt =
                     />
                   </div>
                   <div className="mb-3">
-  <label className="form-label">Moneda</label>
-  <select
-    className="form-select"
-    value={propiedadSeleccionada.moneda || ""}
-    onChange={(e) =>
-      setPropiedadSeleccionada({
-        ...propiedadSeleccionada,
-        moneda: e.target.value,
-      })
-    }
-  >
-    <option value="">Seleccionar moneda</option>
-    <option value="ARS">ARS (Pesos Argentinos)</option>
-    <option value="U$S">U$S (Dólares)</option>
-  </select>
-</div>
+                    <label className="form-label">Moneda</label>
+                    <select
+                      className="form-select"
+                      value={propiedadSeleccionada.moneda || ""}
+                      onChange={(e) =>
+                        setPropiedadSeleccionada({
+                          ...propiedadSeleccionada,
+                          moneda: e.target.value,
+                        })
+                      }
+                    >
+                      <option value="">Seleccionar moneda</option>
+                      <option value="ARS">ARS (Pesos Argentinos)</option>
+                      <option value="U$S">U$S (Dólares)</option>
+                    </select>
+                  </div>
 
 
                   {/* Características numéricas */}
@@ -757,34 +820,38 @@ const precioFmt =
                     </div>
                   ))}
 
-{/* Ubicación geográfica */}
-<h4 className="mt-3">Ubicación Geográfica</h4>
-{["lat", "lng"].map((campo) => (
-  <div className="mb-2 d-flex align-items-center gap-2" key={campo}>
-    <label style={{ minWidth: "120px", fontWeight: "500" }}>{campo}:</label>
-    <input
-      type="text"
-      className="form-control"
-      value={propiedadSeleccionada.ubicacionGeo?.[campo] || ""}
-      onChange={(e) => {
-        const regex = /^-?\d{0,3}(\.\d+)?$/; 
-        const value = e.target.value;
 
-        // Validar que el valor cumpla con el formato de coordenada
-        if (value === "" || regex.test(value)) {
-          setPropiedadSeleccionada({
-            ...propiedadSeleccionada,
-            ubicacionGeo: {
-              ...propiedadSeleccionada.ubicacionGeo,
-              [campo]: value,
-            },
-          });
-        }
-      }}
-      placeholder={campo === "lat" ? "-28.4522681" : "-65.7375216"}
-    />
-  </div>
-))}
+
+                  {/* Ubicación geográfica */}
+                  <h4 className="mt-3">Ubicación Geográfica</h4>
+                  {["lat", "lng"].map((campo) => (
+                    <div className="mb-2 d-flex align-items-center gap-2" key={campo}>
+                      <label style={{ minWidth: "120px", fontWeight: "500" }}>{campo}:</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        value={propiedadSeleccionada.ubicacionGeo?.[campo] || ""}
+                        onChange={(e) => {
+                          const regex = /^-?\d{0,3}(\.\d+)?$/;
+                          const value = e.target.value;
+
+                          // Validar que el valor cumpla con el formato de coordenada
+                          if (value === "" || regex.test(value)) {
+                            setPropiedadSeleccionada({
+                              ...propiedadSeleccionada,
+                              ubicacionGeo: {
+                                ...propiedadSeleccionada.ubicacionGeo,
+                                [campo]: value,
+                              },
+                            });
+                          }
+                        }}
+                        placeholder={campo === "lat" ? "-28.4522681" : "-65.7375216"}
+                      />
+                    </div>
+                  ))}
+
+
 
                   {/* Fecha de última actualización */}
                   <div className="mb-3">
@@ -803,40 +870,41 @@ const precioFmt =
 
 
 
+
                 </form>
               </div>
 
               {/* Footer */}
               <div className="modal-footer">
-              <button type="submit" className="btn btn-success mt-1" onClick={async (e) => {
-                    e.preventDefault();
+                <button type="submit" className="btn btn-success mt-1" onClick={async (e) => {
+                  e.preventDefault();
 
-                    try {
-                      const { doc, updateDoc } = await import("firebase/firestore");
+                  try {
+                    const { doc, updateDoc } = await import("firebase/firestore");
 
-                      // Actualizamos la fecha de última actualización
-                      const fechaActualizacion = new Date().toISOString();
+                    // Actualizamos la fecha de última actualización
+                    const fechaActualizacion = new Date().toISOString();
 
-                      await updateDoc(doc(db, "Propiedades", propiedadSeleccionada.id), {
-                        ...propiedadSeleccionada,
-                        fechaActualizacion,
-                      });
+                    await updateDoc(doc(db, "Propiedades", propiedadSeleccionada.id), {
+                      ...propiedadSeleccionada,
+                      fechaActualizacion,
+                    });
 
-                      // Actualizamos el estado local para que se vea al instante
-                      setPropiedadSeleccionada(prev => ({
-                        ...prev,
-                        fechaActualizacion,
-                      }));
+                    // Actualizamos el estado local para que se vea al instante
+                    setPropiedadSeleccionada(prev => ({
+                      ...prev,
+                      fechaActualizacion,
+                    }));
 
-                      alert("Propiedad actualizada correctamente!");
-                      setPropiedadSeleccionada(false);
+                    alert("Propiedad actualizada correctamente!");
+                    setPropiedadSeleccionada(false);
 
-                    } catch (error) {
-                      console.error("Error actualizando propiedad:", error);
-                    }
-                  }}>
-                    Guardar Cambios
-                  </button>
+                  } catch (error) {
+                    console.error("Error actualizando propiedad:", error);
+                  }
+                }}>
+                  Guardar Cambios
+                </button>
                 <button
                   type="button"
                   className="btn btn-danger"
