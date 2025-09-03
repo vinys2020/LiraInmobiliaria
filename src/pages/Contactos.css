@@ -1,0 +1,54 @@
+.contactos-page {
+    margin-top: 110px;
+    max-width: 100%;
+    background-color: #fff;
+  }
+  
+  .contactos-page h1 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: black;
+  }
+  
+  .contactos-page p {
+    color: #333;
+  }
+  
+  .contacto-img {
+    max-height: 460px;
+    width: 100%;
+    object-fit: cover;
+  }
+  
+  @media (max-width: 992px) {
+    .contacto-img {
+      max-height: 350px;
+    }
+  }
+  
+  @media (max-width: 576px) {
+    .contactos-page {
+        margin-top: 80px;
+    }
+
+
+    .contactos-page h1 {
+      font-size: 1.8rem;
+
+    }
+  
+    .contacto-img {
+      max-height: 250px;
+    }
+  
+    .form-floating input,
+    .form-floating select,
+    .form-floating textarea {
+      font-size: 0.95rem;
+    }
+  
+    .btn-lg {
+      font-size: 1rem;
+    }
+  }
+  

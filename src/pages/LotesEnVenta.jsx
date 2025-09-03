@@ -77,8 +77,19 @@ const PropertyCard = ({ propiedad }) => {
         <div className="card-body d-flex flex-column">
           <h5 className="card-title text-truncate mb-2">{propiedad.titulo}</h5>
           <h6 className="fw-bold text-success mb-2">
-            {propiedad.precio ? `ARS $${propiedad.precio.toLocaleString("es-AR")}` : "Consultar precio"}
-          </h6>
+  {(() => {
+    // Definir símbolo manual
+    let symbol = "";
+    if (propiedad.moneda === "U$S" || propiedad.moneda === "USD") symbol = "U$S";
+    else if (propiedad.moneda === "ARS") symbol = "ARS $";
+
+    // Formatear precio
+    return propiedad.precio != null && propiedad.precio !== ""
+      ? `${symbol} ${Number(propiedad.precio).toLocaleString("es-AR")}`
+      : "Consultar precio";
+  })()}
+</h6>
+
 
           <div className="d-flex flex-wrap gap-2 text-muted small mb-1">
             {propiedad.m2 && (
@@ -254,7 +265,7 @@ const LotesEnVenta = () => {
           </div>
 
           <div className="row g-4">
-            <section className="col-lg-10">
+            <section className="col-lg-12">
               <div className="d-none d-md-flex gap-2 mb-4 col-12">
                 <input
                   type="text"
@@ -282,9 +293,7 @@ const LotesEnVenta = () => {
               )}
             </section>
 
-            <aside className="col-lg-2 d-none d-lg-block p-0 mt-0">
-              <Sidebar propiedades={propiedades} subfiltro={subfiltro} onSetSubfiltro={setSubfiltro} />
-            </aside>
+
           </div>
         </div>
       </section>

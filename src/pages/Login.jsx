@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
+import fondoLogin from "../assets/lira-foto.jpg"; // ajusta la ruta según tu proyecto
+
 import "./login.css"; // Mantiene tu estilo
 
 const Login = () => {
@@ -35,7 +37,20 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
+<div
+  className="login-container"
+  style={{
+    backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${fondoLogin})`,
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+    backgroundRepeat: "no-repeat",
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    padding: "20px",
+  }}
+>
       <div className="login-box">
         <h2>Iniciar Sesión</h2>
 

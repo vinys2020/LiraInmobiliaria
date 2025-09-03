@@ -13,6 +13,8 @@ import {
   FaMapMarkerAlt,
 } from "react-icons/fa";
 import "./PropiedadesEnVenta.css";
+import { useLocation } from "react-router-dom";
+
 
 const PropertyCard = ({ propiedad }) => {
   const [imgIndex, setImgIndex] = useState(0);
@@ -86,10 +88,19 @@ const PropertyCard = ({ propiedad }) => {
         <div className="card-body d-flex flex-column">
           <h5 className="card-title text-truncate mb-2">{propiedad.titulo}</h5>
           <h6 className="fw-bold text-success mb-2">
-            {propiedad.precio
-              ? `ARS $${propiedad.precio.toLocaleString("es-AR")}`
-              : "Consultar precio"}
-          </h6>
+  {(() => {
+    // Definir símbolo manual
+    let symbol = "";
+    if (propiedad.moneda === "U$S" || propiedad.moneda === "USD") symbol = "U$S";
+    else if (propiedad.moneda === "ARS") symbol = "ARS $";
+
+    // Formatear precio
+    return propiedad.precio != null && propiedad.precio !== ""
+      ? `${symbol} ${Number(propiedad.precio).toLocaleString("es-AR")}`
+      : "Consultar precio";
+  })()}
+</h6>
+
           <p className="card-text text-muted small mb-1" style={{ minHeight: "2em" }}>
             {propiedad.descripcion?.length > 120
               ? propiedad.descripcion.slice(0, 120) + "…"
@@ -204,32 +215,62 @@ const PropertyCard = ({ propiedad }) => {
 };
 
 const Sidebar = ({ propiedades, subfiltro, onSetSubfiltro, searchTerm, setSearchTerm }) => {
-  const subtipos = ["Casa", "Departamento", "Dúplex", "Galpón", "Local", "Oficinas"];
+  const subtipos = ["Casa", "Departamento", "Dúplex", "Galpón", "Local", "Oficinas", "Lote"];
+
+  // Contar propiedades por subtipo
   const subCounts = {};
   propiedades.forEach((p) => {
     const tipo = p.tipoDePropiedad || "Otro";
     subCounts[tipo] = (subCounts[tipo] || 0) + 1;
   });
+
   const totalSubtipos = propiedades.length;
+
+  // Manejo de selección múltiple
+  const toggleSubtipo = (sub) => {
+    if (!Array.isArray(subfiltro)) return onSetSubfiltro([sub]);
+
+    if (subfiltro.includes(sub)) {
+      // Quitar del array
+      onSetSubfiltro(subfiltro.filter((t) => t !== sub));
+    } else {
+      // Agregar al array
+      onSetSubfiltro([...subfiltro, sub]);
+    }
+  };
 
   return (
     <div className="p-2 bg-transparent rounded shadow-sm mb-5 py-2 mt-3">
       <h5 className="text-black mb-2 text-center">Propiedades</h5>
+
+      {setSearchTerm && (
+        <input
+          type="text"
+          className="form-control mb-3"
+          placeholder="Buscar por calle, localidad, provincia, código postal"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      )}
+
       <div className="list-group list-group-flush bg-transparent">
         {subtipos.map((sub) => (
           <button
             key={sub}
             className={`list-group-item list-group-item-action rounded-2 mb-2 ${
-              subfiltro === sub ? "active fw-bold" : ""
+              Array.isArray(subfiltro) && subfiltro.includes(sub) ? "active fw-bold" : ""
             }`}
-            onClick={() => onSetSubfiltro(sub)}
+            onClick={() => toggleSubtipo(sub)}
           >
             {sub} ({subCounts[sub] || 0})
           </button>
         ))}
+
         <button
-          className={`list-group-item list-group-item-action rounded-2 ${subfiltro === null ? "active fw-bold" : ""}`}
-          onClick={() => onSetSubfiltro(null)}
+          className={`list-group-item list-group-item-action rounded-2 ${
+            Array.isArray(subfiltro) && subfiltro.length === 0 ? "active fw-bold" : ""
+          }`}
+          onClick={() => onSetSubfiltro([])}
         >
           Todos ({totalSubtipos})
         </button>
@@ -238,10 +279,14 @@ const Sidebar = ({ propiedades, subfiltro, onSetSubfiltro, searchTerm, setSearch
   );
 };
 
+
 const PropiedadesEnVenta = () => {
+  const location = useLocation(); // ← aquí
+  const tiposIniciales = location.state?.tipos || []; // ← aquí (lo que envíe Home)
+
   const [propiedades, setPropiedades] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [subfiltro, setSubfiltro] = useState(null);
+  const [subfiltro, setSubfiltro] = useState(Array.isArray(tiposIniciales) ? tiposIniciales : []); // inicializa con filtro de Home si existe
   const [showFilters, setShowFilters] = useState(false);
   const [searchZone, setSearchZone] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
@@ -252,7 +297,7 @@ const PropiedadesEnVenta = () => {
         const querySnapshot = await getDocs(collection(db, "Propiedades"));
         const props = querySnapshot.docs
           .map((doc) => ({ id: doc.id, ...doc.data() }))
-          .filter((p) => p.propiedadEn === "venta" && p.tipoDePropiedad !== "Lote");
+          .filter((p) => p.propiedadEn === "venta");
           setPropiedades(props);
         setLoading(false);
       } catch (error) {
@@ -264,7 +309,11 @@ const PropiedadesEnVenta = () => {
   }, []);
 
   const propiedadesFiltradas = propiedades.filter((p) => {
-    const matchTipo = subfiltro ? (p.tipoDePropiedad || "Otro") === subfiltro : true;
+    // Filtrado por tipos seleccionados (multiselección)
+    const matchTipo =
+      subfiltro.length === 0 || subfiltro.includes(p.tipoDePropiedad || "Otro");
+  
+    // Función para búsqueda en todos los campos de dirección
     const buscarEnDireccion = (valor) => {
       if (!valor) return false;
       const campos = [
@@ -278,10 +327,13 @@ const PropiedadesEnVenta = () => {
       ];
       return campos.some((campo) => campo && campo.toString().toLowerCase().includes(valor.toLowerCase()));
     };
+  
     const matchSearchDesktop = searchTerm ? buscarEnDireccion(searchTerm) : true;
     const matchSearchMobile = searchZone ? buscarEnDireccion(searchZone) : true;
+  
     return matchTipo && matchSearchDesktop && matchSearchMobile;
   });
+  
 
   return (
     <main className="alquileres-page">

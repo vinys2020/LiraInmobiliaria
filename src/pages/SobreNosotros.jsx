@@ -1,17 +1,22 @@
 import React from "react";
 import "./SobreNosotros.css";
+import liraFoto from "../assets/lira-foto.jpg"; // ajustá la ruta si este componente está en otra carpeta
+import liraFoto1 from "../assets/llaveentrega.jpg"; // ajustá la ruta si este componente está en otra carpeta
+import liraFoto2 from "../assets/asesor.jpg"; // ajustá la ruta si este componente está en otra carpeta
+import liraFoto3 from "../assets/tazadora.jpg"; // ajustá la ruta si este componente está en otra carpeta
+import liraFoto4 from "../assets/administracion.jpg"; // ajustá la ruta si este componente está en otra carpeta
+
 
 const SobreNosotros = () => {
   return (
     <main className="sobre-nosotros bg-white">
       {/* Hero */}
       <section
-        className="hero-section"
-        style={{
-          backgroundImage:
-            "url('https://lirainmobiliaria.com.ar/wp-content/uploads/2024/03/lira-foto.jpg')",
-        }}
-      >
+  className="hero-section"
+  style={{
+    backgroundImage: `url(${liraFoto})`,
+  }}
+>
         <div className="hero-overlay">
           <div className="hero-content text-center">
             <h1 className="titulo-prata">Lira Inmobiliaria</h1>
@@ -42,11 +47,11 @@ Nuestro equipo de profesionales altamente capacitados está comprometido a acomp
     <div className="row align-items-center">
       {/* Columna imagen */}
       <div className="col-md-6 mb-4 mb-md-0">
-        <img
-          src="https://lirainmobiliaria.com.ar/wp-content/uploads/2024/03/alquiler-y-venta-1024x767.jpg"
-          alt="Alquiler y venta de propiedades"
-          className="img-fluid rounded"
-        />
+      <img
+  src={liraFoto1}
+  alt="Administración de propiedades"
+  className="img-fluid rounded"
+/>
       </div>
 
       {/* Columna texto */}
@@ -78,7 +83,7 @@ Nuestro equipo de profesionales altamente capacitados está comprometido a acomp
       {/* Columna imagen */}
       <div className="col-md-6">
         <img
-          src="https://lirainmobiliaria.com.ar/wp-content/uploads/2024/03/administracion-1024x768.jpg"
+          src={liraFoto4}
           alt="Administración de propiedades"
           className="img-fluid rounded"
         />
@@ -94,7 +99,7 @@ Nuestro equipo de profesionales altamente capacitados está comprometido a acomp
       {/* Columna imagen */}
       <div className="col-md-6 mb-4 mb-md-0">
         <img
-          src="https://lirainmobiliaria.com.ar/wp-content/uploads/2024/03/tasaciones-1024x768.jpg"
+          src={liraFoto3}
           alt="Tasaciones"
           className="img-fluid rounded"
         />
@@ -129,7 +134,7 @@ Nuestro equipo de profesionales altamente capacitados está comprometido a acomp
       {/* Columna imagen */}
       <div className="col-md-6">
         <img
-          src="https://lirainmobiliaria.com.ar/wp-content/uploads/2024/03/asesoramiento-1024x767.jpg"
+          src={liraFoto2}
           alt="Asesoramiento inmobiliario"
           className="img-fluid rounded"
         />

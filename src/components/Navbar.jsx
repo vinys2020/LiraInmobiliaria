@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaPhoneAlt, FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import navbarlogo from "../assets/logoliranavblanc.png"; // ajustá la ruta si este componente está en otra carpeta
+
 
 import "./navbar.css";
 
@@ -45,22 +47,22 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-
-      if (currentScrollY === 0) {
+  
+      if (currentScrollY <= 10) {
+        // ✅ Solo aparece si estás en el top (o a menos de 10px)
         setIsTop(true);
         setIsVisible(true);
-      } else if (currentScrollY > 10) {
+      } else {
+        // 👇 Se oculta en cualquier scroll hacia abajo
         setIsTop(false);
         setIsVisible(false);
-      } else {
-        setIsTop(false);
-        setIsVisible(true);
       }
     };
-
+  
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+  
 
   return (
     <header
@@ -84,7 +86,7 @@ const Navbar = () => {
             <div className="logo logo-splash d-none d-lg-block">
               <NavLink to="/">
                 <img
-                  src="https://lirainmobiliaria.com.ar/wp-content/uploads/2024/03/logo-lira-1.png"
+                  src={navbarlogo}
                   alt="logo"
                   height="55"
                   width="220"
@@ -96,7 +98,7 @@ const Navbar = () => {
             <div className="logo logo-splash d-lg-none">
               <NavLink to="/">
                 <img
-                  src="https://lirainmobiliaria.com.ar/wp-content/uploads/2024/03/logo-lira-1.png"
+                  src={navbarlogo}
                   alt="logo móvil"
                   height="40"
                   width="140"

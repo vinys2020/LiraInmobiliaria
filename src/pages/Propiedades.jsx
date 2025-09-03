@@ -2,7 +2,6 @@ import React, { useState, useEffect } from "react";
 import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "../config/firebase"; // tu configuración de Firebase
 import AgregarPropiedadModal from "../components/AgregarPropiedadModal";
-import MapaPropiedades from "../components/MapaPropiedades";
 
 import {
   FaBath,
@@ -25,7 +24,6 @@ export default function Propiedades() {
   const [fullscreenIndex, setFullscreenIndex] = useState(null);
   const [modalNuevaPropiedad, setModalNuevaPropiedad] = useState(false);
   const [subfiltro, setSubfiltro] = useState(null);
-  const [mostrarMapa, setMostrarMapa] = useState(false);
 
 
 

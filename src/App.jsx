@@ -14,6 +14,8 @@ import AlquileresDisponibles from "./pages/AlquileresDisponibles";
 import PropiedadesEnVenta from "./pages/PropiedadesEnVenta";
 import LotesEnVenta from "./pages/LotesEnVenta";
 import SobreNosotros from "./pages/SobreNosotros";
+import Contactos from "./pages/Contactos";
+import TodasPropiedades from "./pages/TodasPropiedades";
 
 // Rutas protegidas
 import AdminRoute from "./routes/AdminRoute";
@@ -31,6 +33,9 @@ function App() {
         <Route path="/PropiedadesEnVenta" element={<PropiedadesEnVenta />} />
         <Route path="/LotesEnVenta" element={<LotesEnVenta />} />
         <Route path="/SobreNosotros" element={<SobreNosotros />} />
+        <Route path="/contacto" element={<Contactos />} />
+        <Route path="/todaspropiedades" element={<TodasPropiedades />} />
+
 
         <Route
           path="/admin"
