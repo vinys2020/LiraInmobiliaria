@@ -37,20 +37,20 @@ const Login = () => {
   };
 
   return (
-<div
-  className="login-container"
-  style={{
-    backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${fondoLogin})`,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    backgroundRepeat: "no-repeat",
-    minHeight: "100vh",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    padding: "20px",
-  }}
->
+    <div
+      className="login-container"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url(${fondoLogin})`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        padding: "20px",
+      }}
+    >
       <div className="login-box">
         <h2>Iniciar Sesión</h2>
 
@@ -86,17 +86,17 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-<button
-  type="button"
-  className="btn btn-outline-secondary"
-  onClick={() => setShowPassword(!showPassword)}
->
-  {showPassword ? (
-    <i className="bi bi-eye-slash"></i>
-  ) : (
-    <i className="bi bi-eye"></i>
-  )}
-</button>
+              <button
+                type="button"
+                className="btn btn-outline-secondary"
+                onClick={() => setShowPassword(!showPassword)}
+              >
+                {showPassword ? (
+                  <i className="bi bi-eye-slash"></i>
+                ) : (
+                  <i className="bi bi-eye"></i>
+                )}
+              </button>
 
             </div>
           </div>

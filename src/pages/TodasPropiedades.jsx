@@ -55,39 +55,38 @@ const PropertyCard = ({ propiedad }) => {
             </>
           )}
 
-<span
-  className={`badge position-absolute top-0 end-0 m-2 px-3 py-2 ${
-    propiedad.propiedadEn === "venta"
-      ? "bg-primary"
-      : propiedad.propiedadEn === "alquiler"
-      ? "bg-success"
-      : "bg-secondary"
-  }`}
->
-  {propiedad.propiedadEn === "venta"
-    ? "En Venta"
-    : propiedad.propiedadEn === "alquiler"
-    ? "En Alquiler"
-    : "Disponible"}
-</span>
+          <span
+            className={`badge position-absolute top-0 end-0 m-2 px-3 py-2 ${propiedad.propiedadEn === "venta"
+                ? "bg-primary"
+                : propiedad.propiedadEn === "alquiler"
+                  ? "bg-success"
+                  : "bg-secondary"
+              }`}
+          >
+            {propiedad.propiedadEn === "venta"
+              ? "En Venta"
+              : propiedad.propiedadEn === "alquiler"
+                ? "En Alquiler"
+                : "Disponible"}
+          </span>
 
         </div>
 
         <div className="card-body d-flex flex-column">
           <h5 className="card-title text-truncate mb-2">{propiedad.titulo}</h5>
           <h6 className="fw-bold text-success mb-2">
-  {(() => {
-    // Definir símbolo manual
-    let symbol = "";
-    if (propiedad.moneda === "U$S" || propiedad.moneda === "USD") symbol = "U$S";
-    else if (propiedad.moneda === "ARS") symbol = "ARS $";
+            {(() => {
+              // Definir símbolo manual
+              let symbol = "";
+              if (propiedad.moneda === "U$S" || propiedad.moneda === "USD") symbol = "U$S";
+              else if (propiedad.moneda === "ARS") symbol = "ARS $";
 
-    // Formatear precio
-    return propiedad.precio != null && propiedad.precio !== ""
-      ? `${symbol} ${Number(propiedad.precio).toLocaleString("es-AR")}`
-      : "Consultar precio";
-  })()}
-</h6>
+              // Formatear precio
+              return propiedad.precio != null && propiedad.precio !== ""
+                ? `${symbol} ${Number(propiedad.precio).toLocaleString("es-AR")}`
+                : "Consultar precio";
+            })()}
+          </h6>
 
           <p className="card-text text-muted small mb-1" style={{ minHeight: "2em" }}>
             {propiedad.descripcion?.length > 120 ? propiedad.descripcion.slice(0, 120) + "…" : propiedad.descripcion || "Sin descripción disponible"}
@@ -178,8 +177,8 @@ const Sidebar = ({ propiedades, subfiltro, onSetSubfiltro, searchTerm, setSearch
 };
 
 const TodasPropiedades = () => {
-    const location = useLocation();
-    const filtroPropiedadEn = location.state?.propiedadEn || null; // null = todos
+  const location = useLocation();
+  const filtroPropiedadEn = location.state?.propiedadEn || null; // null = todos
 
   const [propiedades, setPropiedades] = useState([]);
   const [loading, setLoading] = useState(true);

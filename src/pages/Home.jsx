@@ -5,7 +5,6 @@ import MapaPropiedades from "../components/MapaPropiedades";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../config/firebase"; // Ajusta la ruta
 import "./Home.css";
-import { FaBed, FaBath, FaRulerCombined, FaCar, FaWifi, FaSwimmingPool, FaBurn, FaLeaf, FaMapMarkerAlt } from "react-icons/fa";
 import fondoGif from "../assets/slider-lira.gif";
 import { useNavigate } from "react-router-dom";
 import Card from "../components/Card"; // Ajusta la ruta según tu estructura
@@ -211,34 +210,34 @@ function Home() {
 
 
 
-{/* Sección Alquileres */}
-<section className="py-5" style={{ backgroundColor: "white", padding: "30px 0" }}>
-  <div className="container">
-    <h2 className="text-danger mb-1 text-center titulo-prata">
-      Alquileres Destacados
-    </h2>
-    <p className="mb-3 text-center">
-      Encontrá la propiedad ideal para vos.
-    </p>
+      {/* Sección Alquileres */}
+      <section className="py-5" style={{ backgroundColor: "white", padding: "30px 0" }}>
+        <div className="container">
+          <h2 className="text-danger mb-1 text-center titulo-prata">
+            Alquileres Destacados
+          </h2>
+          <p className="mb-3 text-center">
+            Encontrá la propiedad ideal para vos.
+          </p>
 
-    <div className="row g-4 justify-content-center">
-      {propiedades
-        .filter((p) => p.propiedadEn === "alquiler")
-        .map((prop) => (
-          <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
-          <Card 
-              propiedad={prop} 
-              onClick={() => navigate("/detalle-propiedad", { state: { id: prop.id } })} 
-            />
+          <div className="row g-4 justify-content-center">
+            {propiedades
+              .filter((p) => p.propiedadEn === "alquiler")
+              .map((prop) => (
+                <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
+                  <Card
+                    propiedad={prop}
+                    onClick={() => navigate("/detalle-propiedad", { state: { id: prop.id } })}
+                  />
+                </div>
+              ))}
           </div>
-        ))}
-    </div>
 
-    <div className="text-center mt-4 mb-0">
-      <a href="/alquileres" className="btn btn-danger">VER MÁS PROPIEDADES EN ALQUILER</a>
-    </div>
-  </div>
-</section>
+          <div className="text-center mt-4 mb-0">
+            <a href="/alquileres" className="btn btn-danger">VER MÁS PROPIEDADES EN ALQUILER</a>
+          </div>
+        </div>
+      </section>
 
 
 
@@ -342,37 +341,37 @@ function Home() {
 
 
 
-{/* Sección Venta */}
-<section className="bg-white pt-2 py-5">
-  <div className="container">
-    <h2 className="text-danger mb-2 text-center mt-5 titulo-prata">
-      Propiedades en Venta
-    </h2>
-    <p className="mb-4 fs-6 text-center">
-      En Lira Inmobiliaria te asesoramos para que puedas tener el mejor rendimiento de tu venta o compra de un inmueble.
-    </p>
+      {/* Sección Venta */}
+      <section className="bg-white pt-2 py-5">
+        <div className="container">
+          <h2 className="text-danger mb-2 text-center mt-5 titulo-prata">
+            Propiedades en Venta
+          </h2>
+          <p className="mb-4 fs-6 text-center">
+            En Lira Inmobiliaria te asesoramos para que puedas tener el mejor rendimiento de tu venta o compra de un inmueble.
+          </p>
 
-    <div className="row g-4">
-  {propiedades
-    .filter((p) => p.propiedadEn === "venta")
-    .map((prop) => (
-      <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
-        <Card 
-          propiedad={prop} 
-          onClick={() => navigate("/detalle-propiedad", { state: { id: prop.id } })} 
-        />
-      </div>
-    ))}
-</div>
+          <div className="row g-4">
+            {propiedades
+              .filter((p) => p.propiedadEn === "venta")
+              .map((prop) => (
+                <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
+                  <Card
+                    propiedad={prop}
+                    onClick={() => navigate("/detalle-propiedad", { state: { id: prop.id } })}
+                  />
+                </div>
+              ))}
+          </div>
 
 
-    <div className="text-center mt-4">
-      <a href="/PropiedadesEnVenta" className="btn btn-danger mb-5">
-        VER MÁS PROPIEDADES EN VENTA
-      </a>
-    </div>
-  </div>
-</section>
+          <div className="text-center mt-4">
+            <a href="/PropiedadesEnVenta" className="btn btn-danger mb-5">
+              VER MÁS PROPIEDADES EN VENTA
+            </a>
+          </div>
+        </div>
+      </section>
 
 
 

@@ -36,7 +36,7 @@ const Card = ({ propiedad }) => {
   return (
     <article className="col-12 col-md-12 col-lg-12">
       <div
-        className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-shadow"
+        className="card h-100 shadow-sm border-0 rounded-3 p-0 overflow-hidden hover-shadow"
         onClick={() => navigate("/detalle-propiedad", { state: { id: propiedad.id } })} // ✅ Abre detalle
         style={{ cursor: "pointer" }}
       >
@@ -46,7 +46,7 @@ const Card = ({ propiedad }) => {
             alt={propiedad.titulo}
             className="card-img-top"
             src={imagenes[imgIndex]}
-            style={{ objectFit: "cover", height: "180px" }}
+            style={{ objectFit: "cover", height: "250px" }}
           />
 
           {imagenes.length > 1 && (
@@ -93,24 +93,23 @@ const Card = ({ propiedad }) => {
           )}
 
           <span
-            className={`badge position-absolute top-0 end-0 m-2 px-3 py-2 ${
-              propiedad.propiedadEn === "venta"
+            className={`badge position-absolute top-0 end-0 m-2 px-3 py-2 ${propiedad.propiedadEn === "venta"
                 ? "bg-primary"
                 : propiedad.propiedadEn === "alquiler"
-                ? "bg-success"
-                : "bg-secondary"
-            }`}
+                  ? "bg-success"
+                  : "bg-secondary"
+              }`}
           >
             {propiedad.propiedadEn === "venta"
               ? "En Venta"
               : propiedad.propiedadEn === "alquiler"
-              ? "En Alquiler"
-              : "Disponible"}
+                ? "En Alquiler"
+                : "Disponible"}
           </span>
         </div>
 
         {/* Cuerpo */}
-        <div className="card-body d-flex flex-column">
+        <div className="card-body d-flex flex-column p-4">
           <h5 className="card-title text-truncate mb-2">{propiedad.titulo}</h5>
           <h6 className="fw-bold text-success mb-2">
             {formatPrecio(propiedad.precio, propiedad.moneda)}
@@ -188,11 +187,11 @@ const Card = ({ propiedad }) => {
                   className="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
                   href={
                     propiedad.ubicacionGeo?.lat &&
-                    propiedad.ubicacionGeo?.lng
+                      propiedad.ubicacionGeo?.lng
                       ? `https://www.google.com/maps?q=${propiedad.ubicacionGeo.lat},${propiedad.ubicacionGeo.lng}`
                       : `https://www.google.com/maps?q=${encodeURIComponent(
-                          `${propiedad.direccion.calle} ${propiedad.direccion.localidad} ${propiedad.direccion.provincia} ${propiedad.direccion.pais}`
-                        )}`
+                        `${propiedad.direccion.calle} ${propiedad.direccion.localidad} ${propiedad.direccion.provincia} ${propiedad.direccion.pais}`
+                      )}`
                   }
                   target="_blank"
                   rel="noopener noreferrer"

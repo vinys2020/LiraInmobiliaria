@@ -64,38 +64,38 @@ const DetallePropiedad = () => {
         {propiedad.titulo}
       </h1>
 
-{/* Cuadrícula de imágenes */}
-{propiedad.imagenes && propiedad.imagenes.length > 0 && (
-  <div className="row justify-content-center g-3 mb-5">
-    {/* Primera imagen grande */}
-    {propiedad.imagenes.slice(0, 1).map((img, index) => (
-      <div key={index} className="col-12 col-md-6">
-        <img
-          src={img}
-          alt={`${propiedad.titulo} ${index + 1}`}
-          className="img-fluid rounded-3 shadow-sm propiedad-img"
-          style={{ height: "350px", objectFit: "cover", width: "100%" }}
-        />
-      </div>
-    ))}
+      {/* Cuadrícula de imágenes */}
+      {propiedad.imagenes && propiedad.imagenes.length > 0 && (
+        <div className="row justify-content-center g-3 mb-5">
+          {/* Primera imagen grande */}
+          {propiedad.imagenes.slice(0, 1).map((img, index) => (
+            <div key={index} className="col-12 col-md-6">
+              <img
+                src={img}
+                alt={`${propiedad.titulo} ${index + 1}`}
+                className="img-fluid rounded-3 shadow-sm propiedad-img"
+                style={{ height: "350px", objectFit: "cover", width: "100%" }}
+              />
+            </div>
+          ))}
 
-    {/* Cuatro imágenes pequeñas a la derecha */}
-    <div className="col-12 col-md-6">
-      <div className="row g-3">
-        {propiedad.imagenes.slice(1, 5).map((img, index) => (
-          <div key={index} className="col-6">
-            <img
-              src={img}
-              alt={`${propiedad.titulo} ${index + 2}`}
-              className="img-fluid rounded-3 shadow-sm propiedad-img"
-              style={{ height: "170px", objectFit: "cover", width: "100%" }}
-            />
+          {/* Cuatro imágenes pequeñas a la derecha */}
+          <div className="col-12 col-md-6">
+            <div className="row g-3">
+              {propiedad.imagenes.slice(1, 5).map((img, index) => (
+                <div key={index} className="col-6">
+                  <img
+                    src={img}
+                    alt={`${propiedad.titulo} ${index + 2}`}
+                    className="img-fluid rounded-3 shadow-sm propiedad-img"
+                    style={{ height: "170px", objectFit: "cover", width: "100%" }}
+                  />
+                </div>
+              ))}
+            </div>
           </div>
-        ))}
-      </div>
-    </div>
-  </div>
-)}
+        </div>
+      )}
 
 
 
@@ -141,36 +141,36 @@ const DetallePropiedad = () => {
         propiedad.pileta ||
         propiedad.gasNatural ||
         propiedad.patio) && (
-        <div className="detalle-section bg-white rounded-3 p-4 shadow-sm mb-4">
-          <h4 className="titulo-prata text-danger mb-3">Extras</h4>
-          <div className="d-flex flex-wrap gap-3">
-            {propiedad.internet && (
-              <span className="badge detalle-badge">
-                <FaWifi className="me-2 text-danger" />
-                Internet
-              </span>
-            )}
-            {propiedad.pileta && (
-              <span className="badge detalle-badge">
-                <FaSwimmingPool className="me-2 text-danger" />
-                Pileta
-              </span>
-            )}
-            {propiedad.gasNatural && (
-              <span className="badge detalle-badge">
-                <FaBurn className="me-2 text-danger" />
-                Gas Natural
-              </span>
-            )}
-            {propiedad.patio && (
-              <span className="badge detalle-badge">
-                <FaLeaf className="me-2 text-danger" />
-                Patio
-              </span>
-            )}
+          <div className="detalle-section bg-white rounded-3 p-4 shadow-sm mb-4">
+            <h4 className="titulo-prata text-danger mb-3">Extras</h4>
+            <div className="d-flex flex-wrap gap-3">
+              {propiedad.internet && (
+                <span className="badge detalle-badge">
+                  <FaWifi className="me-2 text-danger" />
+                  Internet
+                </span>
+              )}
+              {propiedad.pileta && (
+                <span className="badge detalle-badge">
+                  <FaSwimmingPool className="me-2 text-danger" />
+                  Pileta
+                </span>
+              )}
+              {propiedad.gasNatural && (
+                <span className="badge detalle-badge">
+                  <FaBurn className="me-2 text-danger" />
+                  Gas Natural
+                </span>
+              )}
+              {propiedad.patio && (
+                <span className="badge detalle-badge">
+                  <FaLeaf className="me-2 text-danger" />
+                  Patio
+                </span>
+              )}
+            </div>
           </div>
-        </div>
-      )}
+        )}
 
       {/* Ubicación */}
       {propiedad.direccion && (

@@ -25,8 +25,8 @@ export default function AdminDashboard() {
                 Agregá, editá o eliminá propiedades disponibles.
               </p>
               <Link to="/propiedades" className="btn btn-outline-primary w-100">
-  Ir a Propiedades
-</Link>
+                Ir a Propiedades
+              </Link>
             </div>
           </div>
         </div>

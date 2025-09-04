@@ -25,9 +25,9 @@ const formatLatLng = (lat, lng) => {
 const MapaPropiedades = ({ propiedades }) => {
   const centro = propiedades[0]?.ubicacionGeo
     ? {
-        lat: Number(propiedades[0].ubicacionGeo.lat),
-        lng: Number(propiedades[0].ubicacionGeo.lng),
-      }
+      lat: Number(propiedades[0].ubicacionGeo.lat),
+      lng: Number(propiedades[0].ubicacionGeo.lng),
+    }
     : { lat: -28.4997754, lng: -65.7877561 }; // fallback con decimales completos
 
   return (

@@ -50,6 +50,13 @@ header#header-section {
   border-radius: 10px;
 }
 
+/* Hover rojo para navbar blanco */
+.white-navbar .nav-link:hover,
+.white-navbar .btn-phone-number:hover {
+  color: red !important;
+}
+
+
 header.hidden {
   opacity: 0;
   pointer-events: none;
@@ -100,6 +107,31 @@ header.visible {
   white-space: nowrap;
 }
 
+
+/* Para navbar normal (oscuro) */
+.navbar-nav .nav-link.active {
+  color: #fff !important;
+  /* texto blanco */
+  font-weight: 600;
+}
+
+/* Para navbar blanco */
+.white-navbar .navbar-nav .nav-link.active {
+  color: #000 !important;
+  /* texto negro */
+  font-weight: 600;
+}
+
+.white-navbar .navbar-nav .nav-link:hover {
+  color: #000;
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.white-navbar .btn-phone-number,
+.white-navbar .nav-link.btn,
+.white-navbar .nav-link {
+  color: #000;
+}
 
 
 
@@ -182,6 +214,8 @@ header.visible {
 }
 
 
+
+
 .navbar .navbar-toggler {
   margin-left: 10px;
 }
@@ -235,7 +269,7 @@ header.visible {
   color: rgb(29, 28, 28);
   padding: 10px 15px;
   border-radius: 10px;
-  border-bottom: 1px  solid #ddd;
+  border-bottom: 1px solid #ddd;
 }
 
 .sidebar-mobile .nav-link:hover {

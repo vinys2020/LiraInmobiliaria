@@ -1,144 +1,164 @@
 /* Padding top para la navbar */
 .propiedades-venta-page {
-    margin-top: 110px;
-    background-color: #f8f9fa;
-    min-height: 100vh; /* ocupa toda la pantalla */
-    width: 100%;       /* opcional para asegurar ancho completo */
-  }
-  
-  /* Sidebar / Offcanvas */
-  /* Sidebar / Offcanvas móvil */
+  margin-top: 110px;
+  /* conserva espacio para la navbar */
+  background-color: #ffffff;
+  /* fondo blanco */
+  min-height: 100vh;
+  /* ocupa toda la pantalla */
+  width: 100%;
+  /* ancho completo */
+  margin-bottom: 0;
+  /* elimina margen inferior */
+  padding-bottom: 0;
+  /* elimina padding inferior extra */
+}
+
+
+/* Sidebar / Offcanvas */
+/* Sidebar / Offcanvas móvil */
+.offcanvas {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100vh;
+  width: 60%;
+  /* ocupa solo 60% del ancho de la pantalla */
+  max-width: 300px;
+  /* opcional para no hacerlo gigante en tablets grandes */
+  background-color: #fff;
+  box-shadow: -4px 0 12px rgba(0, 0, 0, 0.2);
+  transform: translateX(100%);
+  opacity: 0;
+  transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
+  z-index: 1050;
+  overflow-y: auto;
+}
+
+.offcanvas.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+
+/* Fondo oscuro detrás del offcanvas */
+.backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4);
+  opacity: 1;
+  transition: opacity 0.3s ease;
+  z-index: 1040;
+}
+
+/* Adaptación para pantallas grandes (desktop) */
+@media (min-width: 992px) {
   .offcanvas {
-    position: fixed;
-    top: 0;
-    right: 0;
-    height: 100vh;
-    width: 60%;            /* ocupa solo 60% del ancho de la pantalla */
-    max-width: 300px;      /* opcional para no hacerlo gigante en tablets grandes */
-    background-color: #fff;
-    box-shadow: -4px 0 12px rgba(0,0,0,0.2);
-    transform: translateX(100%);
-    opacity: 0;
-    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.3s ease;
-    z-index: 1050;
-    overflow-y: auto;
+    display: none;
+    /* no se usa sidebar en desktop */
   }
-  
-  .offcanvas.show {
-    transform: translateX(0);
-    opacity: 1;
-  }
-  
-  /* Fondo oscuro detrás del offcanvas */
+
   .backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.4);
-    opacity: 1;
-    transition: opacity 0.3s ease;
-    z-index: 1040;
+    display: none;
   }
-  
-  /* Adaptación para pantallas grandes (desktop) */
-  @media (min-width: 992px) {
-    .offcanvas {
-      display: none; /* no se usa sidebar en desktop */
-    }
-    .backdrop {
-      display: none;
-    }
-  }
-  
-  /* Tarjetas de propiedades */
-  .property-card {
-    border-radius: 15px;
-    overflow: hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    cursor: pointer;
-  }
-  
-  .property-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
-  }
-  
+}
+
+/* Tarjetas de propiedades */
+.property-card {
+  border-radius: 15px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  cursor: pointer;
+}
+
+.property-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 25px rgba(0, 0, 0, 0.2);
+}
+
+.property-card img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.property-card:hover img {
+  transform: scale(1.05);
+}
+
+/* Badge de estado */
+.property-badge {
+  font-weight: 600;
+  font-size: 0.85rem;
+  padding: 0.4em 0.6em;
+}
+
+/* Amenities */
+.property-amenities .badge {
+  font-size: 0.75rem;
+  margin-right: 0.3rem;
+  margin-bottom: 0.3rem;
+}
+
+/* Sidebar */
+.sidebar-tipos .list-group-item {
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sidebar-tipos .list-group-item:hover {
+  background-color: #e9ecef;
+}
+
+/* Paginación */
+.pagination .page-link {
+  color: #dc3545;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+/* Responsividad */
+@media (max-width: 768px) {
   .property-card img {
+    height: 180px;
+  }
+
+  .propiedades-venta-page {
+    margin-top: 80px;
+    background-color: #f8f9fa;
+    min-height: 100vh;
+    /* ocupa toda la pantalla */
     width: 100%;
-    height: 250px;
-    object-fit: cover;
-    transition: transform 0.3s ease;
+    /* opcional para asegurar ancho completo */
   }
-  
-  .property-card:hover img {
-    transform: scale(1.05);
-  }
-  
-  /* Badge de estado */
-  .property-badge {
-    font-weight: 600;
-    font-size: 0.85rem;
-    padding: 0.4em 0.6em;
-  }
-  
-  /* Amenities */
-  .property-amenities .badge {
-    font-size: 0.75rem;
-    margin-right: 0.3rem;
-    margin-bottom: 0.3rem;
-  }
-  
-  /* Sidebar */
-  .sidebar-tipos .list-group-item {
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  
-  .sidebar-tipos .list-group-item:hover {
-    background-color: #e9ecef;
-  }
-  
-  /* Paginación */
-  .pagination .page-link {
-    color: #dc3545;
-  }
-  
-  .pagination .page-item.active .page-link {
-    background-color: #dc3545;
-    border-color: #dc3545;
-  }
-  
-  /* Responsividad */
-  @media (max-width: 768px) {
-    .property-card img {
-      height: 180px;
-    }
-    .propiedades-venta-page {
-      margin-top: 80px;
-      background-color: #f8f9fa;
-      min-height: 100vh; /* ocupa toda la pantalla */
-      width: 100%;       /* opcional para asegurar ancho completo */
-    }
-  }
-  
-  /* List group sin fondo blanco */
-  .list-group-item {
-    background-color: transparent !important; /* transparente */
-    border: 1px solid #ddd; /* opcional: solo borde */
-    color: #333;             /* texto visible */
-    transition: background 0.2s ease;
-  }
-  
-  .list-group-item:hover {
-    background-color: #f0f0f0; /* efecto hover suave */
-  }
-  
-  /* Si querés mantener los activos resaltados */
-  .list-group-item.active {
-    background-color: #dc3545 !important; /* color activo */
-    color: #fff !important;
-    font-weight: bold;
-  }
-  
+}
+
+/* List group sin fondo blanco */
+.list-group-item {
+  background-color: transparent !important;
+  /* transparente */
+  border: 1px solid #ddd;
+  /* opcional: solo borde */
+  color: #333;
+  /* texto visible */
+  transition: background 0.2s ease;
+}
+
+.list-group-item:hover {
+  background-color: #f0f0f0;
+  /* efecto hover suave */
+}
+
+/* Si querés mantener los activos resaltados */
+.list-group-item.active {
+  background-color: #dc3545 !important;
+  /* color activo */
+  color: #fff !important;
+  font-weight: bold;
+}

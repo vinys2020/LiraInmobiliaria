@@ -43,9 +43,8 @@ const Sidebar = ({ propiedades, subfiltro, onSetSubfiltro, searchTerm, setSearch
         {subtipos.map((sub) => (
           <button
             key={sub}
-            className={`list-group-item list-group-item-action rounded-2 mb-2 ${
-              Array.isArray(subfiltro) && subfiltro.includes(sub) ? "active fw-bold" : ""
-            }`}
+            className={`list-group-item list-group-item-action rounded-2 mb-2 ${Array.isArray(subfiltro) && subfiltro.includes(sub) ? "active fw-bold" : ""
+              }`}
             onClick={() => toggleSubtipo(sub)}
           >
             {sub} ({subCounts[sub] || 0})
@@ -53,9 +52,8 @@ const Sidebar = ({ propiedades, subfiltro, onSetSubfiltro, searchTerm, setSearch
         ))}
 
         <button
-          className={`list-group-item list-group-item-action rounded-2 ${
-            Array.isArray(subfiltro) && subfiltro.length === 0 ? "active fw-bold" : ""
-          }`}
+          className={`list-group-item list-group-item-action rounded-2 ${Array.isArray(subfiltro) && subfiltro.length === 0 ? "active fw-bold" : ""
+            }`}
           onClick={() => onSetSubfiltro([])}
         >
           Todos ({totalSubtipos})
@@ -122,8 +120,8 @@ const AlquileresDisponibles = () => {
   });
 
   return (
-    <main className="alquileres-page">
-      <section className="py-5" style={{ backgroundColor: "#f9f9f9" }}>
+    <main className="alquileres-page" style={{ backgroundColor: "#ffffff" }}>
+      <section className="py-5" style={{ backgroundColor: "inherit", paddingBottom: 0 }}>
         <div className="container">
           <h2 className="text-center text-danger mb-4" style={{ fontFamily: "Prata, serif" }}>
             Alquileres Disponibles

@@ -23,7 +23,7 @@ const EmpleadoDashboard = () => {
   return (
     <div className="d-flex min-vh-100 mt-5 pt-5">
       {/* Sidebar */}
-      <div className="bg-dark text-white p-3 mt-2" style={{ width: "250px"}}>
+      <div className="bg-dark text-white p-3 mt-2" style={{ width: "250px" }}>
         <h3 className="mb-4">Empleado</h3>
         <p>Hola, {user?.email}</p>
         <hr />

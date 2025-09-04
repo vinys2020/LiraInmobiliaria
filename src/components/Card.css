@@ -1,162 +1,162 @@
 /* Card.css */
 .card {
-    background: linear-gradient(135deg, #f9f8f8 0%, #f7f6f6 100%) !important;
-    transition: transform 0.3s, box-shadow 0.3s;
-  }
-  
+  background: linear-gradient(135deg, #f9f8f8 0%, #f7f6f6 100%) !important;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
 /* Card principal */
 .card-custom {
-    height: 100%;
-    border: none;
-    border-radius: 1rem;
-    overflow: hidden;
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-    transition: transform 0.2s, box-shadow 0.2s;
-    cursor: pointer;
-  }
-  
-  .card-custom:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Imagen */
-  .card-custom img {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-  }
-  
-  /* Badge de estado */
-  .card-badge {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    padding: 0.25rem 0.75rem;
-    font-size: 0.8rem;
-    font-weight: 600;
-    border-radius: 0.5rem;
-    color: #fff;
-    z-index: 5;
-  }
-  
-  /* Badges extra */
-  .card-extra-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-    padding: 0.2rem 0.5rem;
-    border-radius: 1rem;
-    border: 1px solid #ddd;
-    background-color: #f8f9fa;
-    font-size: 0.75rem;
-    color: #333;
-  }
-  
-  /* Cuerpo de la card */
-  .card-body-custom {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
-  }
-  
-  .card-title-custom {
-    font-size: 1rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-  }
-  
-  .card-price {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #198754; /* verde para precios */
-    margin-bottom: 0.25rem;
-  }
-  
-  /* Descripción */
-  .card-desc {
-    font-size: 0.8rem;
-    color: #6c757d;
-    min-height: 2em;
-    margin-bottom: 0.5rem;
-  }
-  
-  /* Métricas de la propiedad */
-  .card-metrics {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    font-size: 0.75rem;
-    color: #6c757d;
-    margin-bottom: 0.5rem;
-  }
-  
-  .card-metrics span {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.25rem;
-  }
-  
-  /* Extras */
-  .card-extras {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 0.5rem;
-  }
-  
-  /* Ubicación */
-  .card-location {
-    margin-top: auto;
-  }
-  
-  .card-location-text {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    font-size: 0.75rem;
-    color: #6c757d;
-  }
-  
-  .card-maps {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 0.25rem;
-  }
-  
-  .card-maps a {
-    display: flex;
-    align-items: center;
-    gap: 0.3rem;
-    font-size: 0.75rem;
-    padding: 0.25rem 0.5rem;
-    white-space: nowrap;
-  }
-  
-  /* Botones de carrusel */
-  .card-carousel-btn {
-    background-color: rgba(0, 0, 0, 0.5);
-    border: none;
-    color: #fff;
-    width: 32px;
-    height: 32px;
-    border-radius: 50%;
-    opacity: 0.8;
-    cursor: pointer;
-    z-index: 10;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: opacity 0.2s;
-  }
-  
-  .card-carousel-btn:hover {
-    opacity: 1;
-  }
-  
+  height: 100%;
+  border: none;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+  transition: transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+}
+
+.card-custom:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 1rem 1.5rem rgba(0, 0, 0, 0.2);
+}
+
+/* Imagen */
+.card-custom img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+/* Badge de estado */
+.card-badge {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 0.5rem;
+  color: #fff;
+  z-index: 5;
+}
+
+/* Badges extra */
+.card-extra-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  border-radius: 1rem;
+  border: 1px solid #ddd;
+  background-color: #f8f9fa;
+  font-size: 0.75rem;
+  color: #333;
+}
+
+/* Cuerpo de la card */
+.card-body-custom {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.card-title-custom {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-price {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #198754;
+  /* verde para precios */
+  margin-bottom: 0.25rem;
+}
+
+/* Descripción */
+.card-desc {
+  font-size: 0.8rem;
+  color: #6c757d;
+  min-height: 2em;
+  margin-bottom: 0.5rem;
+}
+
+/* Métricas de la propiedad */
+.card-metrics {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: #6c757d;
+  margin-bottom: 0.5rem;
+}
+
+.card-metrics span {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Extras */
+.card-extras {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Ubicación */
+.card-location {
+  margin-top: auto;
+}
+
+.card-location-text {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 0.75rem;
+  color: #6c757d;
+}
+
+.card-maps {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 0.25rem;
+}
+
+.card-maps a {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.5rem;
+  white-space: nowrap;
+}
+
+/* Botones de carrusel */
+.card-carousel-btn {
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  opacity: 0.8;
+  cursor: pointer;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.2s;
+}
+
+.card-carousel-btn:hover {
+  opacity: 1;
+}

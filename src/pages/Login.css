@@ -1,11 +1,13 @@
 /* login.css */
 
 /* Fondo general */
-body, html {
+body,
+html {
   height: 100%;
   margin: 0;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  -webkit-text-size-adjust: 100%; /* Evita zoom automático en iOS */
+  -webkit-text-size-adjust: 100%;
+  /* Evita zoom automático en iOS */
 }
 
 /* Contenedor del login */
@@ -22,7 +24,7 @@ body, html {
 .login-box {
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
   padding: 2.5rem 2rem;
   max-width: 400px;
   width: 100%;
@@ -31,7 +33,7 @@ body, html {
 
 .login-box:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 25px rgba(0,0,0,0.2);
+  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
 }
 
 /* Título */
@@ -47,14 +49,15 @@ body, html {
 .login-box .form-control {
   border-radius: 8px;
   padding: 0.75rem 1rem;
-  font-size: 1rem; /* 🔹 Aumentado para iOS, evita zoom */
+  font-size: 1rem;
+  /* 🔹 Aumentado para iOS, evita zoom */
   border: 1px solid #ccc;
   transition: border-color 0.2s;
 }
 
 .login-box .form-control:focus {
   border-color: #b02a37;
-  box-shadow: 0 0 5px rgba(176,42,55,0.3);
+  box-shadow: 0 0 5px rgba(176, 42, 55, 0.3);
 }
 
 /* Botón */
@@ -82,14 +85,15 @@ body, html {
 /* Responsive */
 @media (max-width: 576px) {
   .login-box {
-      padding: 2rem 1.5rem;
+    padding: 2rem 1.5rem;
   }
 
   .login-box h2 {
-      font-size: 1.5rem;
+    font-size: 1.5rem;
   }
 
   .login-box .form-control {
-      font-size: 1rem; /* 🔹 Asegura tamaño legible en móviles */
+    font-size: 1rem;
+    /* 🔹 Asegura tamaño legible en móviles */
   }
 }

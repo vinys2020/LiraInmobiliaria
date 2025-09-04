@@ -128,8 +128,8 @@ const PropiedadesEnVenta = () => {
 
 
   return (
-    <main className="alquileres-page">
-      <section className="py-5 bg-light">
+    <main className="alquileres-page" style={{ backgroundColor: "#ffffff" }}>
+      <section className="py-5" style={{ backgroundColor: "inherit", paddingBottom: 0 }}>
         <div className="mx-lg-5 mx-3">
           <h2 className="text-center text-danger mb-4 mx-lg-1" style={{ fontFamily: "Prata, serif" }}>
             Propiedades en Venta

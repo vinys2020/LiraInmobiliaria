@@ -1,211 +1,231 @@
 body {
-  background: linear-gradient(135deg, #e01010 0%, #660000 100%);
+  background: linear-gradient(135deg, #fbfafa 0%, #f0ecec 100%);
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
-  
-  h1.display-4 {
-    color: #212529;
-  }
-  
-  .card {
-    border-radius: 0.75rem;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    background-color: rgba(255, 255, 255, 0.9);
-    color: #212529; /* texto oscuro para contraste en cards */
-  }
-  
-  .card:hover {
-    transform: translateY(-6px);
-    box-shadow: 0 12px 20px rgba(0,0,0,0.15);
-  }
 
-  .card-img-top {
-    transition: none !important; /* elimina animaciones al hacer hover */
+h1.display-4 {
+  color: #212529;
+}
+
+.card {
+  border-radius: 0.75rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #212529;
+  /* texto oscuro para contraste en cards */
+}
+
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+  transition: none !important;
+  /* elimina animaciones al hacer hover */
 }
 
 .card-img-top:hover {
-    transform: none !important; /* desactiva cualquier escala */
+  transform: none !important;
+  /* desactiva cualquier escala */
 }
-  
-  .btn-primary {
-    background-color: #007bff;
-    border: none;
-  }
-  
-  .btn-primary:hover {
-    background-color: #0056b3;
-  }
-  
-  .btn-success {
-    background-color: #28a745;
-    border: none;
-  }
-  
-  .btn-success:hover {
-    background-color: #1e7e34;
-  }
-  
-  ul {
-    padding-left: 1.25rem;
-    color: #495057;
-    font-weight: 100;
-    grid-gap: 0.5rem;
-  }
-  
-  .home-container {
-    position: relative;
-    height: 670px; /* o la altura que quieras para la sección */
-    overflow: hidden;
-    margin-top: 0px;
-    z-index: inherit;
-  }
-  
-  .background-video {
-    position: absolute; /* cambiar fixed a absolute */
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 700px; /* misma altura que el contenedor */
-    object-fit: cover;
-    z-index: -1;
-    filter: brightness(0.6);
-  }
-  
-  .content-overlay {
-    position: relative;
-    z-index: 1;
-    color: white;
-  }
-  
-  .btn-outline-light {
-    color: white;
-    border-color: white;
-  }
-  
-  .btn-outline-light:hover,
-  .btn-outline-light:focus {
-    background-color: white;
-    color: black;
-    border-color: white;
-  }
-  
-  /* Tabs nav con fondo rojo y texto blanco */
-  .nav-pills {
-    background-color: #dc3545; /* rojo bootstrap */
-    border-radius: 0.375rem;
-  }
-  
-  .nav-pills .nav-link {
-    color: rgb(244, 10, 10);
-    border-top-left-radius: 0.375rem;   /* redondeo arriba izquierda */
-    border-top-right-radius: 0.375rem;  /* redondeo arriba derecha */
-    border-bottom-left-radius: 0;       /* sin redondeo abajo izquierda */
-    border-bottom-right-radius: 0;      /* sin redondeo abajo derecha */
-  }
-  
-  
-  .nav-pills .nav-link.active {
-    background-color: #fafafa; /* rojo más oscuro para activo */
-    color: red;
-  }
-  
-  .nav-pills .nav-link:hover:not(.active) {
-    background-color: #dc162a; /* rojo intermedio al hover */
-    color: white;
-  }
-  
-  /* Dropdown menu con fondo rojo y texto blanco */
-  .dropdown-menu {
-    background-color: #f7f6f6 !important;
-    max-height: 200px;
-    overflow-y: auto;
-    color: black;
-  }
-  
-  .dropdown-item {
-    background-color: #f3ecec !important;
-    color: black;
-    cursor: pointer;
-  }
-  
-  .dropdown-item:hover,
-  .dropdown-item:focus {
-    background-color: #b02a37 !important;
-    color: white;
-  }
-  
-  /* Checkbox checked color */
-  .form-check-input:checked {
-    background-color: #b02a37;
-    border-color: #b02a37;
-  }
-  
-  /* Etiquetas de checkbox en blanco */
-  .form-check-label {
-    color: white;
-  }
-  
-  /* Contenedor del form centrado con ancho máximo */
-  .home-container form {
-    max-width: 450px; /* un poco más ancho para que no se sienta muy comprimido */
-    margin: 0 auto;   /* centrado horizontal */
-  }
-  
-  /* Botón buscar igual alto que input */
-  .home-container form .btn-secondary {
-    height: 100%;
-  }
-  
-  /* Fondo rojo para el contenedor de filtros dentro del form */
-  .home-container form > .row {
-    background-color: #dc3545;
-    border-radius: 0.375rem;
-    padding: 1rem;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-  }
-  
-  /* Para que el botón dropdown-toggle sea blanco con texto rojo */
-  .btn.btn-light.dropdown-toggle {
-    color: #dc3545;
-    font-weight: 600;
-  }
-  
-  /* Para que el texto del placeholder del input sea blanco (opcional) */
-  .home-container form input::placeholder {
-    color: #f8f9fa;
-    opacity: 1;
-  }
-  
-  .banner-title {
-    font-family: 'Prata', serif;
-    font-size: 2.5rem; /* Desktop */
-    font-weight: 400; /* Prata es una fuente serif elegante, usualmente no muy bold */
-    line-height: 1.2;
-    margin-bottom: 1rem;
-    color: #ffffff; /* o el color que quieras */
-    margin-top: 12rem;
-  }
-  
-  @media (max-width: 576px) {
-    .banner-title {
-      font-size: 1.8rem; /* Celular */
-      margin-top: 5.8rem;
-    }
-  }
-  
-  .titulo-prata {
-    font-family: 'Prata', serif;
-  }
-  
 
-  /* Contenedor para la sección con video */
+.btn-primary {
+  background-color: #007bff;
+  border: none;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-success {
+  background-color: #28a745;
+  border: none;
+}
+
+.btn-success:hover {
+  background-color: #1e7e34;
+}
+
+ul {
+  padding-left: 1.25rem;
+  color: #495057;
+  font-weight: 100;
+  grid-gap: 0.5rem;
+}
+
+.home-container {
+  position: relative;
+  height: 670px;
+  /* o la altura que quieras para la sección */
+  overflow: hidden;
+  margin-top: 0px;
+  z-index: inherit;
+}
+
+.background-video {
+  position: absolute;
+  /* cambiar fixed a absolute */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 700px;
+  /* misma altura que el contenedor */
+  object-fit: cover;
+  z-index: -1;
+  filter: brightness(0.6);
+}
+
+.content-overlay {
+  position: relative;
+  z-index: 1;
+  color: white;
+}
+
+.btn-outline-light {
+  color: white;
+  border-color: white;
+}
+
+.btn-outline-light:hover,
+.btn-outline-light:focus {
+  background-color: white;
+  color: black;
+  border-color: white;
+}
+
+/* Tabs nav con fondo rojo y texto blanco */
+.nav-pills {
+  background-color: #dc3545;
+  /* rojo bootstrap */
+  border-radius: 0.375rem;
+}
+
+.nav-pills .nav-link {
+  color: rgb(244, 10, 10);
+  border-top-left-radius: 0.375rem;
+  /* redondeo arriba izquierda */
+  border-top-right-radius: 0.375rem;
+  /* redondeo arriba derecha */
+  border-bottom-left-radius: 0;
+  /* sin redondeo abajo izquierda */
+  border-bottom-right-radius: 0;
+  /* sin redondeo abajo derecha */
+}
+
+
+.nav-pills .nav-link.active {
+  background-color: #fafafa;
+  /* rojo más oscuro para activo */
+  color: red;
+}
+
+.nav-pills .nav-link:hover:not(.active) {
+  background-color: #dc162a;
+  /* rojo intermedio al hover */
+  color: white;
+}
+
+/* Dropdown menu con fondo rojo y texto blanco */
+.dropdown-menu {
+  background-color: #f7f6f6 !important;
+  max-height: 200px;
+  overflow-y: auto;
+  color: black;
+}
+
+.dropdown-item {
+  background-color: #f3ecec !important;
+  color: black;
+  cursor: pointer;
+}
+
+.dropdown-item:hover,
+.dropdown-item:focus {
+  background-color: #b02a37 !important;
+  color: white;
+}
+
+/* Checkbox checked color */
+.form-check-input:checked {
+  background-color: #b02a37;
+  border-color: #b02a37;
+}
+
+/* Etiquetas de checkbox en blanco */
+.form-check-label {
+  color: white;
+}
+
+/* Contenedor del form centrado con ancho máximo */
+.home-container form {
+  max-width: 450px;
+  /* un poco más ancho para que no se sienta muy comprimido */
+  margin: 0 auto;
+  /* centrado horizontal */
+}
+
+/* Botón buscar igual alto que input */
+.home-container form .btn-secondary {
+  height: 100%;
+}
+
+/* Fondo rojo para el contenedor de filtros dentro del form */
+.home-container form>.row {
+  background-color: #dc3545;
+  border-radius: 0.375rem;
+  padding: 1rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+/* Para que el botón dropdown-toggle sea blanco con texto rojo */
+.btn.btn-light.dropdown-toggle {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+/* Para que el texto del placeholder del input sea blanco (opcional) */
+.home-container form input::placeholder {
+  color: #f8f9fa;
+  opacity: 1;
+}
+
+.banner-title {
+  font-family: 'Prata', serif;
+  font-size: 2.5rem;
+  /* Desktop */
+  font-weight: 400;
+  /* Prata es una fuente serif elegante, usualmente no muy bold */
+  line-height: 1.2;
+  margin-bottom: 1rem;
+  color: #ffffff;
+  /* o el color que quieras */
+  margin-top: 12rem;
+}
+
+@media (max-width: 576px) {
+  .banner-title {
+    font-size: 1.8rem;
+    /* Celular */
+    margin-top: 5.8rem;
+  }
+}
+
+.titulo-prata {
+  font-family: 'Prata', serif;
+}
+
+
+/* Contenedor para la sección con video */
 .hero-section {
   position: relative;
   width: 100%;
-  height: 60vh; /* o el alto que quieras para esa sección */
+  height: 60vh;
+  /* o el alto que quieras para esa sección */
   overflow: hidden;
 }
 
@@ -220,5 +240,3 @@ body {
   z-index: -1;
   filter: brightness(0.6);
 }
-
-  

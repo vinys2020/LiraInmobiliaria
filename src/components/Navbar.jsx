@@ -2,7 +2,10 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaPhoneAlt, FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
-import navbarlogo from "../assets/logoliranavblanc.png"; // ajustá la ruta si este componente está en otra carpeta
+import navbarlogo from "../assets/logoliranavblanc.png";
+import NavLinkItem from "./NavLinkItem";
+import navbarlogoRojo from "../assets/logo-lira-rojo.png";
+// ajustá la ruta si este componente está en otra carpeta
 
 
 import "./navbar.css";
@@ -15,6 +18,21 @@ const Navbar = () => {
 
   const { user, rol, logout } = useAuth();
   const navigate = useNavigate();
+
+  // ✅ RUTAS CON NAVBAR BLANCO
+  const whiteNavbarRoutes = [
+    "/detalle-propiedad",
+    "/alquileres",
+    "/PropiedadesEnVenta",
+    "/LotesEnVenta",
+    "/contacto",
+  ];
+
+  // Determina si la ruta actual necesita navbar blanco
+  const isWhiteNavbar = whiteNavbarRoutes.includes(window.location.pathname);
+
+  // Selecciona el logo según la ruta
+  const logoToUse = isWhiteNavbar ? navbarlogoRojo : navbarlogo;
 
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
@@ -47,7 +65,7 @@ const Navbar = () => {
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollY = window.scrollY;
-  
+
       if (currentScrollY <= 10) {
         // ✅ Solo aparece si estás en el top (o a menos de 10px)
         setIsTop(true);
@@ -58,16 +76,16 @@ const Navbar = () => {
         setIsVisible(false);
       }
     };
-  
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-  
+
 
   return (
     <header
       id="header-section"
-      className={`header-desktop header-v4 bg-transparent ${isTop ? "" : "scrolled"}`}
+      className={`header-desktop header-v4 ${isTop ? "" : "scrolled"} ${isWhiteNavbar ? "white-navbar" : ""}`}
       style={{
         position: "fixed",
         top: 0,
@@ -79,6 +97,7 @@ const Navbar = () => {
         pointerEvents: isVisible ? "auto" : "none",
       }}
     >
+
       <div className="container-fluid">
         <div className="header-inner-wrap">
           <div className="navbar d-flex align-items-center justify-content-between" ref={navbarRef}>
@@ -86,7 +105,7 @@ const Navbar = () => {
             <div className="logo logo-splash d-none d-lg-block">
               <NavLink to="/">
                 <img
-                  src={navbarlogo}
+                  src={logoToUse}
                   alt="logo"
                   height="55"
                   width="220"
@@ -98,7 +117,7 @@ const Navbar = () => {
             <div className="logo logo-splash d-lg-none">
               <NavLink to="/">
                 <img
-                  src={navbarlogo}
+                  src={logoToUse}
                   alt="logo móvil"
                   height="40"
                   width="140"
@@ -109,76 +128,57 @@ const Navbar = () => {
             {/* Menu Desktop */}
             <nav className="main-nav navbar-expand-lg d-none d-lg-flex flex-grow-1 justify-content-end">
               <ul id="main-nav" className="navbar-nav">
-              <li className="nav-item">
-                  <NavLink
-                    to="/"
-                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-                    onClick={() => setMenuOpen(false)}
-                  >
+                <li className="nav-item">
+                  <NavLinkItem to="/" onClick={() => setMenuOpen(false)} isWhiteNavbar={isWhiteNavbar}>
                     Inicio
-                  </NavLink>
+                  </NavLinkItem>
                 </li>
                 <li className="nav-item">
-                  <NavLink
-                    to="/alquileres"
-                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-                    onClick={() => setMenuOpen(false)}
-                  >
+                  <NavLinkItem to="/alquileres" onClick={() => setMenuOpen(false)} isWhiteNavbar={isWhiteNavbar}>
                     Alquileres
-                  </NavLink>
+                  </NavLinkItem>
                 </li>
                 <li className="nav-item">
-                  <NavLink
-                    to="/PropiedadesEnVenta"
-                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-                    onClick={() => setMenuOpen(false)}
-                  >
+                  <NavLinkItem to="/PropiedadesEnVenta" onClick={() => setMenuOpen(false)} isWhiteNavbar={isWhiteNavbar}>
                     Venta
-                  </NavLink>
+                  </NavLinkItem>
                 </li>
                 <li className="nav-item">
-                  <NavLink
-                    to="/LotesEnVenta"
-                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-                    onClick={() => setMenuOpen(false)}
-                  >
+                  <NavLinkItem to="/LotesEnVenta" onClick={() => setMenuOpen(false)} isWhiteNavbar={isWhiteNavbar}>
                     Lotes
-                  </NavLink>
+                  </NavLinkItem>
                 </li>
                 <li className="nav-item">
-                  <NavLink
-                    to="/SobreNosotros"
-                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-                    onClick={() => setMenuOpen(false)}
-                  >
+                  <NavLinkItem to="/SobreNosotros" onClick={() => setMenuOpen(false)} isWhiteNavbar={isWhiteNavbar}>
                     Sobre Nosotros
-                  </NavLink>
+                  </NavLinkItem>
                 </li>
                 <li className="nav-item">
-                  <NavLink
-                    to="/contacto"
-                    className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-                    onClick={() => setMenuOpen(false)}
-                  >
+                  <NavLinkItem to="/contacto" onClick={() => setMenuOpen(false)} isWhiteNavbar={isWhiteNavbar}>
                     Contacto
-                  </NavLink>
+                  </NavLinkItem>
                 </li>
 
                 {/* Indicador de usuario logeado */}
                 {user ? (
                   <>
                     <li className="nav-item">
-                      <button className="nav-link btn" onClick={handleLogout}>
+                      <NavLinkItem
+                        to="#"
+                        onClick={handleLogout}
+                        isWhiteNavbar={isWhiteNavbar}
+                        style={{ cursor: "pointer" }}
+                      >
                         Cerrar sesión
-                      </button>
+                      </NavLinkItem>
                     </li>
+
                     <li className="nav-item align-items-center">
-                      <NavLink
-                        className={({ isActive }) =>
-                          `nav-link d-flex align-items-center ${isActive ? "active" : ""}`
-                        }
+                      <NavLinkItem
                         to={rol === "admin" ? "/admin" : "/empleado"}
                         onClick={() => setMenuOpen(false)}
+                        isWhiteNavbar={isWhiteNavbar}
+                        className="d-flex align-items-center"
                       >
                         <img
                           src={
@@ -190,29 +190,29 @@ const Navbar = () => {
                           style={{ width: "28px", height: "25px", borderRadius: "50%" }}
                         />
                         {user.displayName || user.email}
-                      </NavLink>
+                      </NavLinkItem>
                     </li>
                   </>
                 ) : (
                   <li className="nav-item">
-                    <NavLink
-                      className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
-                      to="/login"
-                      onClick={() => setMenuOpen(false)}
-                    >
+                    <NavLinkItem to="/login" onClick={() => setMenuOpen(false)} isWhiteNavbar={isWhiteNavbar}>
                       Iniciar sesión
-                    </NavLink>
+                    </NavLinkItem>
                   </li>
                 )}
 
                 {/* Número de teléfono */}
                 <li className="nav-item d-flex align-items-center">
-  <a href="tel:+5493834523097" className="nav-link d-flex align-items-center fw-bold">
-    <FaPhoneAlt className="me-1" /> +549-3834 52-3097
-  </a>
-</li>
-
+                  <a
+                    href="tel:+5493834523097"
+                    className="nav-link d-flex align-items-center fw-bold"
+                    style={{ color: isWhiteNavbar ? "#000" : "#fff" }}
+                  >
+                    <FaPhoneAlt className="me-1" /> +549-3834 52-3097
+                  </a>
+                </li>
               </ul>
+
             </nav>
 
             {/* Botón hamburguesa para móvil */}
@@ -230,7 +230,7 @@ const Navbar = () => {
           {/* Sidebar móvil */}
           <div className={`sidebar-mobile d-lg-none ${menuOpen ? "open" : ""}`} ref={navbarRef}>
             <ul className="navbar-nav flex-column p-3">
-            <li className="nav-item">
+              <li className="nav-item">
                 <NavLink
                   to="/"
                   className={({ isActive }) => `nav-link ${isActive ? "active" : ""}`}
@@ -300,15 +300,15 @@ const Navbar = () => {
                       }
                       onClick={() => setMenuOpen(false)}
                     >
-                        <img
-                          src={
-                            user.photoURL ||
-                            "https://cdn-icons-png.flaticon.com/512/847/847969.png"
-                          }
-                          alt="Avatar"
-                          className="avatar-img me-2 mb-0 align-items-top"
-                          style={{ width: "28px", height: "25px", borderRadius: "50%" }}
-                        />
+                      <img
+                        src={
+                          user.photoURL ||
+                          "https://cdn-icons-png.flaticon.com/512/847/847969.png"
+                        }
+                        alt="Avatar"
+                        className="avatar-img me-2 mb-0 align-items-top"
+                        style={{ width: "28px", height: "25px", borderRadius: "50%" }}
+                      />
                       {user.displayName || user.email}
                     </NavLink>
                   </li>

@@ -3,53 +3,53 @@ import { collection, addDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
 
 export default function AgregarPropiedadModal({ onClose, refrescarLista }) {
-    const [propiedad, setPropiedad] = useState({
-        titulo: "",
-        descripcion: "",
-        precio: "",
-        moneda: "",
-        habitaciones: "",
-        baños: "",
-        cochera: false,
-        m2: "",
-        superficieCubierta: "",
-        superficieTerreno: "",
-        bombadeagua: false,
-        gasNatural: false,
-        patio: false,
-        pileta: false,
-        alumbradoPublico: false,
-        cloacas: false,
-        agua: false,
-        calleAsfaltada: false,
-        jardin: false,
-        balcon: false,
-        terraza: false,
-        lavadero: false,
-        parrilla: false,
-        alarmaSeguridad: false,
-        camarasSeguridad: false,
-        aireAcondicionado: false,
-        calefaccionCentral: false,
-        internet: false,
-        tvCable: false,
-        telefono: false,
-        expensas: false,
-        mantenimiento: false,
-        gastosComunes: false,
-        luz: false,
-        gas: false,
-        aguaPotable: false,
-        propiedadEn: "",
-        tipoDePropiedad: "",
-        estado: "activo",
-        fechaActualizacion: new Date().toLocaleDateString(),
-        direccion: { calle: "", codigoPostal: "", localidad: "", provincia: "", pais: "" },
-        contacto: { telefono1: "", telefono2: "" },
-        ubicacionGeo: { lat: "", lng: "" },
-        imagenes: [],
-      });
-      
+  const [propiedad, setPropiedad] = useState({
+    titulo: "",
+    descripcion: "",
+    precio: "",
+    moneda: "",
+    habitaciones: "",
+    baños: "",
+    cochera: false,
+    m2: "",
+    superficieCubierta: "",
+    superficieTerreno: "",
+    bombadeagua: false,
+    gasNatural: false,
+    patio: false,
+    pileta: false,
+    alumbradoPublico: false,
+    cloacas: false,
+    agua: false,
+    calleAsfaltada: false,
+    jardin: false,
+    balcon: false,
+    terraza: false,
+    lavadero: false,
+    parrilla: false,
+    alarmaSeguridad: false,
+    camarasSeguridad: false,
+    aireAcondicionado: false,
+    calefaccionCentral: false,
+    internet: false,
+    tvCable: false,
+    telefono: false,
+    expensas: false,
+    mantenimiento: false,
+    gastosComunes: false,
+    luz: false,
+    gas: false,
+    aguaPotable: false,
+    propiedadEn: "",
+    tipoDePropiedad: "",
+    estado: "activo",
+    fechaActualizacion: new Date().toLocaleDateString(),
+    direccion: { calle: "", codigoPostal: "", localidad: "", provincia: "", pais: "" },
+    contacto: { telefono1: "", telefono2: "" },
+    ubicacionGeo: { lat: "", lng: "" },
+    imagenes: [],
+  });
+
 
   const [fullscreenIndex, setFullscreenIndex] = useState(null);
 
@@ -172,7 +172,7 @@ export default function AgregarPropiedadModal({ onClose, refrescarLista }) {
                         onClick={() =>
                           setFullscreenIndex(
                             (fullscreenIndex - 1 + propiedad.imagenes.length) %
-                              propiedad.imagenes.length
+                            propiedad.imagenes.length
                           )
                         }
                       >
@@ -264,93 +264,93 @@ export default function AgregarPropiedadModal({ onClose, refrescarLista }) {
                 )
               )}
 
- {/* Servicios */}
-<h4 className="mt-3">Servicios / Características</h4>
-<div className="d-flex flex-wrap gap-3 mb-3">
-  {[
-    "alumbradoPublico",
-    "gasNatural",
-    "cloacas",
-    "agua",
-    "calleAsfaltada",
-    "bombadeagua",
-    "patio",
-    "pileta",
-    "cochera",
-    "jardin",
-    "balcon",
-    "terraza",
-    "lavadero",
-    "parrilla",
-    "alarmaSeguridad",
-    "camarasSeguridad",
-    "aireAcondicionado",
-    "calefaccionCentral",
-    "internet",
-    "tvCable",
-    "telefono",
-    "expensas",
-    "mantenimiento",
-    "gastosComunes",
-    "luz",
-    "gas",
-    "aguaPotable",
-  ].map((campo) => (
-    <div className="form-check col-6 col-md-4" key={campo}>
-      <input
-        className="form-check-input"
-        type="checkbox"
-        id={`chk-${campo}`}
-        checked={propiedad[campo] || false} // ✅ usar propiedad en vez de propiedadSeleccionada
-        onChange={(e) =>
-          setPropiedad({ ...propiedad, [campo]: e.target.checked }) // ✅ actualizar propiedad
-        }
-      />
-      <label className="form-check-label text-black" htmlFor={`chk-${campo}`}>
-        {campo
-          .replace(/([A-Z])/g, " $1") // agrega espacio antes de mayúsculas
-          .replace(/^./, (str) => str.toUpperCase())} {/* capitaliza primera letra */}
-      </label>
-    </div>
-  ))}
-</div>
+              {/* Servicios */}
+              <h4 className="mt-3">Servicios / Características</h4>
+              <div className="d-flex flex-wrap gap-3 mb-3">
+                {[
+                  "alumbradoPublico",
+                  "gasNatural",
+                  "cloacas",
+                  "agua",
+                  "calleAsfaltada",
+                  "bombadeagua",
+                  "patio",
+                  "pileta",
+                  "cochera",
+                  "jardin",
+                  "balcon",
+                  "terraza",
+                  "lavadero",
+                  "parrilla",
+                  "alarmaSeguridad",
+                  "camarasSeguridad",
+                  "aireAcondicionado",
+                  "calefaccionCentral",
+                  "internet",
+                  "tvCable",
+                  "telefono",
+                  "expensas",
+                  "mantenimiento",
+                  "gastosComunes",
+                  "luz",
+                  "gas",
+                  "aguaPotable",
+                ].map((campo) => (
+                  <div className="form-check col-6 col-md-4" key={campo}>
+                    <input
+                      className="form-check-input"
+                      type="checkbox"
+                      id={`chk-${campo}`}
+                      checked={propiedad[campo] || false} // ✅ usar propiedad en vez de propiedadSeleccionada
+                      onChange={(e) =>
+                        setPropiedad({ ...propiedad, [campo]: e.target.checked }) // ✅ actualizar propiedad
+                      }
+                    />
+                    <label className="form-check-label text-black" htmlFor={`chk-${campo}`}>
+                      {campo
+                        .replace(/([A-Z])/g, " $1") // agrega espacio antes de mayúsculas
+                        .replace(/^./, (str) => str.toUpperCase())} {/* capitaliza primera letra */}
+                    </label>
+                  </div>
+                ))}
+              </div>
 
 
               {/* Propiedad y tipo */}
               <div className="mb-3">
-  <label className="form-label">Propiedad</label>
-  <select
-    className="form-control"
-    value={propiedad.propiedadEn}
-    onChange={(e) => setPropiedad({ ...propiedad, propiedadEn: e.target.value })}
-    required
-  >
-    <option value="">Seleccione una opción</option>
-    <option value="venta">Venta</option>
-    <option value="alquiler">Alquiler</option>
-    <option value="alquilada">Alquilada</option>
-    <option value="vendida">Vendida</option>
-  </select>
-</div>
+                <label className="form-label">Propiedad</label>
+                <select
+                  className="form-control"
+                  value={propiedad.propiedadEn}
+                  onChange={(e) => setPropiedad({ ...propiedad, propiedadEn: e.target.value })}
+                  required
+                >
+                  <option value="">Seleccione una opción</option>
+                  <option value="venta">Venta</option>
+                  <option value="alquiler">Alquiler</option>
+                  <option value="alquilada">Alquilada</option>
+                  <option value="vendida">Vendida</option>
+                </select>
+              </div>
 
               <div className="mb-3">
-  <label className="form-label">Tipo de propiedad</label>
-  <select
-    className="form-control"
-    value={propiedad.tipoDePropiedad}
-    onChange={(e) => setPropiedad({ ...propiedad, tipoDePropiedad: e.target.value })}
-    required
-  >
-    <option value="">Seleccione una opción</option>
-    <option value="Casa">Casa</option>
-    <option value="Lote">Lote</option>
-    <option value="Galpón">Galpón</option>
-    <option value="Departamento">Departamento</option>
-    <option value="Dúplex">Dúplex</option>
-    <option value="Oficinas">Oficinas</option>
-    <option value="Local">Local</option>
-  </select>
-</div>
+                <label className="form-label">Tipo de propiedad</label>
+                <select
+                  className="form-control"
+                  value={propiedad.tipoDePropiedad}
+                  onChange={(e) => setPropiedad({ ...propiedad, tipoDePropiedad: e.target.value })}
+                  required
+                >
+                  <option value="">Seleccione una opción</option>
+                  <option value="Casa">Casa</option>
+                  <option value="Lote">Lote</option>
+                  <option value="Galpón">Galpón</option>
+                  <option value="Departamento">Departamento</option>
+                  <option value="Dúplex">Dúplex</option>
+                  <option value="Oficinas">Oficinas</option>
+                  <option value="Local">Local</option>
+                </select>
+              </div>
 
 
               {/* Dirección */}

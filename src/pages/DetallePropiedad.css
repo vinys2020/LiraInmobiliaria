@@ -1,64 +1,63 @@
 /* Contenedor principal */
 .detalle-propiedad {
-    margin-top: 110px;
-    max-width: 100%;
-    background-color: #ffffff;
-    padding-bottom: 50px;
+  margin-top: 110px;
+  max-width: 100%;
+  background-color: #ffffff;
+  padding-bottom: 50px;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .detalle-propiedad {
+    margin-top: 20px;
+    padding: 15px;
   }
-  
-  /* Mobile */
-  @media (max-width: 768px) {
-    .detalle-propiedad {
-      margin-top: 20px;
-      padding: 15px;
-    }
-  }
-  
-  /* Spinner centrado */
-  .spinner-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 80vh;
-  }
-  
-  /* Imágenes con efecto hover */
-  .propiedad-img {
-    object-fit: cover;
-    height: 180px;
-    width: 100%;
-    cursor: pointer;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  
-  .propiedad-img:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
-  }
-  
-  /* Secciones con estilo limpio y sombra */
-  .detalle-section {
-    transition: all 0.3s ease;
-  }
-  
-  .detalle-section:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
-  }
-  
-  /* Badges elegantes */
-  .detalle-badge {
-    background-color: #ffffff;
-    border: 1px solid #dee2e6;
-    color: #343a40;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    padding: 0.5rem 0.8rem;
-    font-size: 0.9rem;
-    border-radius: 0.5rem;
-    transition: transform 0.2s ease;
-  }
-  
-  .detalle-badge:hover {
-    transform: scale(1.05);
-  }
-  
+}
+
+/* Spinner centrado */
+.spinner-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
+
+/* Imágenes con efecto hover */
+.propiedad-img {
+  object-fit: cover;
+  height: 180px;
+  width: 100%;
+  cursor: pointer;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.propiedad-img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+}
+
+/* Secciones con estilo limpio y sombra */
+.detalle-section {
+  transition: all 0.3s ease;
+}
+
+.detalle-section:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+/* Badges elegantes */
+.detalle-badge {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  color: #343a40;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 0.5rem 0.8rem;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  transition: transform 0.2s ease;
+}
+
+.detalle-badge:hover {
+  transform: scale(1.05);
+}
