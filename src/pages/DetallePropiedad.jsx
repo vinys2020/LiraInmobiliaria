@@ -9,7 +9,19 @@ import {
   FaSwimmingPool,
   FaBurn,
   FaLeaf,
+} from "react-icons/fa";
+import {
+  FaHeart,
+  FaShareAlt,
+  FaPrint,
+  FaWhatsapp,
+  FaFacebookF,
+  FaTwitter,
+  FaPinterestP,
+  FaLinkedinIn,
+  FaEnvelope,
   FaMapMarkerAlt,
+  FaHome
 } from "react-icons/fa";
 import { doc, getDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
@@ -18,6 +30,8 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./DetallePropiedad.css";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
+import { NavLink } from "react-router-dom";
+
 
 
 
@@ -30,6 +44,13 @@ const DetallePropiedad = () => {
 
 
   const propiedadId = location.state?.id || null;
+
+  const getMonedaSimbolo = (moneda) => {
+    if (moneda === "U$S" || moneda === "USD") return "U$S";
+    if (moneda === "ARS") return "ARS $";
+    return "";
+  };
+
 
   useEffect(() => {
     if (!propiedadId) return;
@@ -65,10 +86,140 @@ const DetallePropiedad = () => {
 
   return (
     <div className="container detalle-propiedad p-lg-5">
-      {/* Título */}
-      <h1 className="text-dark titulo-prata text-center mb-4 pt-lg-0 pt-5">
-        {propiedad.titulo}
-      </h1>
+      {/* Page Title con Breadcrumb y Herramientas */}
+      <div className="page-title-wrap mb-4">
+        <div className="container">
+
+          {/* Breadcrumb + Herramientas */}
+          <div className="d-flex align-items-center justify-content-between flex-wrap">
+
+            {/* Breadcrumb */}
+            <div className="breadcrumb-wrap">
+              <nav>
+                <ol className="breadcrumb mb-0">
+                  <li className="breadcrumb-item breadcrumb-item-home">
+                    <FaHome className="me-1 text-danger" />
+                    <NavLink to="/">Home</NavLink>
+                  </li>
+
+                  <li className="breadcrumb-item active">{propiedad.titulo}</li>
+                </ol>
+              </nav>
+            </div>
+
+            {/* Herramientas: Favorito, Share, Print */}
+            <ul className="item-tools d-flex gap-2 mb-0 list-unstyled">
+
+
+              <li className="item-tool houzez-share dropdown">
+                <span
+                  className="item-tool dropdown-toggle"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  <FaShareAlt />
+                </span>
+                <div className="dropdown-menu dropdown-menu-end item-tool-dropdown-menu">
+                  <a
+                    className="dropdown-item"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://api.whatsapp.com/send?text=${encodeURIComponent(propiedad.titulo + " " + window.location.href)}`}
+                  >
+                    <FaWhatsapp className="me-1 text-success" /> WhatsApp
+                  </a>
+                  <a
+                    className="dropdown-item"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://www.facebook.com/sharer.php?u=${encodeURIComponent(window.location.href)}`}
+                  >
+                    <FaFacebookF className="me-1 text-primary" /> Facebook
+                  </a>
+                  <a
+                    className="dropdown-item"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(propiedad.titulo)}&url=${encodeURIComponent(window.location.href)}`}
+                  >
+                    <FaTwitter className="me-1 text-info" /> Twitter
+                  </a>
+                  <a
+                    className="dropdown-item"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${propiedad.imagenes[0]}`}
+                  >
+                    <FaPinterestP className="me-1 text-danger" /> Pinterest
+                  </a>
+                  <a
+                    className="dropdown-item"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    href={`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(window.location.href)}&title=${encodeURIComponent(propiedad.titulo)}`}
+                  >
+                    <FaLinkedinIn className="me-1 text-primary" /> LinkedIn
+                  </a>
+                  <a
+                    className="dropdown-item"
+                    href={`mailto:?Subject=${encodeURIComponent(propiedad.titulo)}&body=${encodeURIComponent(window.location.href)}`}
+                  >
+                    <FaEnvelope className="me-1 text-dark" /> Correo
+                  </a>
+                </div>
+              </li>
+              <li className="item-tool houzez-print">
+                <span
+                  className="item-tool-compare"
+                  style={{ cursor: "pointer" }}
+                  onClick={() => window.print()}
+                >
+                  <FaPrint />
+                </span>
+              </li>
+
+            </ul>
+          </div>
+
+
+          {/* Título y Precio */}
+          <div className="d-flex align-items-center justify-content-between flex-wrap mt-3">
+            <div className="page-title">
+              <h1 className="text-dark titulo-prata">{propiedad.titulo}</h1>
+            </div>
+            {propiedad.precio && (
+              <ul className="item-price-wrap mb-0 list-unstyled">
+                <li className="item-price fs-2 text-dark">
+                  {`${getMonedaSimbolo(propiedad.moneda)} ${propiedad.precio.toLocaleString()}`}
+                  {propiedad.tipoContrato ? `/${propiedad.tipoContrato}` : ""}
+                  {propiedad.propiedadEn?.toUpperCase() === "ALQUILER" ? "/Mensuales" : ""}
+                </li>
+              </ul>
+            )}
+
+
+          </div>
+
+          {/* Estado y Dirección */}
+          <div className="property-labels-wrap mt-2">
+            {propiedad.propiedadEn && (
+              <span className="badge px-3 py-2 bg-light text-dark shadow-sm">
+                {propiedad.propiedadEn.toUpperCase()}
+              </span>
+            )}
+          </div>
+
+
+          {propiedad.direccion && (
+            <address className="item-address mt-2">
+              <FaMapMarkerAlt className="me-1 text-danger" />
+              {`${propiedad.direccion.calle} ${propiedad.direccion.numero || ""}`}
+            </address>
+          )}
+
+        </div>
+      </div>
+
 
       {/* Cuadrícula de imágenes mejorada */}
       {propiedad.imagenes && propiedad.imagenes.length > 0 && (
@@ -142,62 +293,62 @@ const DetallePropiedad = () => {
         </div>
       )}
 
-{/* Pie de fotos / Overview */}
-<div className="col-12 mb-4">
-  <div className="block-wrap">
-    <div className="d-flex property-overview-data flex-wrap justify-content-center">
+      {/* Pie de fotos / Overview */}
+      <div className="col-12 mb-4">
+        <div className="block-wrap">
+          <div className="d-flex property-overview-data flex-wrap justify-content-center">
 
-      {/* Tipo de propiedad */}
-      <ul className="list-unstyled flex-fill text-center">
-        <li className="property-overview-item">
-          <strong>{propiedad.tipo || "Casa"}</strong>
-        </li>
-        <li className="hz-meta-label property-overview-type">Tipo de propiedad</li>
-      </ul>
+            {/* Tipo de propiedad */}
+            <ul className="list-unstyled flex-fill text-center">
+              <li className="property-overview-item">
+                <strong>{propiedad.tipo || "Casa"}</strong>
+              </li>
+              <li className="hz-meta-label property-overview-type">Tipo de propiedad</li>
+            </ul>
 
-      {/* Habitaciones */}
-      {propiedad.habitaciones > 0 && (
-        <ul className="list-unstyled flex-fill text-center">
-          <li className="property-overview-item">
-            <FaBed className="me-1 text-danger" /> <strong>{propiedad.habitaciones}</strong>
-          </li>
-          <li className="hz-meta-label h-beds">Habitaciones</li>
-        </ul>
-      )}
+            {/* Habitaciones */}
+            {propiedad.habitaciones > 0 && (
+              <ul className="list-unstyled flex-fill text-center">
+                <li className="property-overview-item">
+                  <FaBed className="me-1 text-danger" /> <strong>{propiedad.habitaciones}</strong>
+                </li>
+                <li className="hz-meta-label h-beds">Habitaciones</li>
+              </ul>
+            )}
 
-      {/* Baños */}
-      {propiedad.baños > 0 && (
-        <ul className="list-unstyled flex-fill text-center">
-          <li className="property-overview-item">
-            <FaBath className="me-1 text-danger" /> <strong>{propiedad.baños}</strong>
-          </li>
-          <li className="hz-meta-label h-baths">Baño(s)</li>
-        </ul>
-      )}
+            {/* Baños */}
+            {propiedad.baños > 0 && (
+              <ul className="list-unstyled flex-fill text-center">
+                <li className="property-overview-item">
+                  <FaBath className="me-1 text-danger" /> <strong>{propiedad.baños}</strong>
+                </li>
+                <li className="hz-meta-label h-baths">Baño(s)</li>
+              </ul>
+            )}
 
-      {/* Garage / Cochera */}
-      {propiedad.cochera > 0 && (
-        <ul className="list-unstyled flex-fill text-center">
-          <li className="property-overview-item">
-            <FaCar className="me-1 text-danger" /> <strong>{propiedad.cochera}</strong>
-          </li>
-          <li className="hz-meta-label h-garage">Cochera</li>
-        </ul>
-      )}
+            {/* Garage / Cochera */}
+            {propiedad.cochera > 0 && (
+              <ul className="list-unstyled flex-fill text-center">
+                <li className="property-overview-item">
+                  <FaCar className="me-1 text-danger" /> <strong>{propiedad.cochera}</strong>
+                </li>
+                <li className="hz-meta-label h-garage">Cochera</li>
+              </ul>
+            )}
 
-      {/* Superficie */}
-      {propiedad.m2 > 0 && (
-        <ul className="list-unstyled flex-fill text-center">
-          <li className="property-overview-item">
-            <FaRulerCombined className="me-1 text-danger" /> <strong>{propiedad.m2}</strong>
-          </li>
-          <li className="hz-meta-label h-area">m²</li>
-        </ul>
-      )}
+            {/* Superficie */}
+            {propiedad.m2 > 0 && (
+              <ul className="list-unstyled flex-fill text-center">
+                <li className="property-overview-item">
+                  <FaRulerCombined className="me-1 text-danger" /> <strong>{propiedad.m2}</strong>
+                </li>
+                <li className="hz-meta-label h-area">m²</li>
+              </ul>
+            )}
 
-    </div>
-  </div>
-</div>
+          </div>
+        </div>
+      </div>
 
 
 

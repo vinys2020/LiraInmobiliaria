@@ -94,6 +94,36 @@
   color: #6c757d;
 }
 
+
+@media print {
+  body * {
+    visibility: hidden; /* Oculta todo por defecto */
+  }
+
+  .detalle-propiedad, .detalle-propiedad * {
+    visibility: visible; /* Solo muestra el contenido que queremos imprimir */
+  }
+
+  .detalle-propiedad {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+  }
+
+  /* Ajusta imágenes para que entren en la página */
+  .propiedad-img {
+    max-width: 100%;
+    height: auto !important;
+    object-fit: contain !important;
+  }
+
+  /* Opcional: ocultar elementos innecesarios */
+  .item-tools, .btn, nav, .breadcrumb {
+    display: none !important;
+  }
+}
+
 /* Ajustes para móviles */
 @media (max-width: 576px) {
   .property-overview-data ul {
