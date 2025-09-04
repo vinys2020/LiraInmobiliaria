@@ -116,13 +116,18 @@ const Card = ({ propiedad }) => {
           </h6>
 
           <p
-            className="card-text text-muted small mb-1"
-            style={{ minHeight: "2em" }}
-          >
-            {propiedad.descripcion?.length > 120
-              ? propiedad.descripcion.slice(0, 120) + "…"
-              : propiedad.descripcion || "Sin descripción disponible"}
-          </p>
+  className="card-text text-muted small mb-1"
+  style={{
+    display: "-webkit-box",
+    WebkitLineClamp: 2,
+    WebkitBoxOrient: "vertical",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    wordWrap: "break-word",
+  }}
+>
+  {propiedad.descripcion || "Sin descripción disponible"}
+</p>
 
           {/* Métricas */}
           <div className="d-flex flex-wrap gap-2 text-muted small mb-2">

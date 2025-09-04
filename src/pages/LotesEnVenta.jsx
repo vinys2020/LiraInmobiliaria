@@ -87,7 +87,7 @@ const LotesEnVenta = () => {
     <main className="lotes-venta-page" style={{ backgroundColor: "#ffffff" }}>
 
       <section className="py-5" style={{ backgroundColor: "inherit", paddingBottom: 0 }}>
-        <div className="mx-lg-5 mx-3">
+        <div className="container">
           <h2 className="text-center text-danger mb-4 mx-lg-1" style={{ fontFamily: "Prata, serif" }}>
             Lotes en Venta
           </h2>

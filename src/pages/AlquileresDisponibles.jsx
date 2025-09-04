@@ -181,9 +181,9 @@ const AlquileresDisponibles = () => {
               ) : (
                 <div className="row">
                   {propiedadesFiltradas.map((prop) => (
-                    <div key={prop.id} className="col-12 col-md-6 col-lg-4">
-                      <Card propiedad={prop} />
-                    </div>
+  <div key={prop.id} className="col-12 col-md-6 col-lg-4 mb-4 d-flex">
+  <Card propiedad={prop} />
+</div>
                   ))}
                 </div>
               )}
