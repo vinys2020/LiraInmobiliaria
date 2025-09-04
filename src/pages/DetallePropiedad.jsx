@@ -31,11 +31,15 @@ import "./DetallePropiedad.css";
 import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { NavLink } from "react-router-dom";
+import { useParams } from "react-router-dom";
+
+
 
 
 
 
 const DetallePropiedad = () => {
+  const { id } = useParams(); // ✅ obtenemos el ID de la URL
   const navigate = useNavigate();
   const location = useLocation();
   const [propiedad, setPropiedad] = useState(null);
@@ -53,10 +57,11 @@ const DetallePropiedad = () => {
 
 
   useEffect(() => {
-    if (!propiedadId) return;
+    if (!id) return;
+  
     const fetchPropiedad = async () => {
       try {
-        const docRef = doc(db, "Propiedades", propiedadId);
+        const docRef = doc(db, "Propiedades", id);
         const docSnap = await getDoc(docRef);
         if (docSnap.exists()) {
           setPropiedad({ id: docSnap.id, ...docSnap.data() });
@@ -69,8 +74,9 @@ const DetallePropiedad = () => {
         setLoading(false);
       }
     };
+  
     fetchPropiedad();
-  }, [propiedadId]);
+  }, [id]);
 
   if (loading)
     return (
@@ -85,10 +91,10 @@ const DetallePropiedad = () => {
     return <div className="text-center py-5">Propiedad no encontrada</div>;
 
   return (
-    <div className="container detalle-propiedad p-lg-5">
+    <div className="detalle-propiedad p-lg-5">
       {/* Page Title con Breadcrumb y Herramientas */}
       <div className="page-title-wrap mb-4">
-        <div className="container">
+        <div className="container-fluid">
 
           {/* Breadcrumb + Herramientas */}
           <div className="d-flex align-items-center justify-content-between flex-wrap">
@@ -295,7 +301,7 @@ const DetallePropiedad = () => {
 
       {/* Pie de fotos / Overview */}
       <div className="col-12 mb-4">
-        <div className="block-wrap">
+        <div className="block-wrap container">
           <div className="d-flex property-overview-data flex-wrap justify-content-center">
 
             {/* Tipo de propiedad */}

@@ -37,7 +37,7 @@ const Card = ({ propiedad }) => {
     <article className="col-12 col-md-12 col-lg-12">
       <div
         className="card h-100 shadow-sm border-0 rounded-3 p-0 overflow-hidden hover-shadow"
-        onClick={() => navigate("/detalle-propiedad", { state: { id: propiedad.id } })} // ✅ Abre detalle
+        onClick={() => navigate(`/detalle-propiedad/${propiedad.id}`)}
         style={{ cursor: "pointer" }}
       >
         {/* Imagen + badge */}

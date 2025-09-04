@@ -21,7 +21,7 @@ const Navbar = () => {
 
   // ✅ RUTAS CON NAVBAR BLANCO
   const whiteNavbarRoutes = [
-    "/detalle-propiedad",
+    /^\/detalle-propiedad(\/.*)?$/, // Cualquier /detalle-propiedad o /detalle-propiedad/:id
     "/alquileres",
     "/PropiedadesEnVenta",
     "/LotesEnVenta",
@@ -33,8 +33,10 @@ const Navbar = () => {
 
   ];
 
-  // Determina si la ruta actual necesita navbar blanco
-  const isWhiteNavbar = whiteNavbarRoutes.includes(window.location.pathname);
+  const isWhiteNavbar = whiteNavbarRoutes.some(route => 
+    route instanceof RegExp ? route.test(window.location.pathname) : route === window.location.pathname
+  );
+  
 
   // Selecciona el logo según la ruta
   const logoToUse = isWhiteNavbar ? navbarlogoRojo : navbarlogo;

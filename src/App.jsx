@@ -37,7 +37,7 @@ function App() {
         <Route path="/SobreNosotros" element={<SobreNosotros />} />
         <Route path="/contacto" element={<Contactos />} />
         <Route path="/todaspropiedades" element={<TodasPropiedades />} />
-        <Route path="/detalle-propiedad" element={<DetallePropiedad />} />
+        <Route path="/detalle-propiedad/:id" element={<DetallePropiedad />} />
 
 
 
