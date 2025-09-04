@@ -222,14 +222,18 @@ const Navbar = () => {
 
             {/* Botón hamburguesa para móvil */}
             <button
-              className="navbar-toggler d-lg-none border border-light"
-              type="button"
-              onClick={toggleMenu}
-              aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-              aria-expanded={menuOpen}
-            >
-              {menuOpen ? <FaTimes color="white" size={24} /> : <FaBars color="white" size={24} />}
-            </button>
+  className="navbar-toggler d-lg-none border"
+  type="button"
+  onClick={toggleMenu}
+  aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
+  aria-expanded={menuOpen}
+>
+  {menuOpen ? (
+    <FaTimes color={isWhiteNavbar ? "#000" : "#fff"} size={24} />
+  ) : (
+    <FaBars color={isWhiteNavbar ? "#000" : "#fff"} size={24} />
+  )}
+</button>
           </div>
 
           {/* Sidebar móvil */}

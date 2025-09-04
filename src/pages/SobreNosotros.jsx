@@ -20,7 +20,7 @@ const SobreNosotros = () => {
         <div className="hero-overlay">
           <div className="hero-content text-center">
             <h1 className="titulo-prata">Lira Inmobiliaria</h1>
-            <p>Más de 30 años de experiencia en el sector inmobiliario</p>
+            <p className="mx-2">Más de 30 años de experiencia en el sector inmobiliario</p>
           </div>
         </div>
       </section>

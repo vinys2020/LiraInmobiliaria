@@ -4,13 +4,16 @@
   max-width: 100%;
   background-color: #ffffff;
   padding-bottom: 50px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 /* Mobile */
 @media (max-width: 768px) {
   .detalle-propiedad {
-    margin-top: 20px;
-    padding: 15px;
+    margin-top: 80px;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 }
 
@@ -25,18 +28,24 @@
 /* Imágenes con efecto hover */
 .propiedad-img {
   object-fit: cover;
-  height: 180px;
   width: 100%;
   cursor: pointer;
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
 }
 
 .propiedad-img:hover {
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+  transform: scale(1.02);
 }
 
 /* Secciones con estilo limpio y sombra */
 .detalle-section {
   transition: all 0.3s ease;
+  background-color: #fff;
+  border-radius: 0.5rem;
+  padding: 20px;
+  margin-bottom: 25px;
 }
 
 .detalle-section:hover {
@@ -52,10 +61,56 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
   padding: 0.5rem 0.8rem;
   font-size: 0.9rem;
-  border-radius: 0rem;
-  transition: transform 0.2s ease;
+  border-radius: 0.25rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
 }
 
 .detalle-badge:hover {
   transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Pie de fotos / Overview responsive */
+.property-overview-data {
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.property-overview-data ul {
+  flex: 1 1 45%;
+  margin: 0;
+}
+
+.property-overview-data li.property-overview-item {
+  font-weight: bold;
+  font-size: 1rem;
+}
+
+.property-overview-data li.hz-meta-label {
+  font-size: 0.85rem;
+  color: #6c757d;
+}
+
+/* Ajustes para móviles */
+@media (max-width: 576px) {
+  .property-overview-data ul {
+    flex: 1 1 100%;
+    text-align: center;
+  }
+
+  .detalle-badge {
+    font-size: 0.9rem;
+    padding: 0.4rem 0.6rem;
+  }
+
+  .propiedad-img {
+    height: 150px;
+  }
+
+  .detalle-section {
+    padding: 15px;
+  }
 }

@@ -64,15 +64,15 @@ const DetallePropiedad = () => {
     return <div className="text-center py-5">Propiedad no encontrada</div>;
 
   return (
-    <div className="container detalle-propiedad p-5">
+    <div className="container detalle-propiedad p-lg-5">
       {/* Título */}
-      <h1 className="text-danger titulo-prata text-center mb-4">
+      <h1 className="text-dark titulo-prata text-center mb-4 pt-lg-0 pt-5">
         {propiedad.titulo}
       </h1>
 
       {/* Cuadrícula de imágenes mejorada */}
       {propiedad.imagenes && propiedad.imagenes.length > 0 && (
-        <div className="row justify-content-center g-3 mb-5 position-relative">
+        <div className="row justify-content-center g-lg-3 mb-lg-5 mb-4  position-relative">
           {/* Imagen principal grande */}
           <div className="col-12 col-md-8 mb-3 mb-md-0">
             <img
@@ -142,52 +142,63 @@ const DetallePropiedad = () => {
         </div>
       )}
 
-      {/* Pie de fotos / Overview */}
-      <div className="col-12 mb-4">
-        <div className="block-wrap">
-          <div className="d-flex property-overview-data">
-            {/* Tipo de propiedad */}
-            <ul className="list-unstyled flex-fill text-center">
-              <li className="property-overview-item">
-                <strong>{propiedad.tipo || "Casa"}</strong>
-              </li>
-              <li className="hz-meta-label property-overview-type">Tipo de propiedad</li>
-            </ul>
+{/* Pie de fotos / Overview */}
+<div className="col-12 mb-4">
+  <div className="block-wrap">
+    <div className="d-flex property-overview-data flex-wrap justify-content-center">
 
-            {/* Habitaciones */}
-            <ul className="list-unstyled flex-fill text-center">
-              <li className="property-overview-item">
-                <FaBed className="me-1 text-danger" /> <strong>{propiedad.habitaciones || 0}</strong>
-              </li>
-              <li className="hz-meta-label h-beds">Habitaciones</li>
-            </ul>
+      {/* Tipo de propiedad */}
+      <ul className="list-unstyled flex-fill text-center">
+        <li className="property-overview-item">
+          <strong>{propiedad.tipo || "Casa"}</strong>
+        </li>
+        <li className="hz-meta-label property-overview-type">Tipo de propiedad</li>
+      </ul>
 
-            {/* Baños */}
-            <ul className="list-unstyled flex-fill text-center">
-              <li className="property-overview-item">
-                <FaBath className="me-1 text-danger" /> <strong>{propiedad.baños || 0}</strong>
-              </li>
-              <li className="hz-meta-label h-baths">Baño(s)</li>
-            </ul>
+      {/* Habitaciones */}
+      {propiedad.habitaciones > 0 && (
+        <ul className="list-unstyled flex-fill text-center">
+          <li className="property-overview-item">
+            <FaBed className="me-1 text-danger" /> <strong>{propiedad.habitaciones}</strong>
+          </li>
+          <li className="hz-meta-label h-beds">Habitaciones</li>
+        </ul>
+      )}
 
-            {/* Garage / Cochera */}
-            <ul className="list-unstyled flex-fill text-center">
-              <li className="property-overview-item">
-                <FaCar className="me-1 text-danger" /> <strong>{propiedad.cochera || 0}</strong>
-              </li>
-              <li className="hz-meta-label h-garage">Cochera</li>
-            </ul>
+      {/* Baños */}
+      {propiedad.baños > 0 && (
+        <ul className="list-unstyled flex-fill text-center">
+          <li className="property-overview-item">
+            <FaBath className="me-1 text-danger" /> <strong>{propiedad.baños}</strong>
+          </li>
+          <li className="hz-meta-label h-baths">Baño(s)</li>
+        </ul>
+      )}
 
-            {/* Superficie */}
-            <ul className="list-unstyled flex-fill text-center">
-              <li className="property-overview-item">
-                <FaRulerCombined className="me-1 text-danger" /> <strong>{propiedad.m2 || 0}</strong>
-              </li>
-              <li className="hz-meta-label h-area">m²</li>
-            </ul>
-          </div>
-        </div>
-      </div>
+      {/* Garage / Cochera */}
+      {propiedad.cochera > 0 && (
+        <ul className="list-unstyled flex-fill text-center">
+          <li className="property-overview-item">
+            <FaCar className="me-1 text-danger" /> <strong>{propiedad.cochera}</strong>
+          </li>
+          <li className="hz-meta-label h-garage">Cochera</li>
+        </ul>
+      )}
+
+      {/* Superficie */}
+      {propiedad.m2 > 0 && (
+        <ul className="list-unstyled flex-fill text-center">
+          <li className="property-overview-item">
+            <FaRulerCombined className="me-1 text-danger" /> <strong>{propiedad.m2}</strong>
+          </li>
+          <li className="hz-meta-label h-area">m²</li>
+        </ul>
+      )}
+
+    </div>
+  </div>
+</div>
+
 
 
 

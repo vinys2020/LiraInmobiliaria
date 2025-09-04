@@ -180,7 +180,7 @@ header.visible {
   }
 
   .navbar-nav .nav-link.active {
-    background-color: #b02a37;
+    background-color: #d7d5d5;
     color: white;
     border-radius: 10px;
   }
