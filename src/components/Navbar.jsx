@@ -26,6 +26,11 @@ const Navbar = () => {
     "/PropiedadesEnVenta",
     "/LotesEnVenta",
     "/contacto",
+    "/admin",
+    "/propiedades",
+
+
+
   ];
 
   // Determina si la ruta actual necesita navbar blanco
