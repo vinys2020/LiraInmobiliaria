@@ -28,6 +28,7 @@ const Navbar = () => {
     "/contacto",
     "/admin",
     "/propiedades",
+    "/TodasPropiedades",
 
 
 

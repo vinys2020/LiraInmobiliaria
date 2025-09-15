@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { collection, getDocs, onSnapshot } from "firebase/firestore";
 import { db } from "../config/firebase"; // tu configuración de Firebase
 import AgregarPropiedadModal from "../components/AgregarPropiedadModal";
+import Card from "../components/Card";
 
 import {
   FaBath,

@@ -4,6 +4,7 @@ import { FaBed, FaBath, FaRulerCombined, FaCar, FaMapMarkerAlt } from "react-ico
 import "./Card.css";
 import { useNavigate } from "react-router-dom"; // ✅ Importar navegación
 
+
 const Card = ({ propiedad }) => {
   const navigate = useNavigate(); // ✅ Hook para navegar
   const [imgIndex, setImgIndex] = useState(0);
