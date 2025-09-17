@@ -210,34 +210,110 @@ function Home() {
 
 
 
-      {/* Sección Alquileres */}
-      <section className="py-5" style={{ backgroundColor: "white", padding: "30px 0" }}>
-        <div className="container">
-          <h2 className="text-danger mb-1 text-center titulo-prata">
-            Alquileres Destacados
-          </h2>
-          <p className="mb-3 text-center">
-            Encontrá la propiedad ideal para vos.
-          </p>
 
-          <div className="row g-4 justify-content-center">
-            {propiedades
-              .filter((p) => p.propiedadEn === "alquiler")
-              .map((prop) => (
+{/* Sección Alquileres */}
+<section
+  id="alquileres-section"
+  className="py-5"
+  style={{ backgroundColor: "white", padding: "30px 0" }}
+>
+  <div className="container">
+    <h2 className="text-danger mb-1 text-center titulo-prata">
+      Alquileres Destacados
+    </h2>
+    <p className="mb-3 text-center">
+      Encontrá la propiedad ideal para vos.
+    </p>
+
+    {(() => {
+      const propiedadesFiltradas = propiedades.filter((p) => p.propiedadEn === "alquiler");
+
+      const [pagina, setPagina] = useState(1);
+      const porPagina = 9;
+      const totalPaginas = Math.ceil(propiedadesFiltradas.length / porPagina);
+      const inicio = (pagina - 1) * porPagina;
+      const fin = inicio + porPagina;
+      const propiedadesPaginadas = propiedadesFiltradas.slice(inicio, fin);
+
+      const scrollToSection = () => {
+        const section = document.getElementById("alquileres-section");
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      };
+
+      return (
+        <>
+          {/* Contenedor con min-height */}
+          <div
+            className="row g-4 justify-content-center"
+            style={{ minHeight: "700px" }} // 👈 reservamos el espacio
+          >
+            {propiedadesPaginadas.length > 0 ? (
+              propiedadesPaginadas.map((prop) => (
                 <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
                   <Card
                     propiedad={prop}
-                    onClick={() => navigate("/detalle-propiedad", { state: { id: prop.id } })}
+                    onClick={() =>
+                      navigate("/detalle-propiedad", { state: { id: prop.id } })
+                    }
                   />
                 </div>
-              ))}
+              ))
+            ) : (
+              // Spinner de carga
+              <div className="d-flex justify-content-center align-items-center">
+                <div className="spinner-border text-danger" role="status">
+                  <span className="visually-hidden">Cargando...</span>
+                </div>
+              </div>
+            )}
           </div>
 
-          <div className="text-center mt-4 mb-0">
-            <a href="/alquileres" className="btn btn-danger">VER MÁS PROPIEDADES EN ALQUILER</a>
+          {/* Paginación con números */}
+          {totalPaginas > 1 && (
+            <div className="d-flex justify-content-center mt-4">
+              <nav>
+                <ul className="pagination">
+                  {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((num) => (
+                    <li
+                      key={num}
+                      className={`page-item ${pagina === num ? "active" : ""}`}
+                    >
+                      <button
+                        className={`page-link ${
+                          pagina === num
+                            ? "bg-danger text-white border-danger"
+                            : "text-dark"
+                        }`}
+                        onClick={() => {
+                          setPagina(num);
+                          scrollToSection();
+                        }}
+                      >
+                        {num}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          )}
+
+          {/* Botón de ver más propiedades */}
+          <div className="text-center mt-3">
+            <a href="/alquileres" className="btn btn-danger">
+              VER MÁS PROPIEDADES EN ALQUILER
+            </a>
           </div>
-        </div>
-      </section>
+        </>
+      );
+    })()}
+  </div>
+</section>
+
+
+
 
 
 
@@ -262,9 +338,11 @@ function Home() {
         )}
       </section>
 
+
       {/* Nueva sección de íconos */}
       <section className="py-4 bg-white">
         <div className="container mt-5">
+          <hr  className="mb-5 "/>
           <div className="row g-5">
 
             {/* Primer ítem */}
@@ -333,7 +411,11 @@ function Home() {
               </p>
             </div>
 
+
+
           </div>
+          <hr  className="mt-5 bg-black"/>
+
         </div>
       </section>
 
@@ -341,37 +423,107 @@ function Home() {
 
 
 
-      {/* Sección Venta */}
-      <section className="bg-white pt-2 py-5">
-        <div className="container">
-          <h2 className="text-danger mb-2 text-center mt-5 titulo-prata">
-            Propiedades en Venta
-          </h2>
-          <p className="mb-4 fs-6 text-center">
-            En Lira Inmobiliaria te asesoramos para que puedas tener el mejor rendimiento de tu venta o compra de un inmueble.
-          </p>
+{/* Sección Venta */}
+<section
+  id="venta-section"
+  className=""
+  style={{ backgroundColor: "white", padding: "30px 0" }}
+>
+  <div className="container">
+    <h2 className="text-danger mb-2 text-center  titulo-prata">
+      Propiedades en Venta
+    </h2>
+    <p className="mb-4 fs-6 text-center">
+      En Lira Inmobiliaria te asesoramos para que puedas tener el mejor rendimiento de tu venta o compra de un inmueble.
+    </p>
 
-          <div className="row g-4">
-            {propiedades
-              .filter((p) => p.propiedadEn === "venta")
-              .map((prop) => (
+    {(() => {
+      const propiedadesFiltradas = propiedades.filter((p) => p.propiedadEn === "venta");
+
+      const [pagina, setPagina] = useState(1);
+      const porPagina = 9;
+      const totalPaginas = Math.ceil(propiedadesFiltradas.length / porPagina);
+      const inicio = (pagina - 1) * porPagina;
+      const fin = inicio + porPagina;
+      const propiedadesPaginadas = propiedadesFiltradas.slice(inicio, fin);
+
+      const scrollToSection = () => {
+        const section = document.getElementById("venta-section");
+        if (section) {
+          section.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      };
+
+      return (
+        <>
+          {/* Contenedor con min-height */}
+          <div
+            className="row g-4 justify-content-center"
+            style={{ minHeight: "700px" }} // 👈 mantenemos la altura
+          >
+            {propiedadesPaginadas.length > 0 ? (
+              propiedadesPaginadas.map((prop) => (
                 <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
                   <Card
                     propiedad={prop}
-                    onClick={() => navigate("/detalle-propiedad", { state: { id: prop.id } })}
+                    onClick={() =>
+                      navigate("/detalle-propiedad", { state: { id: prop.id } })
+                    }
                   />
                 </div>
-              ))}
+              ))
+            ) : (
+              // Spinner de carga mientras se obtienen propiedades
+              <div className="d-flex justify-content-center align-items-center">
+                <div className="spinner-border text-danger" role="status">
+                  <span className="visually-hidden">Cargando...</span>
+                </div>
+              </div>
+            )}
           </div>
 
+          {/* Paginación */}
+          {totalPaginas > 1 && (
+            <div className="d-flex justify-content-center mt-4">
+              <nav>
+                <ul className="pagination">
+                  {Array.from({ length: totalPaginas }, (_, i) => i + 1).map((num) => (
+                    <li
+                      key={num}
+                      className={`page-item ${pagina === num ? "active" : ""}`}
+                    >
+                      <button
+                        className={`page-link ${
+                          pagina === num
+                            ? "bg-danger text-white border-danger"
+                            : "text-dark"
+                        }`}
+                        onClick={() => {
+                          setPagina(num);
+                          scrollToSection();
+                        }}
+                      >
+                        {num}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </nav>
+            </div>
+          )}
 
+          {/* Botón ver más propiedades */}
           <div className="text-center mt-4">
             <a href="/PropiedadesEnVenta" className="btn btn-danger mb-5">
               VER MÁS PROPIEDADES EN VENTA
             </a>
           </div>
-        </div>
-      </section>
+        </>
+      );
+    })()}
+  </div>
+</section>
+
 
 
 
