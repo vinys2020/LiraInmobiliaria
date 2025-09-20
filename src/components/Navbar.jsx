@@ -29,6 +29,8 @@ const Navbar = () => {
     "/admin",
     "/propiedades",
     "/TodasPropiedades",
+    "/propiedades-en-venta",
+    "/lotes-en-venta",
 
 
 

@@ -17,6 +17,7 @@ import SobreNosotros from "./pages/SobreNosotros";
 import Contactos from "./pages/Contactos";
 import TodasPropiedades from "./pages/TodasPropiedades";
 import DetallePropiedad from "./pages/DetallePropiedad";
+import NormalizeTrailingSlash from "./components/NormalizeTrailingSlash";
 
 
 // Rutas protegidas
@@ -28,12 +29,19 @@ function App() {
     <>
       <Navbar />
       <ScrollToTop smooth={true} />
+
+      <NormalizeTrailingSlash />
+
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/alquileres" element={<AlquileresDisponibles />} />
         <Route path="/PropiedadesEnVenta" element={<PropiedadesEnVenta />} />
+        <Route path="/propiedades-en-venta" element={<PropiedadesEnVenta />} />  {/* ✅ alias SEO friendly */}
+
         <Route path="/LotesEnVenta" element={<LotesEnVenta />} />
+        <Route path="/lotes-en-venta" element={<LotesEnVenta />} />
+
         <Route path="/SobreNosotros" element={<SobreNosotros />} />
         <Route path="/contacto" element={<Contactos />} />
         <Route path="/todaspropiedades" element={<TodasPropiedades />} />
