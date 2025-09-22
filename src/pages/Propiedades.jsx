@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, onSnapshot } from "firebase/firestore";
+import { collection, getDocs, onSnapshot, doc, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase"; // tu configuración de Firebase
 import AgregarPropiedadModal from "../components/AgregarPropiedadModal";
 import Card from "../components/Card";
@@ -548,7 +548,6 @@ export default function Propiedades() {
                   onSubmit={async (e) => {
                     e.preventDefault();
                     try {
-                      const { doc, updateDoc } = await import("firebase/firestore");
                       await updateDoc(doc(db, "Propiedades", propiedadSeleccionada.id), propiedadSeleccionada);
                       alert("Propiedad actualizada correctamente!");
                       setPropiedadSeleccionada(null);
@@ -881,7 +880,6 @@ export default function Propiedades() {
                   e.preventDefault();
 
                   try {
-                    const { doc, updateDoc } = await import("firebase/firestore");
 
                     // Actualizamos la fecha de última actualización
                     const fechaActualizacion = new Date().toISOString();

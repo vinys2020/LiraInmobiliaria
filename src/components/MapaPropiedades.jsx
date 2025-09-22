@@ -55,22 +55,77 @@ const MapaPropiedades = ({ propiedades }) => {
               icon={redIcon}
             >
               <Popup>
-                <a
-                  href={`https://www.google.com/maps?q=${latNum},${lngNum}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
+                <div style={{ textDecoration: "none", color: "inherit", maxWidth: "250px" }}>
+                  {/* Cuadrícula de máximo 2 imágenes */}
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(2, 1fr)",
+                      gap: "4px",
+                      marginBottom: "5px"
+                    }}
+                  >
+                    {prop.imagenes && prop.imagenes.length > 0
+                      ? prop.imagenes.slice(0, 2).map((img, index) => (
+                        <img
+                          key={index}
+                          src={img}
+                          alt={`${prop.titulo} ${index + 1}`}
+                          style={{
+                            width: "100%",
+                            height: "50px",
+                            objectFit: "cover",
+                            borderRadius: "3px"
+                          }}
+                        />
+                      ))
+                      : (
+                        <img
+                          src="/images/placeholder.png"
+                          alt="Placeholder"
+                          style={{
+                            width: "100%",
+                            height: "50px",
+                            objectFit: "cover",
+                            borderRadius: "3px"
+                          }}
+                        />
+                      )
+                    }
+                  </div>
+
+                  {/* Texto de la propiedad */}
                   <strong>{prop.titulo}</strong>
                   <br />
                   {prop.direccion?.calle}, {prop.direccion?.localidad}
                   <br />
-                  Latitud: {coords.lat} <br />
-                  Longitud: {coords.lng}
+                  <strong>Propiedad:</strong> {prop.propiedadEn === "venta" ? "En Venta" : prop.propiedadEn === "alquiler" ? "En Alquiler" : "Disponible"}
                   <br />
-                  <span style={{ color: "#007bff" }}>Ver en Google Maps</span>
-                </a>
+                  <a
+                    href={`/detalle-propiedad/${prop.id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#007bff", display: "block", marginTop: "5px" }}
+                  >
+                    Ver Detalle de la Propiedad
+                  </a>
+
+                  {/* Links */}
+                  <a
+                    href={`https://www.google.com/maps?q=${latNum},${lngNum}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: "#007bff", display: "block", marginTop: "5px" }}
+                  >
+                    Ver en Google Maps
+                  </a>
+
+                </div>
               </Popup>
+
+
+
+
             </Marker>
           );
         })}

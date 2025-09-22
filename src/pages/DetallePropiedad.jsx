@@ -58,7 +58,7 @@ const DetallePropiedad = () => {
 
   useEffect(() => {
     if (!id) return;
-  
+
     const fetchPropiedad = async () => {
       try {
         const docRef = doc(db, "Propiedades", id);
@@ -74,7 +74,7 @@ const DetallePropiedad = () => {
         setLoading(false);
       }
     };
-  
+
     fetchPropiedad();
   }, [id]);
 
@@ -91,6 +91,11 @@ const DetallePropiedad = () => {
     return <div className="text-center py-5">Propiedad no encontrada</div>;
 
   return (
+
+
+
+
+
     <div className="detalle-propiedad p-lg-5">
       {/* Page Title con Breadcrumb y Herramientas */}
       <div className="page-title-wrap mb-4">

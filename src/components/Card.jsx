@@ -1,27 +1,27 @@
-// Card.jsx
 import React, { useState } from "react";
 import { FaBed, FaBath, FaRulerCombined, FaCar, FaMapMarkerAlt } from "react-icons/fa";
 import "./Card.css";
-import { useNavigate } from "react-router-dom"; // ✅ Importar navegación
-
 
 const Card = ({ propiedad }) => {
-  const navigate = useNavigate(); // ✅ Hook para navegar
   const [imgIndex, setImgIndex] = useState(0);
+
   const imagenes =
     propiedad.imagenes && propiedad.imagenes.length > 0
       ? propiedad.imagenes
       : ["/images/placeholder.png"];
 
   const handlePrev = (e) => {
-    e.stopPropagation(); // ✅ Evita abrir el detalle
+    e.preventDefault(); // evita que <a> reciba el click
+    e.stopPropagation(); // evita que el evento suba
     setImgIndex((prev) => (prev === 0 ? imagenes.length - 1 : prev - 1));
   };
 
   const handleNext = (e) => {
-    e.stopPropagation(); // ✅ Evita abrir el detalle
+    e.preventDefault();
+    e.stopPropagation();
     setImgIndex((prev) => (prev === imagenes.length - 1 ? 0 : prev + 1));
   };
+
 
   const getMonedaSimbolo = (moneda) => {
     if (moneda === "U$S" || moneda === "USD") return "U$S";
@@ -36,10 +36,11 @@ const Card = ({ propiedad }) => {
 
   return (
     <article className="col-12 col-md-12 col-lg-12">
-      <div
-        className="card h-100 shadow-sm border-0 rounded-3 p-0 overflow-hidden hover-shadow"
-        onClick={() => navigate(`/detalle-propiedad/${propiedad.id}`)}
-        style={{ cursor: "pointer" }}
+      {/* 🔑 USAMOS <a> EN VEZ DE <div> PARA SOPORTAR CLICK DERECHO Y NUEVA PESTAÑA */}
+      <a
+        href={`/detalle-propiedad/${propiedad.id}`}
+        className="card h-100 shadow-sm border-0 rounded-3 p-0 overflow-hidden hover-shadow text-decoration-none"
+        style={{ cursor: "pointer", color: "inherit" }}
       >
         {/* Imagen + badge */}
         <div className="position-relative">
@@ -90,15 +91,16 @@ const Card = ({ propiedad }) => {
               >
                 &#8250;
               </button>
+              
             </>
           )}
 
           <span
             className={`badge position-absolute top-0 end-0 m-2 px-3 py-2 ${propiedad.propiedadEn === "venta"
-                ? "bg-primary"
-                : propiedad.propiedadEn === "alquiler"
-                  ? "bg-success"
-                  : "bg-secondary"
+              ? "bg-primary"
+              : propiedad.propiedadEn === "alquiler"
+                ? "bg-success"
+                : "bg-secondary"
               }`}
           >
             {propiedad.propiedadEn === "venta"
@@ -117,18 +119,18 @@ const Card = ({ propiedad }) => {
           </h6>
 
           <p
-  className="card-text text-muted small mb-1"
-  style={{
-    display: "-webkit-box",
-    WebkitLineClamp: 2,
-    WebkitBoxOrient: "vertical",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    wordWrap: "break-word",
-  }}
->
-  {propiedad.descripcion || "Sin descripción disponible"}
-</p>
+            className="card-text text-muted small mb-1"
+            style={{
+              display: "-webkit-box",
+              WebkitLineClamp: 2,
+              WebkitBoxOrient: "vertical",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              wordWrap: "break-word",
+            }}
+          >
+            {propiedad.descripcion || "Sin descripción disponible"}
+          </p>
 
           {/* Métricas */}
           <div className="d-flex flex-wrap gap-2 text-muted small mb-2">
@@ -189,18 +191,20 @@ const Card = ({ propiedad }) => {
                   {propiedad.direccion.provincia},{" "}
                   {propiedad.direccion.pais}
                 </div>
-                <a
+
+                {/* Reemplazamos <a> por <button> */}
+                <button
                   className="btn btn-danger btn-sm d-flex align-items-center justify-content-center"
-                  href={
-                    propiedad.ubicacionGeo?.lat &&
-                      propiedad.ubicacionGeo?.lng
-                      ? `https://www.google.com/maps?q=${propiedad.ubicacionGeo.lat},${propiedad.ubicacionGeo.lng}`
-                      : `https://www.google.com/maps?q=${encodeURIComponent(
-                        `${propiedad.direccion.calle} ${propiedad.direccion.localidad} ${propiedad.direccion.provincia} ${propiedad.direccion.pais}`
-                      )}`
-                  }
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    const url =
+                      propiedad.ubicacionGeo?.lat && propiedad.ubicacionGeo?.lng
+                        ? `https://www.google.com/maps?q=${propiedad.ubicacionGeo.lat},${propiedad.ubicacionGeo.lng}`
+                        : `https://www.google.com/maps?q=${encodeURIComponent(
+                          `${propiedad.direccion.calle} ${propiedad.direccion.localidad} ${propiedad.direccion.provincia} ${propiedad.direccion.pais}`
+                        )}`;
+                    window.open(url, "_blank", "noopener,noreferrer");
+                  }}
                   title="Ver en Google Maps"
                   style={{
                     minWidth: "110px",
@@ -208,7 +212,6 @@ const Card = ({ propiedad }) => {
                     gap: "6px",
                     whiteSpace: "nowrap",
                   }}
-                  onClick={(e) => e.stopPropagation()} // ✅ Evita navegar al detalle
                 >
                   <img
                     alt="Google Maps"
@@ -216,12 +219,13 @@ const Card = ({ propiedad }) => {
                     style={{ width: "20px", height: "20px" }}
                   />
                   <span>Ver en Maps</span>
-                </a>
+                </button>
               </div>
             </div>
           )}
+
         </div>
-      </div>
+      </a>
     </article>
   );
 };

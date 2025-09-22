@@ -1,6 +1,7 @@
 body {
   background: linear-gradient(135deg, #fbfafa 0%, #f0ecec 100%);
   font-family: 'Roboto', -apple-system, BlinkMacSystemFont, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  
 }
 
 
@@ -63,6 +64,7 @@ ul {
   overflow: hidden;
   margin-top: 0px;
   z-index: inherit;
+
 }
 
 .background-video {
