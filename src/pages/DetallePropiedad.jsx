@@ -446,6 +446,8 @@ const DetallePropiedad = () => {
           </div>
         )}
 
+
+
       {/* Ubicación */}
       {propiedad.direccion && (
         <div className="detalle-section bg-light rounded-3 p-4 shadow-sm mb-4 border">
@@ -464,16 +466,20 @@ const DetallePropiedad = () => {
           </p>
 
 
-          {propiedad.ubicacionGeo && (
-            <a
-              className="btn btn-danger shadow-sm"
-              href={`https://www.google.com/maps?q=${propiedad.ubicacionGeo.lat},${propiedad.ubicacionGeo.lng}`}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Ver en Google Maps
-            </a>
-          )}
+          <button
+    className="btn btn-danger shadow-sm"
+    onClick={() => {
+      const url =
+        propiedad.ubicacionGeo?.lat && propiedad.ubicacionGeo?.lng
+          ? `https://www.google.com/maps?q=${propiedad.ubicacionGeo.lat},${propiedad.ubicacionGeo.lng}`
+          : `https://www.google.com/maps?q=${encodeURIComponent(
+              `${propiedad.direccion.calle} ${propiedad.direccion.localidad} ${propiedad.direccion.provincia} ${propiedad.direccion.pais}`
+            )}`;
+      window.open(url, "_blank", "noopener,noreferrer");
+    }}
+  >
+    Ver en Google Maps
+  </button>
         </div>
       )}
 
