@@ -5,7 +5,7 @@ import MapaPropiedades from "../components/MapaPropiedades";
 import { collection, onSnapshot } from "firebase/firestore";
 import { db } from "../config/firebase"; // Ajusta la ruta
 import "./Home.css";
-import fondoGif from "../assets/slider-lira.gif";
+import fondoGif from "../assets/slider-lira.mp4";
 import { useNavigate } from "react-router-dom";
 import Card from "../components/Card"; // Ajusta la ruta según tu estructura
 
@@ -79,13 +79,19 @@ function Home() {
     <div>
       {/* Sección con video de fondo */}
       <section className="home-container">
-        <img
-          src={fondoGif}
-          alt="fondo animado"
+        <video
           className="background-video"
-          decoding="async"
-          loading="lazy"
-        />
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="auto"
+          style={{ width: "100%", height: "105%", objectFit: "cover" }}
+        >
+          <source src={fondoGif} type="video/mp4" />
+          Tu navegador no soporta el video HTML5.
+        </video>
+
 
         <div className="content-overlay container py-5 mt-lg-3 mt-4">
           <header className="text-center mb-4 mt-5 text-white">

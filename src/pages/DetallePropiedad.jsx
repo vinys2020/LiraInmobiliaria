@@ -32,6 +32,8 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
+import { buildCloudinaryUrlWithTransform } from "../utils/cloudinary";
+
 
 
 
@@ -105,7 +107,7 @@ const DetallePropiedad = () => {
           <div className="d-flex align-items-center justify-content-between flex-wrap">
 
             {/* Breadcrumb */}
-            <div className="breadcrumb-wrap">
+            <div className="breadcrumb-wrap mt-3 mt-lg-0">
               <nav>
                 <ol className="breadcrumb mb-0">
                   <li className="breadcrumb-item breadcrumb-item-home">
@@ -113,10 +115,10 @@ const DetallePropiedad = () => {
                     <NavLink to="/">Home</NavLink>
                   </li>
 
-                  <li className="breadcrumb-item active">{propiedad.titulo}</li>
                 </ol>
               </nav>
             </div>
+
 
             {/* Herramientas: Favorito, Share, Print */}
             <ul className="item-tools d-flex gap-2 mb-0 list-unstyled">
@@ -192,7 +194,6 @@ const DetallePropiedad = () => {
             </ul>
           </div>
 
-
           {/* Título y Precio */}
           <div className="d-flex align-items-center justify-content-between flex-wrap mt-3">
             <div className="page-title">
@@ -238,7 +239,7 @@ const DetallePropiedad = () => {
           {/* Imagen principal grande */}
           <div className="col-12 col-md-8 mb-3 mb-md-0">
             <img
-              src={propiedad.imagenes[0]}
+              src={buildCloudinaryUrlWithTransform(propiedad.imagenes[0], 1200)}
               alt={`${propiedad.titulo} principal`}
               className="img-fluid rounded-3 shadow-sm propiedad-img"
               style={{ height: "450px", objectFit: "cover", width: "100%", cursor: "pointer" }}
@@ -252,18 +253,18 @@ const DetallePropiedad = () => {
               {propiedad.imagenes.slice(1, 3).map((img, index) => (
                 <div key={index} className="col-6 col-md-12 position-relative">
                   <img
-                    src={img}
+                    src={buildCloudinaryUrlWithTransform(img, 600)}
                     alt={`${propiedad.titulo} ${index + 2}`}
                     className="img-fluid rounded-3 shadow-sm propiedad-img"
                     style={{ height: "215px", objectFit: "cover", width: "100%", cursor: "pointer" }}
                     onClick={() => setOpen(true)}
                   />
-                  {/* Overlay si hay más imágenes de las mostradas */}
+                  {/* Overlay si hay más imágenes */}
                   {index === 1 && propiedad.imagenes.length > 3 && (
                     <div
                       className="position-absolute top-0 start-0 w-100 h-100 d-flex align-items-center justify-content-center"
                       style={{
-                        borderRadius: "0.5rem", // coincide con el border-radius de la imagen
+                        borderRadius: "0.5rem",
                         cursor: "pointer",
                         textAlign: "center",
                       }}
@@ -285,18 +286,19 @@ const DetallePropiedad = () => {
                         +{propiedad.imagenes.length - 3} <i className="fas fa-images"></i>
                       </span>
                     </div>
-
                   )}
-
                 </div>
               ))}
+
             </div>
           </div>
 
           {/* Lightbox */}
           {open && (
             <Lightbox
-              slides={propiedad.imagenes.map((img) => ({ src: img }))}
+              slides={propiedad.imagenes.map((img) => ({
+                src: buildCloudinaryUrlWithTransform(img, 1200),
+              }))}
               open={open}
               close={() => setOpen(false)}
             />
@@ -467,19 +469,19 @@ const DetallePropiedad = () => {
 
 
           <button
-    className="btn btn-danger shadow-sm"
-    onClick={() => {
-      const url =
-        propiedad.ubicacionGeo?.lat && propiedad.ubicacionGeo?.lng
-          ? `https://www.google.com/maps?q=${propiedad.ubicacionGeo.lat},${propiedad.ubicacionGeo.lng}`
-          : `https://www.google.com/maps?q=${encodeURIComponent(
-              `${propiedad.direccion.calle} ${propiedad.direccion.localidad} ${propiedad.direccion.provincia} ${propiedad.direccion.pais}`
-            )}`;
-      window.open(url, "_blank", "noopener,noreferrer");
-    }}
-  >
-    Ver en Google Maps
-  </button>
+            className="btn btn-danger shadow-sm"
+            onClick={() => {
+              const url =
+                propiedad.ubicacionGeo?.lat && propiedad.ubicacionGeo?.lng
+                  ? `https://www.google.com/maps?q=${propiedad.ubicacionGeo.lat},${propiedad.ubicacionGeo.lng}`
+                  : `https://www.google.com/maps?q=${encodeURIComponent(
+                    `${propiedad.direccion.calle} ${propiedad.direccion.localidad} ${propiedad.direccion.provincia} ${propiedad.direccion.pais}`
+                  )}`;
+              window.open(url, "_blank", "noopener,noreferrer");
+            }}
+          >
+            Ver en Google Maps
+          </button>
         </div>
       )}
 

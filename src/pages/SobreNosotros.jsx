@@ -1,8 +1,6 @@
 import React from "react";
 import "./SobreNosotros.css";
-import liraFoto from "../assets/lira-foto.jpg"; // ajustá la ruta si este componente está en otra carpeta
 import liraFoto1 from "../assets/llaveentrega.jpg"; // ajustá la ruta si este componente está en otra carpeta
-import liraFoto2 from "../assets/asesor.jpg"; // ajustá la ruta si este componente está en otra carpeta
 import liraFoto3 from "../assets/tazadora.jpg"; // ajustá la ruta si este componente está en otra carpeta
 import liraFoto4 from "../assets/administracion.jpg"; // ajustá la ruta si este componente está en otra carpeta
 
@@ -14,7 +12,7 @@ const SobreNosotros = () => {
       <section
         className="hero-section"
         style={{
-          backgroundImage: `url(${liraFoto})`,
+          backgroundImage: `url("https://res.cloudinary.com/dcggcw8df/image/upload/v1758807219/rzw9zovzhcpl9endxmlu.webp")`,
         }}
       >
         <div className="hero-overlay">
@@ -131,14 +129,15 @@ const SobreNosotros = () => {
               </p>
             </div>
 
-            {/* Columna imagen */}
-            <div className="col-md-6">
-              <img
-                src={liraFoto2}
-                alt="Asesoramiento inmobiliario"
-                className="img-fluid rounded"
-              />
-            </div>
+{/* Columna imagen */}
+<div className="col-md-6">
+  <img
+    src="https://res.cloudinary.com/dcggcw8df/image/upload/v1758744397/jrkurpse7vfm0ibes8wh.jpg"
+    alt="Asesoramiento inmobiliario"
+    className="img-fluid rounded"
+  />
+</div>
+
           </div>
         </div>
       </section>

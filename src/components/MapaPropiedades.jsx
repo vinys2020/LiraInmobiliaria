@@ -2,6 +2,8 @@ import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import { buildCloudinaryUrlWithTransform } from "../utils/cloudinary";
+
 
 // Ícono rojo personalizado
 const redIcon = new L.Icon({
@@ -69,7 +71,7 @@ const MapaPropiedades = ({ propiedades }) => {
                       ? prop.imagenes.slice(0, 2).map((img, index) => (
                         <img
                           key={index}
-                          src={img}
+                          src={buildCloudinaryUrlWithTransform(img, 150)} // <-- ajustamos tamaño
                           alt={`${prop.titulo} ${index + 1}`}
                           style={{
                             width: "100%",

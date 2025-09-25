@@ -18,6 +18,8 @@ import Contactos from "./pages/Contactos";
 import TodasPropiedades from "./pages/TodasPropiedades";
 import DetallePropiedad from "./pages/DetallePropiedad";
 import NormalizeTrailingSlash from "./components/NormalizeTrailingSlash";
+import InstagramWarning from "./components/InstagramWarning";
+
 
 
 // Rutas protegidas
@@ -27,6 +29,8 @@ import EmpleadoRoute from "./routes/EmpleadoRoute";
 function App() {
   return (
     <>
+      <InstagramWarning />
+
       <Navbar />
       <ScrollToTop smooth={true} />
 

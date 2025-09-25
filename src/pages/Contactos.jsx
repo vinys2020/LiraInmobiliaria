@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import "./Contactos.css";
-import contactoImg from "../assets/contactanos.jpg";
+import { buildCloudinaryUrlWithTransform } from "../utils/cloudinary";
+
 
 
 const Contactos = () => {
@@ -42,7 +43,10 @@ const Contactos = () => {
         <article className="col-12 col-lg-6 mb-5 d-flex justify-content-center">
           <img
             className="img-fluid rounded shadow contacto-img"
-            src={contactoImg}
+            src={buildCloudinaryUrlWithTransform(
+              "https://res.cloudinary.com/dcggcw8df/image/upload/v1758744323/imqndbwfd2mqorqlbps8.jpg",
+
+            )}
             alt="Contacto"
           />
         </article>

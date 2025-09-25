@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { FaBed, FaBath, FaRulerCombined, FaCar, FaMapMarkerAlt } from "react-icons/fa";
 import "./Card.css";
+import { buildCloudinaryUrlWithTransform } from "../utils/cloudinary";
+
 
 const Card = ({ propiedad }) => {
   const [imgIndex, setImgIndex] = useState(0);
@@ -44,12 +46,12 @@ const Card = ({ propiedad }) => {
       >
         {/* Imagen + badge */}
         <div className="position-relative">
-          <img
-            alt={propiedad.titulo}
-            className="card-img-top"
-            src={imagenes[imgIndex]}
-            style={{ objectFit: "cover", height: "250px" }}
-          />
+        <img
+  alt={propiedad.titulo}
+  className="card-img-top"
+  src={buildCloudinaryUrlWithTransform(imagenes[imgIndex])} // 🔥 optimizada
+  style={{ objectFit: "cover", height: "250px" }}
+/>
 
           {imagenes.length > 1 && (
             <>

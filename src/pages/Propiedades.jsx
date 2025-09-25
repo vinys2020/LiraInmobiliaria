@@ -2,7 +2,9 @@ import React, { useState, useEffect } from "react";
 import { collection, getDocs, onSnapshot, doc, updateDoc } from "firebase/firestore";
 import { db } from "../config/firebase"; // tu configuración de Firebase
 import AgregarPropiedadModal from "../components/AgregarPropiedadModal";
-import Card from "../components/Card";
+import { useCloudinaryUpload } from "../hooks/useCloudinaryUpload";
+import { buildCloudinaryUrlWithTransform } from "../utils/cloudinary";
+
 
 import {
   FaBath,
@@ -25,6 +27,8 @@ export default function Propiedades() {
   const [fullscreenIndex, setFullscreenIndex] = useState(null);
   const [modalNuevaPropiedad, setModalNuevaPropiedad] = useState(false);
   const [subfiltro, setSubfiltro] = useState(null);
+  const { uploadFiles, loading: uploading } = useCloudinaryUpload();
+
 
 
 
@@ -229,14 +233,15 @@ export default function Propiedades() {
                   <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-shadow">
                     {/* Imagen + etiqueta */}
                     <div className="position-relative">
-                      {prop.imagenes && prop.imagenes[0] && (
-                        <img
-                          src={prop.imagenes[0]}
-                          alt={prop.titulo}
-                          className="card-img-top"
-                          style={{ objectFit: "cover", height: "200px" }}
-                        />
-                      )}
+                    {prop.imagenes && prop.imagenes[0] && (
+  <img
+    src={buildCloudinaryUrlWithTransform(prop.imagenes[0], 300)} // ancho reducido para Card
+    alt={prop.titulo}
+    className="card-img-top"
+    style={{ objectFit: "cover", height: "200px" }}
+  />
+)}
+
 
                       {estadoLabel && (
                         <span
@@ -460,7 +465,7 @@ export default function Propiedades() {
                         {propiedadSeleccionada.imagenes.map((img, idx) => (
                           <div key={idx} className={`carousel-item ${idx === 0 ? "active" : ""}`}>
                             <img
-                              src={img}
+                              src={buildCloudinaryUrlWithTransform(img, 600)} // ancho intermedio para modal
                               alt={`${propiedadSeleccionada.titulo} ${idx + 1}`}
                               className="d-block w-100"
                               style={{ maxHeight: "320px", objectFit: "cover", cursor: "zoom-in" }}
@@ -522,7 +527,7 @@ export default function Propiedades() {
                         )}
 
                         <img
-                          src={propiedadSeleccionada.imagenes[fullscreenIndex]}
+                          src={buildCloudinaryUrlWithTransform(propiedadSeleccionada.imagenes[fullscreenIndex], 1200)} // imagen grande
                           alt="Vista completa"
                           style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain", borderRadius: "8px" }}
                         />
@@ -560,64 +565,103 @@ export default function Propiedades() {
                   {/* Input para subir imágenes */}
                   <h4 className="mt-3">Agregar / Modificar Imágenes</h4>
                   <div className="mb-3">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="form-control mb-2"
-                      onChange={async (e) => {
-                        const files = Array.from(e.target.files);
-                        if (!files.length) return;
+                  <input
+  type="file"
+  accept="image/*"
+  multiple
+  className="form-control mb-2"
+  onChange={async (e) => {
+    const files = Array.from(e.target.files);
+    if (!files.length) return;
 
-                        // Subir a Cloudinary
-                        const uploadedUrls = await Promise.all(
-                          files.map(async (file) => {
-                            const formData = new FormData();
-                            formData.append("file", file);
-                            formData.append("upload_preset", "tu_upload_preset"); // reemplaza con tu preset
+    try {
+      const uploadedUrls = await uploadFiles(files); // ✅ aquí usamos tu hook
+      setPropiedadSeleccionada({
+        ...propiedadSeleccionada,
+        imagenes: [...(propiedadSeleccionada.imagenes || []), ...uploadedUrls],
+      });
+    } catch (error) {
+      console.error("Error subiendo imágenes:", error);
+    }
+  }}
+/>
+{uploading && <p>Subiendo imágenes...</p>}
 
-                            const res = await fetch("https://api.cloudinary.com/v1_1/tu_cloud_name/image/upload", {
-                              method: "POST",
-                              body: formData,
-                            });
-                            const data = await res.json();
-                            return data.secure_url;
-                          })
-                        );
-
-                        setPropiedadSeleccionada({
-                          ...propiedadSeleccionada,
-                          imagenes: [...(propiedadSeleccionada.imagenes || []), ...uploadedUrls],
-                        });
-                      }}
-                    />
                   </div>
 
-                  {/* Preview de imágenes actuales */}
-                  <div className="d-flex flex-wrap gap-2 mb-3">
-                    {(propiedadSeleccionada.imagenes || []).map((img, idx) => (
-                      <div key={idx} className="position-relative">
-                        <img
-                          src={img}
-                          alt={`Propiedad ${idx}`}
-                          style={{ width: "100px", height: "100px", objectFit: "cover", borderRadius: "4px" }}
-                        />
-                        <button
-                          type="button"
-                          className="btn btn-sm btn-danger position-absolute top-0 end-0"
-                          style={{ padding: "0 6px" }}
-                          onClick={() =>
-                            setPropiedadSeleccionada({
-                              ...propiedadSeleccionada,
-                              imagenes: propiedadSeleccionada.imagenes.filter((_, i) => i !== idx),
-                            })
-                          }
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                  </div>
+{/* Preview de imágenes actuales con reordenamiento seguro */}
+<div className="d-flex flex-wrap gap-3 mb-3">
+  {(propiedadSeleccionada.imagenes || []).map((img, idx) => (
+    <div
+      key={idx}
+      className="d-flex flex-column align-items-center position-relative"
+      style={{ width: "110px" }}
+    >
+      {/* Número de orden */}
+      <span className="badge bg-dark mb-1">{idx + 1}</span>
+
+      {/* Imagen */}
+      <img
+        src={buildCloudinaryUrlWithTransform(img, 100)} // miniatura
+        alt={`Propiedad ${idx}`}
+        style={{
+          width: "100px",
+          height: "100px",
+          objectFit: "cover",
+          borderRadius: "4px",
+        }}
+      />
+
+      {/* Botón eliminar (arriba, bien separado) */}
+      <button
+        type="button"
+        className="btn btn-sm btn-danger position-absolute top-0 end-0"
+        style={{ padding: "0 6px" }}
+        onClick={() =>
+          setPropiedadSeleccionada({
+            ...propiedadSeleccionada,
+            imagenes: propiedadSeleccionada.imagenes.filter((_, i) => i !== idx),
+          })
+        }
+      >
+        ✕
+      </button>
+
+      {/* Controles de orden (debajo de la imagen) */}
+      <div className="d-flex gap-1 mt-1">
+        {/* Botón subir */}
+        <button
+          type="button"
+          className="btn btn-sm btn-outline-secondary"
+          disabled={idx === 0}
+          onClick={() => {
+            const nuevas = [...propiedadSeleccionada.imagenes];
+            [nuevas[idx - 1], nuevas[idx]] = [nuevas[idx], nuevas[idx - 1]];
+            setPropiedadSeleccionada({ ...propiedadSeleccionada, imagenes: nuevas });
+          }}
+        >
+          ↑
+        </button>
+
+        {/* Botón bajar */}
+        <button
+          type="button"
+          className="btn btn-sm btn-outline-secondary"
+          disabled={idx === propiedadSeleccionada.imagenes.length - 1}
+          onClick={() => {
+            const nuevas = [...propiedadSeleccionada.imagenes];
+            [nuevas[idx + 1], nuevas[idx]] = [nuevas[idx], nuevas[idx + 1]];
+            setPropiedadSeleccionada({ ...propiedadSeleccionada, imagenes: nuevas });
+          }}
+        >
+          ↓
+        </button>
+      </div>
+    </div>
+  ))}
+</div>
+
+
 
                   {/* Campos básicos */}
                   <div className="mb-3">
