@@ -4,45 +4,10 @@ import { db } from "../config/firebase";
 import "./LotesEnVenta.css";
 import Card from "../components/Card"; // ✅ Usamos el mismo componente que en PropiedadesEnVenta
 
-// Sidebar
-const Sidebar = ({ propiedades, subfiltro, onSetSubfiltro, searchTerm, setSearchTerm }) => {
-  const subtipos = ["Lote"];
-  const subCounts = {};
-  propiedades.forEach((p) => {
-    const tipo = p.tipoDePropiedad || "Otro";
-    subCounts[tipo] = (subCounts[tipo] || 0) + 1;
-  });
-  const totalSubtipos = propiedades.length;
-
-  return (
-    <div className="p-2 bg-transparent rounded shadow-sm mb-5 py-2 mt-3">
-      <h5 className="text-black mb-2 text-center">Lotes</h5>
-      <div className="list-group list-group-flush bg-transparent">
-        {subtipos.map((sub) => (
-          <button
-            key={sub}
-            className={`list-group-item list-group-item-action rounded-2 mb-2 ${subfiltro === sub ? "active fw-bold" : ""}`}
-            onClick={() => onSetSubfiltro(sub)}
-          >
-            {sub} ({subCounts[sub] || 0})
-          </button>
-        ))}
-        <button
-          className={`list-group-item list-group-item-action rounded-2 ${subfiltro === null ? "active fw-bold" : ""}`}
-          onClick={() => onSetSubfiltro(null)}
-        >
-          Todos ({totalSubtipos})
-        </button>
-      </div>
-    </div>
-  );
-};
 
 const LotesEnVenta = () => {
   const [propiedades, setPropiedades] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [subfiltro, setSubfiltro] = useState(null);
-  const [showFilters, setShowFilters] = useState(false);
   const [searchZone, setSearchZone] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -64,7 +29,6 @@ const LotesEnVenta = () => {
   }, []);
 
   const propiedadesFiltradas = propiedades.filter((p) => {
-    const matchTipo = subfiltro ? (p.tipoDePropiedad || "Otro") === subfiltro : true;
     const buscarEnDireccion = (valor) => {
       if (!valor) return false;
       const campos = [
@@ -76,12 +40,17 @@ const LotesEnVenta = () => {
         p.ubicacionGeo?.lat,
         p.ubicacionGeo?.lng,
       ];
-      return campos.some((campo) => campo && campo.toString().toLowerCase().includes(valor.toLowerCase()));
+      return campos.some(
+        (campo) => campo && campo.toString().toLowerCase().includes(valor.toLowerCase())
+      );
     };
+
     const matchSearchDesktop = searchTerm ? buscarEnDireccion(searchTerm) : true;
     const matchSearchMobile = searchZone ? buscarEnDireccion(searchZone) : true;
-    return matchTipo && matchSearchDesktop && matchSearchMobile;
+
+    return matchSearchDesktop && matchSearchMobile;
   });
+
 
   return (
     <main className="lotes-venta-page" style={{ backgroundColor: "#ffffff" }}>
@@ -103,9 +72,6 @@ const LotesEnVenta = () => {
                 onChange={(e) => setSearchZone(e.target.value)}
                 style={{ flex: 1 }}
               />
-              <button className="btn btn-outline-danger d-flex align-items-center" onClick={() => setShowFilters(true)}>
-                <span>Filtrar</span>
-              </button>
             </div>
           </div>
 
@@ -143,25 +109,6 @@ const LotesEnVenta = () => {
         </div>
       </section>
 
-      {showFilters && <div className="offcanvas-backdrop fade show" onClick={() => setShowFilters(false)}></div>}
-      <div
-        className={`offcanvas offcanvas-end ${showFilters ? "show" : ""} d-lg-none`}
-        style={{ visibility: showFilters ? "visible" : "hidden" }}
-      >
-        <div className="offcanvas-header">
-          <h5 className="offcanvas-title">Filtrar</h5>
-          <button type="button" className="btn-close text-reset" onClick={() => setShowFilters(false)}></button>
-        </div>
-        <div className="offcanvas-body">
-          <Sidebar
-            propiedades={propiedades}
-            subfiltro={subfiltro}
-            onSetSubfiltro={setSubfiltro}
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-          />
-        </div>
-      </div>
     </main>
   );
 };

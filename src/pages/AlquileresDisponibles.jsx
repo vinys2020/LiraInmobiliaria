@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { collection, getDocs } from "firebase/firestore";
+import { collection, getDocs, query, orderBy, where } from "firebase/firestore";
 import { db } from "../config/firebase";
 import { useLocation } from "react-router-dom";
 import Card from "../components/Card";
@@ -74,22 +74,37 @@ const AlquileresDisponibles = () => {
   const [searchZone, setSearchZone] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
 
+
+
   useEffect(() => {
     const fetchPropiedades = async () => {
+      setLoading(true);
+  
       try {
-        const querySnapshot = await getDocs(collection(db, "Propiedades"));
-        const props = querySnapshot.docs
-          .map((doc) => ({ id: doc.id, ...doc.data() }))
-          .filter((p) => p.propiedadEn === "alquiler");
+        const propsRef = collection(db, "Propiedades");
+        const q = query(
+          propsRef,
+          where("propiedadEn", "==", "alquiler"),
+          orderBy("direccion.codigoPostal")
+        );
+  
+        const snapshot = await getDocs(q);
+        const props = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  
         setPropiedades(props);
-        setLoading(false);
+  
       } catch (error) {
         console.error("Error cargando propiedades:", error);
-        setLoading(false);
       }
+  
+      setLoading(false);
     };
+  
     fetchPropiedades();
   }, []);
+  
+  // Dependencia: lastDoc permite cargar el siguiente lote
+  
 
   const propiedadesFiltradas = propiedades.filter((p) => {
     const tipoProp = p.tipoDePropiedad || "Otro";
