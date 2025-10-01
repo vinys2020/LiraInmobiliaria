@@ -424,10 +424,10 @@ export default function AgregarPropiedadModal({ onClose, refrescarLista }) {
                       for (const file of files) {
                         const formData = new FormData();
                         formData.append("file", file);
-                        formData.append("upload_preset", "ml_default");
+                        formData.append("upload_preset", "preset_trip");
                         try {
                           const res = await fetch(
-                            "https://api.cloudinary.com/v1_1/dcggcw8df/upload",
+                            "https://api.cloudinary.com/v1_1/dxdnsblj6/upload",
                             { method: "POST", body: formData }
                           );
                           const data = await res.json();
