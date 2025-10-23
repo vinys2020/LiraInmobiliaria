@@ -355,7 +355,7 @@ const Navbar = () => {
             <div className="sidebar-logo text-center py-4">
               <NavLink to="/" onClick={() => setMenuOpen(false)}>
                 <img
-                  src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755019332/zqrmoousswdjxrzpzchx.png"
+                  src="https://res.cloudinary.com/dxdnsblj6/image/upload/v1761174247/liraisolog_l0cbmw.png"
                   alt="Logo Lira"
                   style={{
                     height: "40px",

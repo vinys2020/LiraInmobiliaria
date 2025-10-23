@@ -39,7 +39,7 @@ const Login = () => {
     <div
     className="login-container"
     style={{
-      backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url("https://res.cloudinary.com/dcggcw8df/image/upload/v1758807219/rzw9zovzhcpl9endxmlu.webp")`,
+      backgroundImage: `linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url("https://res.cloudinary.com/dxdnsblj6/image/upload/v1761174697/loginbackground_1_wan29u.jpg")`,
       backgroundSize: "cover",
       backgroundPosition: "center",
       backgroundRepeat: "no-repeat",

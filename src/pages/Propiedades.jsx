@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, onSnapshot, doc, updateDoc } from "firebase/firestore";
+import { collection, getDocs, onSnapshot, doc, updateDoc,  } from "firebase/firestore";
+
 import { db } from "../config/firebase"; // tu configuración de Firebase
 import AgregarPropiedadModal from "../components/AgregarPropiedadModal";
 import { useCloudinaryUpload } from "../hooks/useCloudinaryUpload";
-import { buildCloudinaryUrlWithTransform } from "../utils/cloudinary";
 
 
 import {
@@ -27,7 +27,10 @@ export default function Propiedades() {
   const [fullscreenIndex, setFullscreenIndex] = useState(null);
   const [modalNuevaPropiedad, setModalNuevaPropiedad] = useState(false);
   const [subfiltro, setSubfiltro] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
   const { uploadFiles, loading: uploading } = useCloudinaryUpload();
+  const [limit, setLimit] = useState(9); // cantidad inicial de propiedades visibles
+
 
 
 
@@ -67,22 +70,33 @@ export default function Propiedades() {
       .normalize("NFD")
       .replace(/[\u0300-\u036f]/g, "");
 
-  // Filtrar propiedades según filtro seleccionado y subfiltro
   const propiedadesFiltradas = propiedades.filter((p) => {
-    // "todos" muestra todo
-    if (filtro === "todos") return true;
+    // Normalizar campos para comparación
+    const matchesFiltro =
+      filtro === "todos" ||
+      normalize(p.propiedadEn) === normalize(filtro);
 
-    // Filtrado con subfiltro
-    if (subfiltro) {
-      return (
-        normalize(p.propiedadEn) === normalize(filtro) &&
-        normalize(p.tipoDePropiedad) === normalize(subfiltro)
-      );
-    }
+    const matchesSubfiltro =
+      !subfiltro ||
+      normalize(p.tipoDePropiedad) === normalize(subfiltro);
 
-    // Solo filtro principal
-    return normalize(p.propiedadEn) === normalize(filtro);
+    // Combinar calle, localidad, provincia, código postal
+    const ubicacion = [
+      p?.direccion?.calle,
+      p?.direccion?.localidad,
+      p?.direccion?.provincia,
+      p?.direccion?.codigoPostal,
+    ]
+      .filter(Boolean)
+      .join(" ")
+      .toLowerCase();
+
+    const matchesSearch = normalize(ubicacion).includes(normalize(searchTerm));
+
+    // ✅ Resultado final
+    return matchesFiltro && matchesSubfiltro && matchesSearch;
   });
+
 
 
 
@@ -172,6 +186,17 @@ export default function Propiedades() {
             Propiedades {filtro !== "todos" && `- ${filtro.charAt(0).toUpperCase() + filtro.slice(1)}`}
           </h2>
 
+          <div className="d-none d-md-flex gap-2 mb-4">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Buscar por calle, localidad, provincia, código postal"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+
+
           <div className="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
             {propiedadesFiltradas.map((prop) => {
               const baths = prop["baños"] ?? prop.banos ?? prop.bathrooms ?? prop.bath ?? undefined;
@@ -229,18 +254,20 @@ export default function Propiedades() {
                 .join(", ") || prop.ubicacion || "";
 
               return (
+
                 <div key={prop.id} className="col" id={prop.id}>
                   <div className="card h-100 shadow-sm border-0 rounded-3 overflow-hidden hover-shadow">
                     {/* Imagen + etiqueta */}
                     <div className="position-relative">
-                    {prop.imagenes && prop.imagenes[0] && (
-  <img
-    src={buildCloudinaryUrlWithTransform(prop.imagenes[0], 300)} // ancho reducido para Card
-    alt={prop.titulo}
-    className="card-img-top"
-    style={{ objectFit: "cover", height: "200px" }}
-  />
-)}
+                      {prop.imagenes && prop.imagenes[0] && (
+                        <img
+                          src={prop.imagenes[0]}
+                          loading="lazy"
+                          alt={prop.titulo}
+                          className="card-img-top"
+                          style={{ objectFit: "cover", height: "200px" }}
+                        />
+                      )}
 
 
                       {estadoLabel && (
@@ -380,7 +407,7 @@ export default function Propiedades() {
                               }}
                             >
                               <img
-                                src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755458272/r3kx7npz5muhzio5agq8.png"
+                                src="https://res.cloudinary.com/dxdnsblj6/image/upload/v1761174205/googlemap_puktna.png"
                                 alt="Google Maps"
                                 style={{ width: "20px", height: "20px" }}
                               />
@@ -465,7 +492,7 @@ export default function Propiedades() {
                         {propiedadSeleccionada.imagenes.map((img, idx) => (
                           <div key={idx} className={`carousel-item ${idx === 0 ? "active" : ""}`}>
                             <img
-                              src={buildCloudinaryUrlWithTransform(img, 600)} // ancho intermedio para modal
+                              src={img}
                               alt={`${propiedadSeleccionada.titulo} ${idx + 1}`}
                               className="d-block w-100"
                               style={{ maxHeight: "320px", objectFit: "cover", cursor: "zoom-in" }}
@@ -527,7 +554,8 @@ export default function Propiedades() {
                         )}
 
                         <img
-                          src={buildCloudinaryUrlWithTransform(propiedadSeleccionada.imagenes[fullscreenIndex], 1200)} // imagen grande
+                          src={propiedadSeleccionada.imagenes[fullscreenIndex]}
+                          loading="lazy"
                           alt="Vista completa"
                           style={{ maxHeight: "100%", maxWidth: "100%", objectFit: "contain", borderRadius: "8px" }}
                         />
@@ -565,101 +593,102 @@ export default function Propiedades() {
                   {/* Input para subir imágenes */}
                   <h4 className="mt-3">Agregar / Modificar Imágenes</h4>
                   <div className="mb-3">
-                  <input
-  type="file"
-  accept="image/*"
-  multiple
-  className="form-control mb-2"
-  onChange={async (e) => {
-    const files = Array.from(e.target.files);
-    if (!files.length) return;
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="form-control mb-2"
+                      onChange={async (e) => {
+                        const files = Array.from(e.target.files);
+                        if (!files.length) return;
 
-    try {
-      const uploadedUrls = await uploadFiles(files); // ✅ aquí usamos tu hook
-      setPropiedadSeleccionada({
-        ...propiedadSeleccionada,
-        imagenes: [...(propiedadSeleccionada.imagenes || []), ...uploadedUrls],
-      });
-    } catch (error) {
-      console.error("Error subiendo imágenes:", error);
-    }
-  }}
-/>
-{uploading && <p>Subiendo imágenes...</p>}
+                        try {
+                          const uploadedUrls = await uploadFiles(files); // ✅ aquí usamos tu hook
+                          setPropiedadSeleccionada({
+                            ...propiedadSeleccionada,
+                            imagenes: [...(propiedadSeleccionada.imagenes || []), ...uploadedUrls],
+                          });
+                        } catch (error) {
+                          console.error("Error subiendo imágenes:", error);
+                        }
+                      }}
+                    />
+                    {uploading && <p>Subiendo imágenes...</p>}
 
                   </div>
 
-{/* Preview de imágenes actuales con reordenamiento seguro */}
-<div className="d-flex flex-wrap gap-3 mb-3">
-  {(propiedadSeleccionada.imagenes || []).map((img, idx) => (
-    <div
-      key={idx}
-      className="d-flex flex-column align-items-center position-relative"
-      style={{ width: "110px" }}
-    >
-      {/* Número de orden */}
-      <span className="badge bg-dark mb-1">{idx + 1}</span>
+                  {/* Preview de imágenes actuales con reordenamiento seguro */}
+                  <div className="d-flex flex-wrap gap-3 mb-3">
+                    {(propiedadSeleccionada.imagenes || []).map((img, idx) => (
+                      <div
+                        key={idx}
+                        className="d-flex flex-column align-items-center position-relative"
+                        style={{ width: "110px" }}
+                      >
+                        {/* Número de orden */}
+                        <span className="badge bg-dark mb-1">{idx + 1}</span>
 
-      {/* Imagen */}
-      <img
-        src={buildCloudinaryUrlWithTransform(img, 100)} // miniatura
-        alt={`Propiedad ${idx}`}
-        style={{
-          width: "100px",
-          height: "100px",
-          objectFit: "cover",
-          borderRadius: "4px",
-        }}
-      />
+                        {/* Imagen */}
+                        <img
+                          src={img}
+                          loading="lazy"
+                          alt={`Propiedad ${idx}`}
+                          style={{
+                            width: "100px",
+                            height: "100px",
+                            objectFit: "cover",
+                            borderRadius: "4px",
+                          }}
+                        />
 
-      {/* Botón eliminar (arriba, bien separado) */}
-      <button
-        type="button"
-        className="btn btn-sm btn-danger position-absolute top-0 end-0"
-        style={{ padding: "0 6px" }}
-        onClick={() =>
-          setPropiedadSeleccionada({
-            ...propiedadSeleccionada,
-            imagenes: propiedadSeleccionada.imagenes.filter((_, i) => i !== idx),
-          })
-        }
-      >
-        ✕
-      </button>
+                        {/* Botón eliminar (arriba, bien separado) */}
+                        <button
+                          type="button"
+                          className="btn btn-sm btn-danger position-absolute top-0 end-0"
+                          style={{ padding: "0 6px" }}
+                          onClick={() =>
+                            setPropiedadSeleccionada({
+                              ...propiedadSeleccionada,
+                              imagenes: propiedadSeleccionada.imagenes.filter((_, i) => i !== idx),
+                            })
+                          }
+                        >
+                          ✕
+                        </button>
 
-      {/* Controles de orden (debajo de la imagen) */}
-      <div className="d-flex gap-1 mt-1">
-        {/* Botón subir */}
-        <button
-          type="button"
-          className="btn btn-sm btn-outline-secondary"
-          disabled={idx === 0}
-          onClick={() => {
-            const nuevas = [...propiedadSeleccionada.imagenes];
-            [nuevas[idx - 1], nuevas[idx]] = [nuevas[idx], nuevas[idx - 1]];
-            setPropiedadSeleccionada({ ...propiedadSeleccionada, imagenes: nuevas });
-          }}
-        >
-          ↑
-        </button>
+                        {/* Controles de orden (debajo de la imagen) */}
+                        <div className="d-flex gap-1 mt-1">
+                          {/* Botón subir */}
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-outline-secondary"
+                            disabled={idx === 0}
+                            onClick={() => {
+                              const nuevas = [...propiedadSeleccionada.imagenes];
+                              [nuevas[idx - 1], nuevas[idx]] = [nuevas[idx], nuevas[idx - 1]];
+                              setPropiedadSeleccionada({ ...propiedadSeleccionada, imagenes: nuevas });
+                            }}
+                          >
+                            ↑
+                          </button>
 
-        {/* Botón bajar */}
-        <button
-          type="button"
-          className="btn btn-sm btn-outline-secondary"
-          disabled={idx === propiedadSeleccionada.imagenes.length - 1}
-          onClick={() => {
-            const nuevas = [...propiedadSeleccionada.imagenes];
-            [nuevas[idx + 1], nuevas[idx]] = [nuevas[idx], nuevas[idx + 1]];
-            setPropiedadSeleccionada({ ...propiedadSeleccionada, imagenes: nuevas });
-          }}
-        >
-          ↓
-        </button>
-      </div>
-    </div>
-  ))}
-</div>
+                          {/* Botón bajar */}
+                          <button
+                            type="button"
+                            className="btn btn-sm btn-outline-secondary"
+                            disabled={idx === propiedadSeleccionada.imagenes.length - 1}
+                            onClick={() => {
+                              const nuevas = [...propiedadSeleccionada.imagenes];
+                              [nuevas[idx + 1], nuevas[idx]] = [nuevas[idx], nuevas[idx + 1]];
+                              setPropiedadSeleccionada({ ...propiedadSeleccionada, imagenes: nuevas });
+                            }}
+                          >
+                            ↓
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
 
 
 

@@ -2,13 +2,12 @@ import React from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import { buildCloudinaryUrlWithTransform } from "../utils/cloudinary";
 
 
 // Ícono rojo personalizado
 const redIcon = new L.Icon({
   iconUrl:
-    "https://res.cloudinary.com/dcggcw8df/image/upload/v1755536958/frspnqfnboytx8czwyuu.png",
+    "https://res.cloudinary.com/dxdnsblj6/image/upload/v1761174284/liramapasicono_xoeqtp.png",
   iconSize: [50, 51],
   iconAnchor: [25, 51], // ajusta para que apunte correctamente
   popupAnchor: [1, -34],
@@ -71,8 +70,9 @@ const MapaPropiedades = ({ propiedades }) => {
                       ? prop.imagenes.slice(0, 2).map((img, index) => (
                         <img
                           key={index}
-                          src={buildCloudinaryUrlWithTransform(img, 150)} // <-- ajustamos tamaño
+                          src={img}
                           alt={`${prop.titulo} ${index + 1}`}
+                          loading="lazy"
                           style={{
                             width: "100%",
                             height: "50px",

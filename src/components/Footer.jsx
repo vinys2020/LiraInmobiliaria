@@ -9,7 +9,7 @@ const Footer = () => {
           <div className="col-12 col-md-4 text-center text-md-start">
             <Link to="/">
               <img
-                src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755019332/zqrmoousswdjxrzpzchx.png"
+                src="https://res.cloudinary.com/dxdnsblj6/image/upload/v1761174247/liraisolog_l0cbmw.png"
                 alt="Logo Lira"
                 style={{ maxWidth: "200px", height: "auto", marginBottom: "1.5rem" }}
               />

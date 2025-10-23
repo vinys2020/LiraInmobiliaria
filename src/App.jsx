@@ -20,9 +20,6 @@ import DetallePropiedad from "./pages/DetallePropiedad";
 import NormalizeTrailingSlash from "./components/NormalizeTrailingSlash";
 import InstagramWarning from "./components/InstagramWarning";
 
-
-
-// Rutas protegidas
 import AdminRoute from "./routes/AdminRoute";
 import EmpleadoRoute from "./routes/EmpleadoRoute";
 
@@ -41,7 +38,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/alquileres" element={<AlquileresDisponibles />} />
         <Route path="/PropiedadesEnVenta" element={<PropiedadesEnVenta />} />
-        <Route path="/propiedades-en-venta" element={<PropiedadesEnVenta />} />  {/* ✅ alias SEO friendly */}
+        <Route path="/propiedades-en-venta" element={<PropiedadesEnVenta />} />
 
         <Route path="/LotesEnVenta" element={<LotesEnVenta />} />
         <Route path="/lotes-en-venta" element={<LotesEnVenta />} />

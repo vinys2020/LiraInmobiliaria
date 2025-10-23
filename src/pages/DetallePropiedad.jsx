@@ -32,7 +32,6 @@ import Lightbox from "yet-another-react-lightbox";
 import "yet-another-react-lightbox/styles.css";
 import { NavLink } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import { buildCloudinaryUrlWithTransform } from "../utils/cloudinary";
 
 
 
@@ -239,8 +238,8 @@ const DetallePropiedad = () => {
           {/* Imagen principal grande */}
           <div className="col-12 col-md-8 mb-3 mb-md-0">
             <img
-              src={buildCloudinaryUrlWithTransform(propiedad.imagenes[0], 1200)}
-              alt={`${propiedad.titulo} principal`}
+  src={propiedad.imagenes[0]}
+  alt={`${propiedad.titulo} principal`}
               className="img-fluid rounded-3 shadow-sm propiedad-img"
               style={{ height: "450px", objectFit: "cover", width: "100%", cursor: "pointer" }}
               onClick={() => setOpen(true)}
@@ -253,8 +252,8 @@ const DetallePropiedad = () => {
               {propiedad.imagenes.slice(1, 3).map((img, index) => (
                 <div key={index} className="col-6 col-md-12 position-relative">
                   <img
-                    src={buildCloudinaryUrlWithTransform(img, 600)}
-                    alt={`${propiedad.titulo} ${index + 2}`}
+  src={img}
+  alt={`${propiedad.titulo} ${index + 2}`}
                     className="img-fluid rounded-3 shadow-sm propiedad-img"
                     style={{ height: "215px", objectFit: "cover", width: "100%", cursor: "pointer" }}
                     onClick={() => setOpen(true)}
@@ -296,12 +295,13 @@ const DetallePropiedad = () => {
           {/* Lightbox */}
           {open && (
             <Lightbox
-              slides={propiedad.imagenes.map((img) => ({
-                src: buildCloudinaryUrlWithTransform(img, 1200),
-              }))}
-              open={open}
-              close={() => setOpen(false)}
-            />
+  slides={propiedad.imagenes.map((img) => ({
+    src: img,
+  }))}
+  open={open}
+  close={() => setOpen(false)}
+/>
+
           )}
         </div>
       )}

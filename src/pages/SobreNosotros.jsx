@@ -12,7 +12,7 @@ const SobreNosotros = () => {
       <section
         className="hero-section"
         style={{
-          backgroundImage: `url("https://res.cloudinary.com/dcggcw8df/image/upload/v1758807219/rzw9zovzhcpl9endxmlu.webp")`,
+          backgroundImage: `url("https://res.cloudinary.com/dxdnsblj6/image/upload/v1761174697/loginbackground_1_wan29u.jpg")`,
         }}
       >
         <div className="hero-overlay">
@@ -26,7 +26,7 @@ const SobreNosotros = () => {
 
 
       {/* Sección Misión, Visión y Valores */}
-      <section className="container-light py-5 bg-white ">
+      <section className="col-12 py-5 bg-white ">
         <div className="text-center mx-lg-5">
           <p>
             En Lira Inmobiliaria, nuestra misión es brindarte un servicio integral y personalizado en el apasionante mundo de bienes raíces. Nos enorgullece ser tu aliado de confianza en el proceso de compra o venta de propiedades, ofreciéndote un asesoramiento experto que maximice el rendimiento de tu inversión.
@@ -129,14 +129,14 @@ const SobreNosotros = () => {
               </p>
             </div>
 
-{/* Columna imagen */}
-<div className="col-md-6">
-  <img
-    src="https://res.cloudinary.com/dcggcw8df/image/upload/v1758744397/jrkurpse7vfm0ibes8wh.jpg"
-    alt="Asesoramiento inmobiliario"
-    className="img-fluid rounded"
-  />
-</div>
+            {/* Columna imagen */}
+            <div className="col-md-6">
+              <img
+                src="https://res.cloudinary.com/dxdnsblj6/image/upload/v1761174841/sobrenos_1_rd9wcd.jpg"
+                alt="Asesoramiento inmobiliario"
+                className="img-fluid rounded"
+              />
+            </div>
 
           </div>
         </div>

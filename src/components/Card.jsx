@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { FaBed, FaBath, FaRulerCombined, FaCar, FaMapMarkerAlt } from "react-icons/fa";
 import "./Card.css";
-import { buildCloudinaryUrlWithTransform } from "../utils/cloudinary";
 
 
 const Card = ({ propiedad }) => {
@@ -49,8 +48,9 @@ const Card = ({ propiedad }) => {
         <img
   alt={propiedad.titulo}
   className="card-img-top"
-  src={buildCloudinaryUrlWithTransform(imagenes[imgIndex])} // 🔥 optimizada
-  style={{ objectFit: "cover", height: "250px" }}
+  src={imagenes[imgIndex]}
+  loading="lazy"
+    style={{ objectFit: "cover", height: "250px" }}
 />
 
           {imagenes.length > 1 && (
@@ -217,7 +217,7 @@ const Card = ({ propiedad }) => {
                 >
                   <img
                     alt="Google Maps"
-                    src="https://res.cloudinary.com/dcggcw8df/image/upload/v1755458272/r3kx7npz5muhzio5agq8.png"
+                    src="https://res.cloudinary.com/dxdnsblj6/image/upload/v1761174205/googlemap_puktna.png"
                     style={{ width: "20px", height: "20px" }}
                   />
                   <span>Ver en Maps</span>
