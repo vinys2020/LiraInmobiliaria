@@ -293,8 +293,6 @@ export default function AgregarPropiedadModal({ onClose, refrescarLista }) {
                   "mantenimiento",
                   "gastosComunes",
                   "luz",
-                  "gas",
-                  "aguaPotable",
                 ].map((campo) => (
                   <div className="form-check col-6 col-md-4" key={campo}>
                     <input
