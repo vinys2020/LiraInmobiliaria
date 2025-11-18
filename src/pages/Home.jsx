@@ -218,63 +218,63 @@ function Home() {
 
 
 
-{/* Sección Alquileres */}
-<section
-  id="alquileres-section"
-  className="py-5"
-  style={{ backgroundColor: "white", padding: "30px 0" }}
->
-  <div className="container">
-    <h2 className="text-danger mb-1 text-center titulo-prata">
-      Alquileres Destacados
-    </h2>
-    <p className="mb-3 text-center">
-      Encontrá la propiedad ideal para vos.
-    </p>
+      {/* Sección Alquileres */}
+      <section
+        id="alquileres-section"
+        className="py-5"
+        style={{ backgroundColor: "white", padding: "30px 0" }}
+      >
+        <div className="container">
+          <h2 className="text-danger mb-1 text-center titulo-prata">
+            Alquileres Destacados
+          </h2>
+          <p className="mb-3 text-center">
+            Encontrá la propiedad ideal para vos.
+          </p>
 
-    {(() => {
-      const propiedadesFiltradas = propiedades
-        .filter((p) => p.propiedadEn === "alquiler")
-        .slice(0, 6); // 👈 Solo mostramos las primeras 6
+          {(() => {
+            const propiedadesFiltradas = propiedades
+              .filter((p) => p.propiedadEn === "alquiler")
+              .slice(0, 6); // 👈 Solo mostramos las primeras 6
 
-      return (
-        <>
-          {/* Contenedor con min-height */}
-          <div
-            className="row g-4 justify-content-center"
-            style={{ minHeight: "700px" }}
-          >
-            {propiedadesFiltradas.length > 0 ? (
-              propiedadesFiltradas.map((prop) => (
-                <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
-                  <Card
-                    propiedad={prop}
-                    onClick={() =>
-                      navigate("/detalle-propiedad", { state: { id: prop.id } })
-                    }
-                  />
+            return (
+              <>
+                {/* Contenedor con min-height */}
+                <div
+                  className="row g-4 justify-content-center"
+                  style={{ minHeight: "700px" }}
+                >
+                  {propiedadesFiltradas.length > 0 ? (
+                    propiedadesFiltradas.map((prop) => (
+                      <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
+                        <Card
+                          propiedad={prop}
+                          onClick={() =>
+                            navigate("/detalle-propiedad", { state: { id: prop.id } })
+                          }
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="d-flex justify-content-center align-items-center">
+                      <div className="spinner-border text-danger" role="status">
+                        <span className="visually-hidden">Cargando...</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              ))
-            ) : (
-              <div className="d-flex justify-content-center align-items-center">
-                <div className="spinner-border text-danger" role="status">
-                  <span className="visually-hidden">Cargando...</span>
-                </div>
-              </div>
-            )}
-          </div>
 
-          {/* Botón de ver más propiedades */}
-          <div className="text-center mt-5">
-            <a href="/alquileres" className="btn btn-danger">
-              VER MÁS PROPIEDADES EN ALQUILER
-            </a>
-          </div>
-        </>
-      );
-    })()}
-  </div>
-</section>
+                {/* Botón de ver más propiedades */}
+                <div className="text-center mt-5">
+                  <a href="/alquileres" className="btn btn-danger">
+                    VER MÁS PROPIEDADES EN ALQUILER
+                  </a>
+                </div>
+              </>
+            );
+          })()}
+        </div>
+      </section>
 
 
 
@@ -288,12 +288,7 @@ function Home() {
           <p className="text-muted mb-3">
             Descubrí todas las ubicaciones de nuestras propiedades en un mapa interactivo.
           </p>
-          <button
-            className="btn btn-outline-danger btn-lg"
-            onClick={() => setMostrarMapa(!mostrarMapa)}
-          >
-            {mostrarMapa ? "Ocultar Mapa" : "Ver todas las ubicaciones"}
-          </button>
+
         </div>
 
         {mostrarMapa && (
@@ -388,64 +383,64 @@ function Home() {
 
 
 
-{/* Sección Venta */}
-<section
-  id="venta-section"
-  className="py-5"
-  style={{ backgroundColor: "white", padding: "30px 0" }}
->
-  <div className="container">
-    <h2 className="text-danger mb-2 text-center titulo-prata">
-      Propiedades en Venta
-    </h2>
-    <p className="mb-4 fs-6 text-center">
-      En Lira Inmobiliaria te asesoramos para que puedas tener el mejor rendimiento de tu venta o compra de un inmueble.
-    </p>
+      {/* Sección Venta */}
+      <section
+        id="venta-section"
+        className="py-5"
+        style={{ backgroundColor: "white", padding: "30px 0" }}
+      >
+        <div className="container">
+          <h2 className="text-danger mb-2 text-center titulo-prata">
+            Propiedades en Venta
+          </h2>
+          <p className="mb-4 fs-6 text-center">
+            En Lira Inmobiliaria te asesoramos para que puedas tener el mejor rendimiento de tu venta o compra de un inmueble.
+          </p>
 
-    {(() => {
-      // Solo mostramos las primeras 6 propiedades en venta
-      const propiedadesFiltradas = propiedades
-        .filter((p) => p.propiedadEn === "venta")
-        .slice(0, 6);
+          {(() => {
+            // Solo mostramos las primeras 6 propiedades en venta
+            const propiedadesFiltradas = propiedades
+              .filter((p) => p.propiedadEn === "venta")
+              .slice(0, 6);
 
-      return (
-        <>
-          {/* Contenedor con min-height */}
-          <div
-            className="row g-4 justify-content-center"
-            style={{ minHeight: "700px" }}
-          >
-            {propiedadesFiltradas.length > 0 ? (
-              propiedadesFiltradas.map((prop) => (
-                <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
-                  <Card
-                    propiedad={prop}
-                    onClick={() =>
-                      navigate("/detalle-propiedad", { state: { id: prop.id } })
-                    }
-                  />
+            return (
+              <>
+                {/* Contenedor con min-height */}
+                <div
+                  className="row g-4 justify-content-center"
+                  style={{ minHeight: "700px" }}
+                >
+                  {propiedadesFiltradas.length > 0 ? (
+                    propiedadesFiltradas.map((prop) => (
+                      <div key={prop.id} className="col-12 col-md-6 col-lg-4 d-flex">
+                        <Card
+                          propiedad={prop}
+                          onClick={() =>
+                            navigate("/detalle-propiedad", { state: { id: prop.id } })
+                          }
+                        />
+                      </div>
+                    ))
+                  ) : (
+                    <div className="d-flex justify-content-center align-items-center">
+                      <div className="spinner-border text-danger" role="status">
+                        <span className="visually-hidden">Cargando...</span>
+                      </div>
+                    </div>
+                  )}
                 </div>
-              ))
-            ) : (
-              <div className="d-flex justify-content-center align-items-center">
-                <div className="spinner-border text-danger" role="status">
-                  <span className="visually-hidden">Cargando...</span>
-                </div>
-              </div>
-            )}
-          </div>
 
-          {/* Botón de ver más propiedades */}
-          <div className="text-center mt-5">
-            <a href="/PropiedadesEnVenta" className="btn btn-danger">
-              VER MÁS PROPIEDADES EN VENTA
-            </a>
-          </div>
-        </>
-      );
-    })()}
-  </div>
-</section>
+                {/* Botón de ver más propiedades */}
+                <div className="text-center mt-5">
+                  <a href="/PropiedadesEnVenta" className="btn btn-danger">
+                    VER MÁS PROPIEDADES EN VENTA
+                  </a>
+                </div>
+              </>
+            );
+          })()}
+        </div>
+      </section>
 
 
 

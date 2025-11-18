@@ -84,34 +84,45 @@ const PropiedadesEnVenta = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
 
-useEffect(() => {
-  const fetchPropiedades = async () => {
-    setLoading(true);
+  useEffect(() => {
+    const fetchPropiedades = async () => {
+      setLoading(true);
 
-    try {
-      const propsRef = collection(db, "Propiedades");
-      const q = query(
-        propsRef,
-        where("propiedadEn", "==", "venta"),
-        orderBy("direccion.codigoPostal")
-      );
+      try {
+        const propsRef = collection(db, "Propiedades");
+        const q = query(
+          propsRef,
+          where("propiedadEn", "==", "venta"),
+          orderBy("direccion.codigoPostal")
+        );
 
-      const snapshot = await getDocs(q);
-      const props = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const snapshot = await getDocs(q);
+        const props = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      setPropiedades(props);
+        setPropiedades(props);
 
-    } catch (error) {
-      console.error("Error cargando propiedades:", error);
-    }
+      } catch (error) {
+        console.error("Error cargando propiedades:", error);
+      }
 
-    setLoading(false);
-  };
+      setLoading(false);
+    };
 
-  fetchPropiedades();
-}, []);
+    fetchPropiedades();
+  }, []);
 
 
+
+  // 🔥 Normalización completa
+  const normalizeFull = (str) =>
+    str
+      ?.toString()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // elimina acentos
+      .replace(/[^\w\s]/g, "")         // elimina símbolos: , . / - _ etc.
+      .replace(/\s+/g, " ")            // limpia espacios dobles
+      .trim();
 
   const propiedadesFiltradas = propiedades.filter((p) => {
     // Filtrado por tipos seleccionados (multiselección)
@@ -121,6 +132,9 @@ useEffect(() => {
     // Función para búsqueda en todos los campos de dirección
     const buscarEnDireccion = (valor) => {
       if (!valor) return false;
+
+      const valorNorm = normalizeFull(valor);
+
       const campos = [
         p.direccion?.calle,
         p.direccion?.codigoPostal,
@@ -129,8 +143,14 @@ useEffect(() => {
         p.direccion?.pais,
         p.ubicacionGeo?.lat,
         p.ubicacionGeo?.lng,
+        p.titulo, // 👈 agregado para buscar también por título
       ];
-      return campos.some((campo) => campo && campo.toString().toLowerCase().includes(valor.toLowerCase()));
+
+      return campos.some(
+        (campo) =>
+          campo &&
+          normalizeFull(campo).includes(valorNorm)
+      );
     };
 
     const matchSearchDesktop = searchTerm ? buscarEnDireccion(searchTerm) : true;
@@ -138,6 +158,7 @@ useEffect(() => {
 
     return matchTipo && matchSearchDesktop && matchSearchMobile;
   });
+
 
 
   return (

@@ -79,7 +79,7 @@ const AlquileresDisponibles = () => {
   useEffect(() => {
     const fetchPropiedades = async () => {
       setLoading(true);
-  
+
       try {
         const propsRef = collection(db, "Propiedades");
         const q = query(
@@ -87,32 +87,46 @@ const AlquileresDisponibles = () => {
           where("propiedadEn", "==", "alquiler"),
           orderBy("direccion.codigoPostal")
         );
-  
+
         const snapshot = await getDocs(q);
         const props = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  
+
         setPropiedades(props);
-  
+
       } catch (error) {
         console.error("Error cargando propiedades:", error);
       }
-  
+
       setLoading(false);
     };
-  
+
     fetchPropiedades();
   }, []);
-  
+
   // Dependencia: lastDoc permite cargar el siguiente lote
-  
+
+
+  // Normalización fuerte (acentos, símbolos, espacios, etc.)
+  const normalize = (str) => {
+    if (!str) return "";
+    return str
+      .toLowerCase()
+      .normalize("NFD")                       // separa acentos
+      .replace(/[\u0300-\u036f]/g, "")        // elimina acentos
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "") // elimina símbolos comunes
+      .replace(/\s+/g, " ")                   // espacios múltiples → uno
+      .trim();                                // sin espacios extremos
+  };
 
   const propiedadesFiltradas = propiedades.filter((p) => {
     const tipoProp = p.tipoDePropiedad || "Otro";
+
     const matchTipo =
       !subfiltro || subfiltro.length === 0 ? true : subfiltro.includes(tipoProp);
 
     const buscarEnDireccion = (valor) => {
       if (!valor) return false;
+
       const campos = [
         p.direccion?.calle,
         p.direccion?.codigoPostal,
@@ -121,18 +135,27 @@ const AlquileresDisponibles = () => {
         p.direccion?.pais,
         p.ubicacionGeo?.lat,
         p.ubicacionGeo?.lng,
+        p.titulo, // ← 🔥 agregado para que busque también por título
       ];
+
       return campos.some(
         (campo) =>
-          campo && campo.toString().toLowerCase().includes(valor.toLowerCase())
+          campo &&
+          normalize(campo.toString()).includes(normalize(valor))
       );
     };
 
-    const matchSearchDesktop = searchTerm ? buscarEnDireccion(searchTerm) : true;
-    const matchSearchMobile = searchZone ? buscarEnDireccion(searchZone) : true;
+    const matchSearchDesktop = searchTerm
+      ? buscarEnDireccion(searchTerm)
+      : true;
+
+    const matchSearchMobile = searchZone
+      ? buscarEnDireccion(searchZone)
+      : true;
 
     return matchTipo && matchSearchDesktop && matchSearchMobile;
   });
+
 
   return (
     <main className="alquileres-page" style={{ backgroundColor: "#ffffff" }}>
@@ -196,9 +219,9 @@ const AlquileresDisponibles = () => {
               ) : (
                 <div className="row">
                   {propiedadesFiltradas.map((prop) => (
-  <div key={prop.id} className="col-12 col-md-6 col-lg-4 mb-4 d-flex">
-  <Card propiedad={prop} />
-</div>
+                    <div key={prop.id} className="col-12 col-md-6 col-lg-4 mb-4 d-flex">
+                      <Card propiedad={prop} />
+                    </div>
                   ))}
                 </div>
               )}

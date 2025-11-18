@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { collection, getDocs, onSnapshot, doc, updateDoc,  } from "firebase/firestore";
+import { collection, getDocs, onSnapshot, doc, updateDoc, } from "firebase/firestore";
 
 import { db } from "../config/firebase"; // tu configuración de Firebase
 import AgregarPropiedadModal from "../components/AgregarPropiedadModal";
@@ -64,11 +64,17 @@ export default function Propiedades() {
     };
   }, []);
 
-  const normalize = (str) =>
-    str
-      ?.toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+  const normalize = (str) => {
+    if (!str) return "";
+
+    return str
+      .toLowerCase()
+      .normalize("NFD")                     // separa acentos
+      .replace(/[\u0300-\u036f]/g, "")      // elimina acentos
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g, "") // elimina símbolos comunes
+      .replace(/\s+/g, " ")                 // normaliza espacios múltiples
+      .trim();                              // elimina espacios adelante/atrás
+  };
 
   const propiedadesFiltradas = propiedades.filter((p) => {
     // Normalizar campos para comparación
@@ -88,14 +94,23 @@ export default function Propiedades() {
       p?.direccion?.codigoPostal,
     ]
       .filter(Boolean)
-      .join(" ")
-      .toLowerCase();
+      .join(" ");
 
-    const matchesSearch = normalize(ubicacion).includes(normalize(searchTerm));
+    // Agregar también el título
+    const titulo = p?.titulo || "";
 
-    // ✅ Resultado final
+    // Búsqueda fuerte sin acentos ni símbolos
+    const term = normalize(searchTerm);
+
+    const matchesSearch =
+      !term ||
+      normalize(ubicacion).includes(term) ||
+      normalize(titulo).includes(term);
+
     return matchesFiltro && matchesSubfiltro && matchesSearch;
   });
+
+
 
 
 

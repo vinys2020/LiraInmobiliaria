@@ -28,9 +28,21 @@ const LotesEnVenta = () => {
     fetchPropiedades();
   }, []);
 
+  // 🔥 Normaliza: saca acentos, símbolos, barras, comas, puntos, ñ, etc.
+  const normalizeFull = (str) =>
+    str
+      ?.toString()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")   // acentos
+      .replace(/[^\w\s]/g, "")           // símbolos: , . / - _ etc.
+      .replace(/\s+/g, " ")              // espacios dobles
+      .trim();
+
   const propiedadesFiltradas = propiedades.filter((p) => {
     const buscarEnDireccion = (valor) => {
       if (!valor) return false;
+
       const campos = [
         p.direccion?.calle,
         p.direccion?.codigoPostal,
@@ -39,9 +51,15 @@ const LotesEnVenta = () => {
         p.direccion?.pais,
         p.ubicacionGeo?.lat,
         p.ubicacionGeo?.lng,
+        p.titulo, // 👈 agregado para buscar por título
       ];
+
+      const valorNorm = normalizeFull(valor);
+
       return campos.some(
-        (campo) => campo && campo.toString().toLowerCase().includes(valor.toLowerCase())
+        (campo) =>
+          campo &&
+          normalizeFull(campo).includes(valorNorm)
       );
     };
 
@@ -50,6 +68,7 @@ const LotesEnVenta = () => {
 
     return matchSearchDesktop && matchSearchMobile;
   });
+
 
 
   return (

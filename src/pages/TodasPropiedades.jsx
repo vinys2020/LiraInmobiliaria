@@ -75,16 +75,33 @@ const TodasPropiedades = () => {
   }, []);
 
 
+  // 🔥 Normalización completa
+  const normalizeFull = (str) =>
+    str
+      ?.toString()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "") // elimina acentos
+      .replace(/[^\w\s]/g, "")         // elimina símbolos: , . / - etc.
+      .replace(/\s+/g, " ")            // limpia espacios dobles
+      .trim();
+
   const propiedadesFiltradas = propiedades.filter((p) => {
     // Filtro por tipo (sidebar)
-    const matchTipo = subfiltro.length === 0 || subfiltro.includes(p.tipoDePropiedad || "Otro");
+    const matchTipo =
+      subfiltro.length === 0 || subfiltro.includes(p.tipoDePropiedad || "Otro");
 
     // Filtro por propiedadEn según la pestaña
-    const matchPropiedadEn = filtroPropiedadEn ? p.propiedadEn === filtroPropiedadEn : true;
+    const matchPropiedadEn = filtroPropiedadEn
+      ? p.propiedadEn === filtroPropiedadEn
+      : true;
 
     // Búsqueda
     const buscarEnDireccion = (valor) => {
       if (!valor) return false;
+
+      const valorNorm = normalizeFull(valor);
+
       const campos = [
         p.direccion?.calle,
         p.direccion?.codigoPostal,
@@ -93,8 +110,14 @@ const TodasPropiedades = () => {
         p.direccion?.pais,
         p.ubicacionGeo?.lat,
         p.ubicacionGeo?.lng,
+        p.titulo, // 👈 agregado para que busque también por título
       ];
-      return campos.some((campo) => campo && campo.toString().toLowerCase().includes(valor.toLowerCase()));
+
+      return campos.some(
+        (campo) =>
+          campo &&
+          normalizeFull(campo).includes(valorNorm)
+      );
     };
 
     const matchSearchDesktop = searchTerm ? buscarEnDireccion(searchTerm) : true;
@@ -102,6 +125,7 @@ const TodasPropiedades = () => {
 
     return matchTipo && matchPropiedadEn && matchSearchDesktop && matchSearchMobile;
   });
+
 
   return (
     <main className="alquileres-page">
@@ -133,13 +157,13 @@ const TodasPropiedades = () => {
               ) : propiedadesFiltradas.length === 0 ? (
                 <div className="alert alert-warning text-center">No se encontraron propiedades disponibles.</div>
               ) : (
-<div className="row">
-  {propiedadesFiltradas.map((prop) => (
-    <div key={prop.id} className="col-12 col-md-6 col-lg-4 mb-4">
-      <Card propiedad={prop} />
-    </div>
-  ))}
-</div>
+                <div className="row">
+                  {propiedadesFiltradas.map((prop) => (
+                    <div key={prop.id} className="col-12 col-md-6 col-lg-4 mb-4">
+                      <Card propiedad={prop} />
+                    </div>
+                  ))}
+                </div>
               )}
             </section>
 

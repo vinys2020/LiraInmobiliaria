@@ -26,7 +26,7 @@ const SobreNosotros = () => {
 
 
       {/* Sección Misión, Visión y Valores */}
-      <section className="col-12 py-5 bg-white ">
+      <section className="col-12 py-5 bg-white px-5">
         <div className="text-center mx-lg-5">
           <p>
             En Lira Inmobiliaria, nuestra misión es brindarte un servicio integral y personalizado en el apasionante mundo de bienes raíces. Nos enorgullece ser tu aliado de confianza en el proceso de compra o venta de propiedades, ofreciéndote un asesoramiento experto que maximice el rendimiento de tu inversión.
@@ -42,7 +42,7 @@ const SobreNosotros = () => {
       {/* Sección Alquiler y venta */}
       <section className=" container-light alquiler-venta-section bg-white">
         <div className="container">
-          <div className="row align-items-center">
+          <div className="row align-items-center flex-column-reverse flex-md-row">
             {/* Columna imagen */}
             <div className="col-md-6 mb-4 mb-md-0">
               <img
@@ -69,7 +69,7 @@ const SobreNosotros = () => {
 
       <section className=" container-light administracion-section bg-white py-lg-5">
         <div className="container mt-5">
-          <div className="row align-items-center">
+          <div className="row align-items-center flex-column flex-md-row">
             {/* Columna texto */}
             <div className="col-md-6 mb-4 mb-md-0">
               <h2 className="mb-3 titulo-prata">Administración</h2>
@@ -93,7 +93,7 @@ const SobreNosotros = () => {
       {/* Sección Tasaciones */}
       <section className="container-light tasaciones-section py-lg-5 mt-5 mt-lg-0 bg-white">
         <div className="container">
-          <div className="row align-items-center">
+          <div className="row align-items-center flex-column-reverse flex-md-row">
             {/* Columna imagen */}
             <div className="col-md-6 mb-4 mb-md-0">
               <img
@@ -120,7 +120,7 @@ const SobreNosotros = () => {
 
       <section className=" container-light asesoramiento-section bg-white mb-lg-5 py-5">
         <div className="container">
-          <div className="row align-items-center ">
+          <div className="row align-items-center flex-column flex-md-row">
             {/* Columna texto */}
             <div className="col-md-6 mb-4 mb-md-0">
               <h2 className="mb-3 titulo-prata">Asesoramiento</h2>
@@ -137,10 +137,10 @@ const SobreNosotros = () => {
                 className="img-fluid rounded"
               />
             </div>
-
           </div>
         </div>
       </section>
+
 
 
 

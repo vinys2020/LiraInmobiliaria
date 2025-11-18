@@ -25,8 +25,7 @@ const PreFooter = () => {
               <li className="d-flex align-items-center">
                 <i className="bi bi-envelope-fill me-2 fs-5 text-danger" aria-hidden="true"></i>
                 <a href="mailto:info@lirainmobiliaria.com.ar" className="text-decoration-none">
-                  info@lirainmobiliaria.com.ar
-                </a>
+                  lirainmobiliaria@yahoo.com.ar                </a>
               </li>
             </ul>
           </article>

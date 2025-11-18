@@ -13,6 +13,9 @@ const redIcon = new L.Icon({
   popupAnchor: [1, -34],
 });
 
+const offsetLat = 0.04; // Ajustá este valor para mover más o menos
+
+
 // Función para formatear lat/lng
 const formatLatLng = (lat, lng) => {
   const latSuffix = lat < 0 ? "S" : "N";
@@ -33,8 +36,8 @@ const MapaPropiedades = ({ propiedades }) => {
 
   return (
     <MapContainer
-      center={[centro.lat, centro.lng]}
-      zoom={12}
+    center={[centro.lat + offsetLat, centro.lng]}
+    zoom={12}
       scrollWheelZoom={false} // desactiva zoom con scroll
       style={{ width: "100%", height: "450px", borderRadius: "10px", overflow: "hidden" }}
     >
