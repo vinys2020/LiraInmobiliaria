@@ -29,7 +29,7 @@ const Sidebar = ({ propiedades, subfiltro, onSetSubfiltro, searchTerm, setSearch
       <h5 className="text-black mb-2 text-center">Propiedades</h5>
 
       {setSearchTerm && (
-        <input type="text" className="form-control mb-3" placeholder="Buscar por calle, localidad, provincia, código postal" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+        <input type="text" className="form-control mb-3" placeholder="Buscar por título, calle, localidad, provincia" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
       )}
 
       <div className="list-group list-group-flush bg-transparent">
@@ -136,7 +136,7 @@ const TodasPropiedades = () => {
           {/* Barra de búsqueda móvil */}
           <div className="mb-3 d-md-none">
             <div className="d-flex gap-2">
-              <input type="text" className="form-control" placeholder="Buscar por calle, localidad, provincia, código postal" value={searchZone} onChange={(e) => setSearchZone(e.target.value)} style={{ flex: 1 }} />
+              <input type="text" className="form-control" placeholder="Buscar por título, calle, localidad, provincia" value={searchZone} onChange={(e) => setSearchZone(e.target.value)} style={{ flex: 1 }} />
               <button className="btn btn-outline-danger d-flex align-items-center" onClick={() => setShowFilters(true)}>
                 <span>Filtrar</span>
               </button>
@@ -146,7 +146,7 @@ const TodasPropiedades = () => {
           <div className="row g-4">
             <section className="col-lg-10">
               <div className="d-none d-md-flex gap-2 mb-4 col-12">
-                <input type="text" className="form-control" placeholder="Buscar por calle, localidad, provincia, código postal" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ flex: 1 }} />
+                <input type="text" className="form-control" placeholder="Buscar por título, calle, localidad, provincia" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} style={{ flex: 1 }} />
               </div>
 
               {loading ? (

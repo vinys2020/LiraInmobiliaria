@@ -205,7 +205,7 @@ export default function Propiedades() {
             <input
               type="text"
               className="form-control"
-              placeholder="Buscar por calle, localidad, provincia, código postal"
+              placeholder="Buscar por título, calle, localidad, provincia"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />

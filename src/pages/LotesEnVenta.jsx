@@ -86,7 +86,7 @@ const LotesEnVenta = () => {
               <input
                 type="text"
                 className="form-control"
-                placeholder="Buscar por calle, localidad, provincia, código postal"
+                placeholder="Buscar por título, calle, localidad, provincia"
                 value={searchZone}
                 onChange={(e) => setSearchZone(e.target.value)}
                 style={{ flex: 1 }}
@@ -100,7 +100,7 @@ const LotesEnVenta = () => {
                 <input
                   type="text"
                   className="form-control"
-                  placeholder="Buscar por calle, localidad, provincia, código postal"
+                  placeholder="Buscar por título, calle, localidad, provincia"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   style={{ flex: 1 }}
