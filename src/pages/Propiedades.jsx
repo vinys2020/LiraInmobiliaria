@@ -605,32 +605,39 @@ export default function Propiedades() {
                   }}
                 >
 
-                  {/* Input para subir imágenes */}
-                  <h4 className="mt-3">Agregar / Modificar Imágenes</h4>
-                  <div className="mb-3">
-                    <input
-                      type="file"
-                      accept="image/*"
-                      multiple
-                      className="form-control mb-2"
-                      onChange={async (e) => {
-                        const files = Array.from(e.target.files);
-                        if (!files.length) return;
+{/* Input para subir imágenes */}
+<h4 className="mt-3">Agregar / Modificar Imágenes</h4>
+<div className="mb-3">
+  <input
+    type="file"
+    accept="image/*"
+    multiple
+    className="form-control mb-2"
+    onChange={async (e) => {
+      const files = Array.from(e.target.files);
+      if (!files.length) return;
 
-                        try {
-                          const uploadedUrls = await uploadFiles(files); // ✅ aquí usamos tu hook
-                          setPropiedadSeleccionada({
-                            ...propiedadSeleccionada,
-                            imagenes: [...(propiedadSeleccionada.imagenes || []), ...uploadedUrls],
-                          });
-                        } catch (error) {
-                          console.error("Error subiendo imágenes:", error);
-                        }
-                      }}
-                    />
-                    {uploading && <p>Subiendo imágenes...</p>}
+      // Validación: máximo 800 KB
+      const archivosMuyGrandes = files.filter(file => file.size > 800 * 1024);
+      if (archivosMuyGrandes.length > 0) {
+        alert("La imagen es muy pesada (máx 800 KB). Por favor comprimila e intenta de nuevo.");
+        return;
+      }
 
-                  </div>
+      try {
+        const uploadedUrls = await uploadFiles(files); // ✅ aquí usamos tu hook
+        setPropiedadSeleccionada({
+          ...propiedadSeleccionada,
+          imagenes: [...(propiedadSeleccionada.imagenes || []), ...uploadedUrls],
+        });
+      } catch (error) {
+        console.error("Error subiendo imágenes:", error);
+      }
+    }}
+  />
+  {uploading && <p>Subiendo imágenes...</p>}
+</div>
+
 
                   {/* Preview de imágenes actuales con reordenamiento seguro */}
                   <div className="d-flex flex-wrap gap-3 mb-3">

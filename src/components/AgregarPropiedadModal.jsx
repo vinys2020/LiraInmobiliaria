@@ -412,36 +412,45 @@ export default function AgregarPropiedadModal({ onClose, refrescarLista }) {
               <div className="mb-3">
                 <label className="form-label">Imágenes</label>
                 <input
-                  accept="image/*"
-                  multiple
-                  className="form-control mb-2"
-                  type="file"
-                  onChange={async (e) => {
-                    if (e.target.files && e.target.files.length > 0) {
-                      const files = Array.from(e.target.files);
-                      for (const file of files) {
-                        const formData = new FormData();
-                        formData.append("file", file);
-                        formData.append("upload_preset", "preset_trip");
-                        try {
-                          const res = await fetch(
-                            "https://api.cloudinary.com/v1_1/dxdnsblj6/upload",
-                            { method: "POST", body: formData }
-                          );
-                          const data = await res.json();
-                          if (data.secure_url) {
-                            setPropiedad((prev) => ({
-                              ...prev,
-                              imagenes: [...(prev.imagenes || []), data.secure_url],
-                            }));
-                          }
-                        } catch (err) {
-                          console.error("Error al subir imagen:", err);
-                        }
-                      }
-                    }
-                  }}
-                />
+  accept="image/*"
+  multiple
+  className="form-control mb-2"
+  type="file"
+  onChange={async (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const files = Array.from(e.target.files);
+
+      // Validación: máximo 800 KB
+      const archivosMuyGrandes = files.filter(file => file.size > 800 * 1024);
+      if (archivosMuyGrandes.length > 0) {
+        alert("La imagen es muy pesada (máx 800 KB). Por favor comprimila e intenta de nuevo.");
+        return;
+      }
+
+      for (const file of files) {
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "preset_trip");
+        try {
+          const res = await fetch(
+            "https://api.cloudinary.com/v1_1/dxdnsblj6/upload",
+            { method: "POST", body: formData }
+          );
+          const data = await res.json();
+          if (data.secure_url) {
+            setPropiedad((prev) => ({
+              ...prev,
+              imagenes: [...(prev.imagenes || []), data.secure_url],
+            }));
+          }
+        } catch (err) {
+          console.error("Error al subir imagen:", err);
+        }
+      }
+    }
+  }}
+/>
+
                 <div className="d-flex flex-wrap gap-3 mt-2">
                   {propiedad.imagenes.map((img, idx) => (
                     <div
