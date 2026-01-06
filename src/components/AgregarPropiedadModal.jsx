@@ -421,11 +421,13 @@ export default function AgregarPropiedadModal({ onClose, refrescarLista }) {
       const files = Array.from(e.target.files);
 
       // Validación: máximo 800 KB
-      const archivosMuyGrandes = files.filter(file => file.size > 800 * 1024);
-      if (archivosMuyGrandes.length > 0) {
-        alert("La imagen es muy pesada (máx 800 KB). Por favor comprimila e intenta de nuevo.");
-        return;
-      }
+// Validación: máximo 1 MB
+const archivosMuyGrandes = files.filter(file => file.size > 1024 * 1024);
+if (archivosMuyGrandes.length > 0) {
+  alert("La imagen es muy pesada (máx 1 MB). Por favor comprimila e intenta de nuevo.");
+  return;
+}
+
 
       for (const file of files) {
         const formData = new FormData();
