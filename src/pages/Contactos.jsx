@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import toast from "react-hot-toast";
 import "./Contactos.css";
 
 
@@ -19,7 +20,7 @@ const Contactos = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("Formulario enviado:", formData);
-    alert("¡Gracias por tu mensaje! Te responderemos pronto.");
+    toast.success("¡Gracias por tu mensaje! Te responderemos pronto.");
     setFormData({
       from_name: "",
       email_id: "",

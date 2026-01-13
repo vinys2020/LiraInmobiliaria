@@ -1,6 +1,8 @@
 import React, { useState } from "react";
 import { collection, addDoc } from "firebase/firestore";
 import { db } from "../config/firebase";
+import toast from "react-hot-toast";
+
 
 export default function AgregarPropiedadModal({ onClose, refrescarLista }) {
   const [propiedad, setPropiedad] = useState({
@@ -68,7 +70,7 @@ export default function AgregarPropiedadModal({ onClose, refrescarLista }) {
         superficieTerreno: Number(propiedad.superficieTerreno),
       };
       await addDoc(collection(db, "Propiedades"), propiedadFinal);
-      alert("Propiedad agregada correctamente!");
+      toast.success("Propiedad agregada correctamente!");
       onClose();
       refrescarLista();
     } catch (error) {
@@ -86,8 +88,39 @@ export default function AgregarPropiedadModal({ onClose, refrescarLista }) {
       className="modal fade show d-block"
       tabIndex="-1"
       role="dialog"
-      onClick={() => { if (window.confirm("¿Desea cerrar el modal? Se perderán los cambios no guardados.")) onClose(); }}
-      aria-modal="true"
+      onClick={() => {
+        toast(
+          (t) => (
+            <div>
+              <strong>Confirmar acción</strong>
+              <p style={{ marginTop: 8 }}>
+                ¿Desea cerrar el modal? Se perderán los cambios no guardados.
+              </p>
+      
+              <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+                <button
+                  className="btn btn-danger btn-sm"
+                  onClick={() => {
+                    toast.dismiss(t.id);
+                    onClose();
+                  }}
+                >
+                  Sí, cerrar
+                </button>
+      
+                <button
+                  className="btn btn-secondary btn-sm"
+                  onClick={() => toast.dismiss(t.id)}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          ),
+          { duration: 8000 }
+        );
+      }}
+            aria-modal="true"
       style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
     >
       <div
@@ -412,46 +445,45 @@ export default function AgregarPropiedadModal({ onClose, refrescarLista }) {
               <div className="mb-3">
                 <label className="form-label">Imágenes</label>
                 <input
-  accept="image/*"
-  multiple
-  className="form-control mb-2"
-  type="file"
-  onChange={async (e) => {
-    if (e.target.files && e.target.files.length > 0) {
-      const files = Array.from(e.target.files);
+                  accept="image/*"
+                  multiple
+                  className="form-control mb-2"
+                  type="file"
+                  onChange={async (e) => {
+                    if (e.target.files && e.target.files.length > 0) {
+                      const files = Array.from(e.target.files);
 
-      // Validación: máximo 800 KB
-// Validación: máximo 1 MB
-const archivosMuyGrandes = files.filter(file => file.size > 1024 * 1024);
-if (archivosMuyGrandes.length > 0) {
-  alert("La imagen es muy pesada (máx 1 MB). Por favor comprimila e intenta de nuevo.");
-  return;
-}
+                      // Validación: máximo 1 MB
+                      const archivosMuyGrandes = files.filter(file => file.size > 1024 * 1024);
+                      if (archivosMuyGrandes.length > 0) {
+                        toast.error("La imagen es muy pesada (máx 1 MB). Por favor comprimila e intenta de nuevo.");
+                        return;
+                      }
 
 
-      for (const file of files) {
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "preset_trip");
-        try {
-          const res = await fetch(
-            "https://api.cloudinary.com/v1_1/dxdnsblj6/upload",
-            { method: "POST", body: formData }
-          );
-          const data = await res.json();
-          if (data.secure_url) {
-            setPropiedad((prev) => ({
-              ...prev,
-              imagenes: [...(prev.imagenes || []), data.secure_url],
-            }));
-          }
-        } catch (err) {
-          console.error("Error al subir imagen:", err);
-        }
-      }
-    }
-  }}
-/>
+                      for (const file of files) {
+                        const formData = new FormData();
+                        formData.append("file", file);
+                        formData.append("upload_preset", "preset_trip");
+                        try {
+                          const res = await fetch(
+                            "https://api.cloudinary.com/v1_1/dxdnsblj6/upload",
+                            { method: "POST", body: formData }
+                          );
+                          const data = await res.json();
+                          if (data.secure_url) {
+                            setPropiedad((prev) => ({
+                              ...prev,
+                              imagenes: [...(prev.imagenes || []), data.secure_url],
+                            }));
+                          }
+                        } catch (err) {
+                          console.error("Error al subir imagen:", err);
+                        }
+                      }
+                    }
+                  }}
+                />
 
                 <div className="d-flex flex-wrap gap-3 mt-2">
                   {propiedad.imagenes.map((img, idx) => (

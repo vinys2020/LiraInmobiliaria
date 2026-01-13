@@ -19,6 +19,8 @@ import TodasPropiedades from "./pages/TodasPropiedades";
 import DetallePropiedad from "./pages/DetallePropiedad";
 import NormalizeTrailingSlash from "./components/NormalizeTrailingSlash";
 import InstagramWarning from "./components/InstagramWarning";
+import { Toaster } from "react-hot-toast"; // 👈 IMPORTANTE
+
 
 import AdminRoute from "./routes/AdminRoute";
 import EmpleadoRoute from "./routes/EmpleadoRoute";
@@ -26,6 +28,19 @@ import EmpleadoRoute from "./routes/EmpleadoRoute";
 function App() {
   return (
     <>
+
+          {/* 🔔 TOASTER GLOBAL */}
+          <Toaster
+        position="top-right"
+        toastOptions={{
+          duration: 4000,
+          style: {
+            background: "#111",
+            color: "#fff",
+          },
+        }}
+      />
+      
       <InstagramWarning />
 
       <Navbar />
