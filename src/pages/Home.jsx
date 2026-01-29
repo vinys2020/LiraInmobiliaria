@@ -386,7 +386,7 @@ function Home() {
       {/* Sección Venta */}
       <section
         id="venta-section"
-        className="pb-5 pt-5"
+        className="pb-5 pt-lg-2 pt-0"
         style={{ backgroundColor: "white", padding: "30px 0" }}
       >
         <div className="container">
