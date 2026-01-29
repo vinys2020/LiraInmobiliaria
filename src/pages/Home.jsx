@@ -282,7 +282,7 @@ function Home() {
 
 
 
-      <section className=" container-fluid py-4 p-lg-5 p-2 bg-white">
+      <section className=" container-fluid p-lg-5 p-2 bg-white">
         <div className="text-center mb-4">
           <h2 className="text-danger titulo-prata mb-1">Explorá nuestras propiedades</h2>
           <p className="text-muted mb-3">
@@ -300,8 +300,8 @@ function Home() {
 
 
       {/* Nueva sección de íconos */}
-      <section className="py-4 bg-white">
-        <div className="container mt-5">
+      <section className="py-5 pt-5 bg-white">
+        <div className="container " style={{paddingTop: "100px"}}>
           <hr className="mb-5 " />
           <div className="row g-5">
 
@@ -386,7 +386,7 @@ function Home() {
       {/* Sección Venta */}
       <section
         id="venta-section"
-        className="py-5"
+        className="pb-5 pt-5"
         style={{ backgroundColor: "white", padding: "30px 0" }}
       >
         <div className="container">
