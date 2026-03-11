@@ -15,9 +15,14 @@ import PropiedadesEnVenta from "./pages/PropiedadesEnVenta";
 import LotesEnVenta from "./pages/LotesEnVenta";
 import SobreNosotros from "./pages/SobreNosotros";
 import Contactos from "./pages/Contactos";
+import CustomerDashboard from "./pages/CustomerDashboard";
 import TodasPropiedades from "./pages/TodasPropiedades";
 import DetallePropiedad from "./pages/DetallePropiedad";
+import Politicadeprivacidad from "./pages/politica-de-privacidad";
+import Condicionesdelservicio from "./pages/condiciones-del-servicio";
+
 import NormalizeTrailingSlash from "./components/NormalizeTrailingSlash";
+
 import InstagramWarning from "./components/InstagramWarning";
 import { Toaster } from "react-hot-toast"; // 👈 IMPORTANTE
 
@@ -29,8 +34,8 @@ function App() {
   return (
     <>
 
-          {/* 🔔 TOASTER GLOBAL */}
-          <Toaster
+      {/* 🔔 TOASTER GLOBAL */}
+      <Toaster
         position="top-right"
         toastOptions={{
           duration: 4000,
@@ -40,7 +45,7 @@ function App() {
           },
         }}
       />
-      
+
       <InstagramWarning />
 
       <Navbar />
@@ -54,15 +59,15 @@ function App() {
         <Route path="/alquileres" element={<AlquileresDisponibles />} />
         <Route path="/PropiedadesEnVenta" element={<PropiedadesEnVenta />} />
         <Route path="/propiedades-en-venta" element={<PropiedadesEnVenta />} />
-
+        <Route path="/politica-de-privacidad" element={<Politicadeprivacidad />} />
+        <Route path="/condiciones-del-servicio" element={<Condicionesdelservicio />} />
+        <Route path="/clientes" element={<CustomerDashboard />} />
         <Route path="/LotesEnVenta" element={<LotesEnVenta />} />
         <Route path="/lotes-en-venta" element={<LotesEnVenta />} />
-
         <Route path="/SobreNosotros" element={<SobreNosotros />} />
         <Route path="/contacto" element={<Contactos />} />
         <Route path="/todaspropiedades" element={<TodasPropiedades />} />
         <Route path="/detalle-propiedad/:id" element={<DetallePropiedad />} />
-
 
 
         <Route

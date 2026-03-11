@@ -31,6 +31,8 @@ const Navbar = () => {
     "/TodasPropiedades",
     "/propiedades-en-venta",
     "/lotes-en-venta",
+    "/clientes",
+
 
 
 

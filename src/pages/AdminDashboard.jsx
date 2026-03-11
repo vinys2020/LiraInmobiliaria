@@ -51,7 +51,8 @@ export default function AdminDashboard() {
               <p className="card-text">
                 Administrá datos de propietarios e interesados.
               </p>
-              <button className="btn btn-outline-success w-100">Ver Clientes</button>
+              <Link to="/clientes" className="btn btn-outline-success w-100">Ver Clientes</Link>
+
             </div>
           </div>
         </div>

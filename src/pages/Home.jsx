@@ -103,7 +103,6 @@ function Home() {
           <form className="mb-5 p-4" onSubmit={handleBuscar} autoComplete="off">
 
             {/* Tabs de estado */}
-            {/* Tabs de estado */}
             <ul
               className="nav nav-pills justify-content-center mb-3 bg-transparent rounded"
               role="tablist"
@@ -228,14 +227,15 @@ function Home() {
           <h2 className="text-danger mb-1 text-center titulo-prata">
             Alquileres Destacados
           </h2>
-          <p className="mb-3 text-center">
+          <p className="mb-3 text-center mb-lg-5">
             Encontrá la propiedad ideal para vos.
           </p>
 
           {(() => {
             const propiedadesFiltradas = propiedades
               .filter((p) => p.propiedadEn === "alquiler")
-              .slice(0, 6); // 👈 Solo mostramos las primeras 6
+              .sort(() => Math.random() - 0.5)
+              .slice(0, 6);
 
             return (
               <>
@@ -282,7 +282,7 @@ function Home() {
 
 
 
-      <section className=" container-fluid p-lg-5 p-2 bg-white">
+      <section className="container-fluid p-lg-5 p-2 bg-white">
         <div className="text-center mb-4">
           <h2 className="text-danger titulo-prata mb-1">Explorá nuestras propiedades</h2>
           <p className="text-muted mb-3">
@@ -292,7 +292,7 @@ function Home() {
         </div>
 
         {mostrarMapa && (
-          <div className="mapa-propiedades-container shadow-sm rounded mb-5 w-80">
+          <div className="mapa-propiedades-container shadow-sm rounded w-80">
             <MapaPropiedades propiedades={propiedadesFiltradas} />
           </div>
         )}
@@ -300,8 +300,8 @@ function Home() {
 
 
       {/* Nueva sección de íconos */}
-      <section className="py-5 pt-5 bg-white">
-        <div className="container " style={{paddingTop: "100px"}}>
+      <section className="py-5 bg-white">
+        <div className="container">
           <hr className="mb-5 " />
           <div className="row g-5">
 
@@ -393,7 +393,7 @@ function Home() {
           <h2 className="text-danger mb-2 text-center titulo-prata">
             Propiedades en Venta
           </h2>
-          <p className="mb-4 fs-6 text-center">
+          <p className="mb-4 fs-6 text-center mb-lg-5">
             En Lira Inmobiliaria te asesoramos para que puedas tener el mejor rendimiento de tu venta o compra de un inmueble.
           </p>
 
@@ -401,6 +401,7 @@ function Home() {
             // Solo mostramos las primeras 6 propiedades en venta
             const propiedadesFiltradas = propiedades
               .filter((p) => p.propiedadEn === "venta")
+              .sort(() => Math.random() - 0.5)
               .slice(0, 6);
 
             return (
