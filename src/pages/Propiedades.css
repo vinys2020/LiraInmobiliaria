@@ -185,14 +185,18 @@
   background-color: #c82333;
 }
 
-
-
-
+/* monitores grandes */
+@media (min-width: 1200px) {
+  .mapa-propiedades-container {
+    margin-bottom: 40px;
+  }
+}
 
 
 /* monitores grandes */
 @media (min-width: 1450px) {
   .mapa-propiedades-container {
-    margin-bottom: 300px;
+    margin-bottom: 200px;
   }
 }
+
