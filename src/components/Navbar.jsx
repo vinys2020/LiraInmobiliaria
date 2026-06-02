@@ -32,7 +32,12 @@ const Navbar = () => {
     "/propiedades-en-venta",
     "/lotes-en-venta",
     "/clientes",
-
+    "/propietarios",
+    "/inquilinos",
+    "/garantes",
+    "/estado",
+    "/reporte-morosos",
+    "/proximos-periodos"
 
 
 

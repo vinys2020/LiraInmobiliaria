@@ -20,6 +20,13 @@ import TodasPropiedades from "./pages/TodasPropiedades";
 import DetallePropiedad from "./pages/DetallePropiedad";
 import Politicadeprivacidad from "./pages/politica-de-privacidad";
 import Condicionesdelservicio from "./pages/condiciones-del-servicio";
+import PropietariosPage from "./pages/PropietariosPage";
+import InquilinosPage from "./pages/InquilinosPage";
+import GarantesPage from "./pages/GarantesPage";
+import EstadoCajaPage from "./pages/EstadoCajaPage";
+import ReporteMorosos from "./pages/ReporteMorosos";
+import ProximosPeriodos from "./pages/ProximosPeriodos";
+
 
 import NormalizeTrailingSlash from "./components/NormalizeTrailingSlash";
 
@@ -68,6 +75,23 @@ function App() {
         <Route path="/contacto" element={<Contactos />} />
         <Route path="/todaspropiedades" element={<TodasPropiedades />} />
         <Route path="/detalle-propiedad/:id" element={<DetallePropiedad />} />
+        <Route
+  path="/propietarios"
+  element={<PropietariosPage />}
+/>
+        <Route
+  path="/inquilinos"
+  element={<InquilinosPage />}
+/>
+
+<Route path="/garantes" element={<GarantesPage />} />
+
+<Route path="/estado" element={<EstadoCajaPage />} />
+<Route path="/reporte-morosos" element={<ReporteMorosos />} />
+<Route
+  path="/proximos-periodos"
+  element={<ProximosPeriodos />}
+/>
 
 
         <Route

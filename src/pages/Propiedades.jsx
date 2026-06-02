@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { collection, getDocs, onSnapshot, doc, updateDoc, } from "firebase/firestore";
-import { db } from "../config/firebase"; 
+import { db } from "../config/firebase";
 import AgregarPropiedadModal from "../components/AgregarPropiedadModal";
 import { useCloudinaryUpload } from "../hooks/useCloudinaryUpload";
 import toast from "react-hot-toast";
@@ -79,10 +79,10 @@ export default function Propiedades() {
   const propiedadesFiltradas = propiedades.filter((p) => {
     // Normalizar campos para comparación
     const matchesFiltro =
-    filtro === "todos"
-      ? p.propiedadEn !== "eliminada"
-      : normalize(p.propiedadEn) === normalize(filtro);
-  
+      filtro === "todos"
+        ? p.propiedadEn !== "eliminada"
+        : normalize(p.propiedadEn) === normalize(filtro);
+
 
     const matchesSubfiltro =
       !subfiltro ||
@@ -226,31 +226,31 @@ export default function Propiedades() {
 
               const estado = (prop.propiedadEn || "").toLowerCase();
               const estadoLabel =
-              estado === "venta"
-                ? "En Venta"
-                : estado === "alquiler"
-                  ? "En Alquiler"
-                  : estado === "vendida"
-                    ? "Vendida"
-                    : estado === "alquilada"
-                      ? "Alquilada"
-                      : estado === "eliminada"
-                        ? "Eliminada"
-                        : "";
-            
-            const badgeColor =
-              estado === "venta"
-                ? "#0d6efd"
-                : estado === "alquiler"
-                  ? "#198754"
-                  : estado === "vendida"
-                    ? "#dc3545"
-                    : estado === "alquilada"
-                      ? "#6c757d"
-                      : estado === "eliminada"
-                        ? "#000000"
-                        : "#6c757d";
-            
+                estado === "venta"
+                  ? "En Venta"
+                  : estado === "alquiler"
+                    ? "En Alquiler"
+                    : estado === "vendida"
+                      ? "Vendida"
+                      : estado === "alquilada"
+                        ? "Alquilada"
+                        : estado === "eliminada"
+                          ? "Eliminada"
+                          : "";
+
+              const badgeColor =
+                estado === "venta"
+                  ? "#0d6efd"
+                  : estado === "alquiler"
+                    ? "#198754"
+                    : estado === "vendida"
+                      ? "#dc3545"
+                      : estado === "alquilada"
+                        ? "#6c757d"
+                        : estado === "eliminada"
+                          ? "#000000"
+                          : "#6c757d";
+
 
               // Normalizar moneda
               const moneda = (prop.moneda || "").toUpperCase();
@@ -475,39 +475,39 @@ export default function Propiedades() {
           role="dialog"
           aria-modal="true"
           style={{ backgroundColor: "rgba(0,0,0,0.6)" }}
-onClick={() => {
-  toast(
-    (t) => (
-      <div>
-        <strong>Confirmar acción</strong>
-        <p style={{ marginTop: 8 }}>
-          ¿Desea cerrar el modal? Se perderán los cambios no guardados.
-        </p>
+          onClick={() => {
+            toast(
+              (t) => (
+                <div>
+                  <strong>Confirmar acción</strong>
+                  <p style={{ marginTop: 8 }}>
+                    ¿Desea cerrar el modal? Se perderán los cambios no guardados.
+                  </p>
 
-        <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
-          <button
-            className="btn btn-danger btn-sm"
-            onClick={() => {
-              toast.dismiss(t.id);
-              setPropiedadSeleccionada(null);
-              toast.success("Cambios descartados.");
-            }}
-          >
-            Sí, cerrar
-          </button>
+                  <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+                    <button
+                      className="btn btn-danger btn-sm"
+                      onClick={() => {
+                        toast.dismiss(t.id);
+                        setPropiedadSeleccionada(null);
+                        toast.success("Cambios descartados.");
+                      }}
+                    >
+                      Sí, cerrar
+                    </button>
 
-          <button
-            className="btn btn-secondary btn-sm"
-            onClick={() => toast.dismiss(t.id)}
-          >
-            Cancelar
-          </button>
-        </div>
-      </div>
-    ),
-    { duration: 8000 }
-  );
-}}
+                    <button
+                      className="btn btn-secondary btn-sm"
+                      onClick={() => toast.dismiss(t.id)}
+                    >
+                      Cancelar
+                    </button>
+                  </div>
+                </div>
+              ),
+              { duration: 8000 }
+            );
+          }}
 
         >
           <div
@@ -530,7 +530,7 @@ onClick={() => {
                           <p style={{ marginTop: 8 }}>
                             ¿Desea cerrar el modal? Se perderán los cambios no guardados.
                           </p>
-                  
+
                           <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
                             <button
                               className="btn btn-danger btn-sm"
@@ -542,7 +542,7 @@ onClick={() => {
                             >
                               Sí, cerrar
                             </button>
-                  
+
                             <button
                               className="btn btn-secondary btn-sm"
                               onClick={() => toast.dismiss(t.id)}
@@ -555,7 +555,7 @@ onClick={() => {
                       { duration: 8000 }
                     );
                   }}
-                  
+
                   aria-label="Cerrar"
                 ></button>
               </div>
@@ -673,39 +673,39 @@ onClick={() => {
                   }}
                 >
 
-{/* Input para subir imágenes */}
-<h4 className="mt-3">Agregar / Modificar Imágenes</h4>
-<div className="mb-3">
-  <input
-    type="file"
-    accept="image/*"
-    multiple
-    className="form-control mb-2"
-    onChange={async (e) => {
-      const files = Array.from(e.target.files);
-      if (!files.length) return;
+                  {/* Input para subir imágenes */}
+                  <h4 className="mt-3">Agregar / Modificar Imágenes</h4>
+                  <div className="mb-3">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      className="form-control mb-2"
+                      onChange={async (e) => {
+                        const files = Array.from(e.target.files);
+                        if (!files.length) return;
 
-// Validación: máximo 1 MB
-const archivosMuyGrandes = files.filter(file => file.size > 1024 * 1024);
-if (archivosMuyGrandes.length > 0) {
-  toast.error("La imagen es muy pesada (máx 1 MB). Por favor comprimila e intenta de nuevo.");
-  return;
-}
+                        // Validación: máximo 1 MB
+                        const archivosMuyGrandes = files.filter(file => file.size > 1024 * 1024);
+                        if (archivosMuyGrandes.length > 0) {
+                          toast.error("La imagen es muy pesada (máx 1 MB). Por favor comprimila e intenta de nuevo.");
+                          return;
+                        }
 
 
-      try {
-        const uploadedUrls = await uploadFiles(files); // ✅ aquí usamos tu hook
-        setPropiedadSeleccionada({
-          ...propiedadSeleccionada,
-          imagenes: [...(propiedadSeleccionada.imagenes || []), ...uploadedUrls],
-        });
-      } catch (error) {
-        console.error("Error subiendo imágenes:", error);
-      }
-    }}
-  />
-  {uploading && <p>Subiendo imágenes...</p>}
-</div>
+                        try {
+                          const uploadedUrls = await uploadFiles(files); // ✅ aquí usamos tu hook
+                          setPropiedadSeleccionada({
+                            ...propiedadSeleccionada,
+                            imagenes: [...(propiedadSeleccionada.imagenes || []), ...uploadedUrls],
+                          });
+                        } catch (error) {
+                          console.error("Error subiendo imágenes:", error);
+                        }
+                      }}
+                    />
+                    {uploading && <p>Subiendo imágenes...</p>}
+                  </div>
 
 
                   {/* Preview de imágenes actuales con reordenamiento seguro */}
@@ -1069,73 +1069,73 @@ if (archivosMuyGrandes.length > 0) {
                   Guardar Cambios
                 </button>
                 <button
-  type="button"
-  className="btn btn-danger"
-  onClick={async () => {
-    const { doc, deleteDoc, updateDoc, serverTimestamp } = await import("firebase/firestore");
-  
-    if (!propiedadSeleccionada) return;
-  
-    const estaEliminada = propiedadSeleccionada.propiedadEn === "eliminada";
-  
-    const mensaje = estaEliminada
-      ? "⚠️ Esta acción es irreversible.\n¿Eliminar definitivamente la propiedad?"
-      : "¿Deseas eliminar esta propiedad?";
-  
-    toast(
-      (t) => (
-        <div>
-          <strong>Confirmar acción</strong>
-          <p style={{ marginTop: 8, whiteSpace: "pre-line" }}>{mensaje}</p>
-  
-          <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
-            <button
-              className="btn btn-danger btn-sm"
-              onClick={async () => {
-                toast.dismiss(t.id);
-  
-                const ref = doc(db, "Propiedades", propiedadSeleccionada.id);
-  
-                try {
-                  if (estaEliminada) {
-                    // 🔴 Eliminación definitiva
-                    await deleteDoc(ref);
-                    toast.success("Propiedad eliminada definitivamente");
-                  } else {
-                    // 🟡 Mover a eliminadas (papelera)
-                    await updateDoc(ref, {
-                      propiedadEn: "eliminada",
-                      fechaEliminada: serverTimestamp(),
-                    });
-                    toast.success("Propiedad movida a Eliminadas");
-                  }
-  
-                  setPropiedadSeleccionada(null);
-                } catch (error) {
-                  console.error("Error al eliminar la propiedad:", error);
-                  toast.error("Ocurrió un error al procesar la acción");
-                }
-              }}
-            >
-              Confirmar
-            </button>
-  
-            <button
-              className="btn btn-secondary btn-sm"
-              onClick={() => toast.dismiss(t.id)}
-            >
-              Cancelar
-            </button>
-          </div>
-        </div>
-      ),
-      { duration: 8000 }
-    );
-  }}
-  
->
-  Eliminar Propiedad
-</button>
+                  type="button"
+                  className="btn btn-danger"
+                  onClick={async () => {
+                    const { doc, deleteDoc, updateDoc, serverTimestamp } = await import("firebase/firestore");
+
+                    if (!propiedadSeleccionada) return;
+
+                    const estaEliminada = propiedadSeleccionada.propiedadEn === "eliminada";
+
+                    const mensaje = estaEliminada
+                      ? "⚠️ Esta acción es irreversible.\n¿Eliminar definitivamente la propiedad?"
+                      : "¿Deseas eliminar esta propiedad?";
+
+                    toast(
+                      (t) => (
+                        <div>
+                          <strong>Confirmar acción</strong>
+                          <p style={{ marginTop: 8, whiteSpace: "pre-line" }}>{mensaje}</p>
+
+                          <div style={{ marginTop: 10, display: "flex", gap: 8 }}>
+                            <button
+                              className="btn btn-danger btn-sm"
+                              onClick={async () => {
+                                toast.dismiss(t.id);
+
+                                const ref = doc(db, "Propiedades", propiedadSeleccionada.id);
+
+                                try {
+                                  if (estaEliminada) {
+                                    // 🔴 Eliminación definitiva
+                                    await deleteDoc(ref);
+                                    toast.success("Propiedad eliminada definitivamente");
+                                  } else {
+                                    // 🟡 Mover a eliminadas (papelera)
+                                    await updateDoc(ref, {
+                                      propiedadEn: "eliminada",
+                                      fechaEliminada: serverTimestamp(),
+                                    });
+                                    toast.success("Propiedad movida a Eliminadas");
+                                  }
+
+                                  setPropiedadSeleccionada(null);
+                                } catch (error) {
+                                  console.error("Error al eliminar la propiedad:", error);
+                                  toast.error("Ocurrió un error al procesar la acción");
+                                }
+                              }}
+                            >
+                              Confirmar
+                            </button>
+
+                            <button
+                              className="btn btn-secondary btn-sm"
+                              onClick={() => toast.dismiss(t.id)}
+                            >
+                              Cancelar
+                            </button>
+                          </div>
+                        </div>
+                      ),
+                      { duration: 8000 }
+                    );
+                  }}
+
+                >
+                  Eliminar Propiedad
+                </button>
 
               </div>
             </div>
