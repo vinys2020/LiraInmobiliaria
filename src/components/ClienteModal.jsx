@@ -86,20 +86,14 @@ const mes = Number(pago.mes) - 1;
 
     const interes = montoBase * (diasMora / 100);
 
-    console.log("📅 INICIO:", inicioMes);
-    console.log("📅 HOY:", fin);
-    console.log("🔥 DIAS MORA:", diasMora);
-    console.log("💰 INTERES:", interes);
+
 
     return interes;
 };
 
     const normalizeLiquidacion = (p) => {
 
-        console.log("NORMALIZANDO:", p);
 
-        console.log("LOCADOR:", p.locadorNombre);
-        console.log("LOCATARIO:", p.locatarioNombre);
 
         return {
 
@@ -593,7 +587,6 @@ const mes = Number(pago.mes) - 1;
 
                                                                                             const editando = liqEditando === liq.id;
 
-                                                                                            console.log("LIQUIDACION EN TABLA:", liq);
 
                                                                                             return (
                                                                                                 <tr key={liq.id}>
@@ -872,10 +865,7 @@ const mes = Number(pago.mes) - 1;
                                                                                                                                 p.interesGenerado ?? 0,
                                                                                                                         };
 
-                                                                                                                        console.log(
-                                                                                                                            "📋 LIQUIDACION NORMALIZADA:",
-                                                                                                                            liquidacionData
-                                                                                                                        );
+                                                                                                                  
 
                                                                                                                         setPagoSeleccionado(liquidacionData);
 
@@ -926,7 +916,6 @@ const mes = Number(pago.mes) - 1;
                                                                                                                                 (p) => p.periodoNumero === liq.periodoNumero
                                                                                                                             );
 
-                                                                                                                        console.log("PAGO RELACIONADO:", pagoRelacionado);
 
                                                                                                                         // =========================
                                                                                                                         // RECIBO CONSOLIDADO
@@ -1004,7 +993,6 @@ const mes = Number(pago.mes) - 1;
                                                                                                                             fechaCobro: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
                                                                                                                         };
 
-                                                                                                                        console.log("📋 RECIBO LIQUIDACION:", datosRecibo);
 
                                                                                                                         GenerarRecibo(datosRecibo, formatCurrency);
                                                                                                                     }}
@@ -1641,7 +1629,6 @@ montoFinal:
                                                                                                                                 ),
                                                                                                                         };
 
-                                                                                                                        console.log("📋 RECIBO PAGO:", pagoNormalizado);
 
                                                                                                                         GenerarRecibo(pagoNormalizado, formatCurrency);
                                                                                                                     }}
@@ -2141,7 +2128,6 @@ montoFinal:
                                                                                                     fechaCobro: cobroForm?.fechaCobro,
                                                                                                 };
 
-                                                                                                console.log("📋 DATOS ENVIADOS A GENERARRECIBO:", datosRecibo);
 
                                                                                                 GenerarRecibo(datosRecibo, formatCurrency);
                                                                                                 guardarRecibo(datosRecibo);

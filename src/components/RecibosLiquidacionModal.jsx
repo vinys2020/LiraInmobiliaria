@@ -86,7 +86,6 @@ const filtrados = data.filter((r) => {
 
   if (!mostrarRecibos) return null;
 
-  console.log("🧾 RECIBOS RENDER:", recibos);
 
   return (
     <>

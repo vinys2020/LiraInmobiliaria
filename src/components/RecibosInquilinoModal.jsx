@@ -37,7 +37,6 @@ useEffect(() => {
       ...d.data(),
     }));
 
-    console.log("📦 TODOS:", data);
 
     // =====================================================
     // FILTRAR SOLO LOS RECIBOS
@@ -57,7 +56,6 @@ const filtrados = data.filter((r) => {
   );
 });
 
-    console.log("🎯 FILTRADOS:", filtrados);
 
     setRecibos(filtrados);
 
@@ -107,7 +105,6 @@ const filtrados = data.filter((r) => {
 
   if (!mostrarRecibosInquilino) return null;
 
-  console.log("🧾 RECIBOS RENDER:", recibos);
 
   return (
     <>
