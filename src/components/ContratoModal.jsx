@@ -553,11 +553,11 @@ export default function ContratoModal({
                                                                                 className="fw-bold mb-1"
                                                                                 style={{ color: "#7b2cbf" }}
                                                                             >
-                                                                                Datos del Garante
+                                                                                Datos del Garante 1
                                                                             </h5>
 
                                                                             <div className="small text-muted">
-                                                                                Información y documentación del garante del contrato
+                                                                                Información y documentación del primer garante del contrato
                                                                             </div>
                                                                         </div>
 
@@ -708,6 +708,198 @@ export default function ContratoModal({
                                                                                     <div className="mt-3">
 
                                                                                         {formData.garanteArchivos.map((file, index) => (
+                                                                                            <div
+                                                                                                key={index}
+                                                                                                className="small mb-1"
+                                                                                                style={{ color: "#6c757d" }}
+                                                                                            >
+                                                                                                📄 {file.name}
+                                                                                            </div>
+                                                                                        ))}
+
+                                                                                    </div>
+                                                                                )}
+
+                                                                            </div>
+
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                </div>
+                                                            </div>
+
+                                                                                                                        <div className="col-12 mt-4">
+                                                                <div
+                                                                    className="border rounded-4 p-4"
+                                                                    style={{
+                                                                        backgroundColor: "#faf7ff",
+                                                                        borderColor: "#cdb4ff"
+                                                                    }}
+                                                                >
+
+                                                                    <div className="d-flex align-items-center justify-content-between mb-4">
+
+                                                                        <div>
+                                                                            <h5
+                                                                                className="fw-bold mb-1"
+                                                                                style={{ color: "#7b2cbf" }}
+                                                                            >
+                                                                                Datos del Garante 2
+                                                                            </h5>
+
+                                                                            <div className="small text-muted">
+                                                                                Información y documentación del segundo garante del contrato
+                                                                            </div>
+                                                                        </div>
+
+                                                                        <div
+                                                                            className="rounded-circle d-flex align-items-center justify-content-center"
+                                                                            style={{
+                                                                                width: "45px",
+                                                                                height: "45px",
+                                                                                backgroundColor: "rgba(123,44,191,0.12)"
+                                                                            }}
+                                                                        >
+                                                                            <i
+                                                                                className="bi bi-shield-check"
+                                                                                style={{
+                                                                                    color: "#7b2cbf",
+                                                                                    fontSize: "1.2rem"
+                                                                                }}
+                                                                            ></i>
+                                                                        </div>
+
+                                                                    </div>
+
+                                                                    <div className="row g-3">
+
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">Nombre y Apellido</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                className="form-control"
+                                                                                value={formData.garante2Nombre}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        garante2Nombre: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
+
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">DNI</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                className="form-control"
+                                                                                value={formData.garante2Dni}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        garante2Dni: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
+
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">CUIL</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                placeholder="20-12345678-3"
+                                                                                className="form-control"
+                                                                                value={formData.garante2Cuil}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        garante2Cuil: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
+
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">Email</label>
+
+                                                                            <input
+                                                                                type="email"
+                                                                                className="form-control"
+                                                                                value={formData.garante2Email || ""}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        garante2Email: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
+
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">Teléfono 1</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                className="form-control"
+                                                                                value={formData.garante2Telefono1 || ""}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        garante2Telefono1: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
+
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">Teléfono 2</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                className="form-control"
+                                                                                value={formData.garante2Telefono2 || ""}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        garante2Telefono2: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
+
+                                                                        <div className="col-12">
+
+                                                                            <div
+                                                                                className="border rounded-4 p-3"
+                                                                                style={{
+                                                                                    backgroundColor: "#ffffff",
+                                                                                    borderStyle: "dashed",
+                                                                                    borderColor: "#cdb4ff"
+                                                                                }}
+                                                                            >
+
+                                                                                <div
+                                                                                    className="fw-semibold mb-3"
+                                                                                    style={{ color: "#070707" }}
+                                                                                >
+                                                                                    Documentación Garante
+                                                                                </div>
+
+                                                                                <input
+                                                                                    type="file"
+                                                                                    multiple
+                                                                                    className="form-control"
+                                                                                    onChange={(e) =>
+                                                                                        setFormData({
+                                                                                            ...formData,
+                                                                                            garante2Archivos: Array.from(e.target.files)
+                                                                                        })
+                                                                                    }
+                                                                                />
+
+                                                                                {formData.garante2Archivos?.length > 0 && (
+                                                                                    <div className="mt-3">
+
+                                                                                        {formData.garante2Archivos.map((file, index) => (
                                                                                             <div
                                                                                                 key={index}
                                                                                                 className="small mb-1"

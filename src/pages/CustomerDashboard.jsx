@@ -199,6 +199,16 @@ const cargarCantidadProximosPeriodos = async () => {
     garanteTelefono2: "",
     garanteArchivos: [],
 
+    // GARANTE 2
+
+    garante2Nombre: "",
+    garante2Dni: "",
+    garante2Cuil: "",
+    garante2Email: "",
+    garante2Telefono1: "",
+    garante2Telefono2: "",
+    garante2Archivos: [],
+
     // CONTRATO
     fechaInicio: "",
     fechaFin: "",
@@ -234,6 +244,7 @@ const cargarCantidadProximosPeriodos = async () => {
     locadorId: null,
 locatarioId: null,
 garanteId: null,
+garante2Id: null,
 
   });
 
@@ -353,6 +364,9 @@ const eliminarCarpetaStorage = async (ruta) => {
 
       if (tipo === "garante") {
         clienteId = contrato.garanteId;
+      }
+      if (tipo === "garante2") {
+        clienteId = contrato.garante2Id;
       }
 
       if (!clienteId) {
@@ -607,6 +621,15 @@ const eliminarCarpetaStorage = async (ruta) => {
       garanteTelefono2: "",
       garanteArchivos: [],
 
+      // GARANTE 2
+      garante2Nombre: "",
+      garante2Dni: "",
+      garante2Cuil: "",
+      garante2Email: "",
+      garante2Telefono1: "",
+      garante2Telefono2: "",
+      garante2Archivos: [],
+
       // CONTRATO
       fechaInicio: "",
       fechaFin: "",
@@ -784,20 +807,33 @@ const eliminarCarpetaStorage = async (ruta) => {
         );
       };
 
-      const locadorArchivos = await subirArchivos(
-        formData.locadorArchivos,
-        "locador"
-      );
+const locadorArchivos = formData.contratoId
+  ? (formData.locadorArchivos || [])
+  : await subirArchivos(
+      formData.locadorArchivos,
+      "locador"
+    );
 
-      const locatarioArchivos = await subirArchivos(
-        formData.locatarioArchivos,
-        "locatario"
-      );
+const locatarioArchivos = formData.contratoId
+  ? (formData.locatarioArchivos || [])
+  : await subirArchivos(
+      formData.locatarioArchivos,
+      "locatario"
+    );
 
-      const garanteArchivos = await subirArchivos(
-        formData.garanteArchivos,
-        "garante"
-      );
+const garanteArchivos = formData.contratoId
+  ? (formData.garanteArchivos || [])
+  : await subirArchivos(
+      formData.garanteArchivos,
+      "garante"
+    );
+
+const garante2Archivos = formData.contratoId
+  ? (formData.garante2Archivos || [])
+  : await subirArchivos(
+      formData.garante2Archivos,
+      "garante2"
+    );
 
       
 
@@ -808,6 +844,7 @@ const eliminarCarpetaStorage = async (ruta) => {
 let locadorRef;
 let locatarioRef;
 let garanteRef;
+let garante2Ref;
 
 if (!formData.contratoId) {
 
@@ -871,6 +908,25 @@ if (!formData.contratoId) {
     }
   );
 
+  garante2Ref = await addDoc(
+  collection(db, "Clientes"),
+  {
+    nombre: formData.garante2Nombre || "",
+    dni: formData.garante2Dni || "",
+    cuil: formData.garante2Cuil || "",
+    email: formData.garante2Email || "",
+    telefono1: formData.garante2Telefono1 || "",
+    telefono2: formData.garante2Telefono2 || "",
+    archivos: garante2Archivos,
+    estado: true,
+    imagenPerfil: "",
+    observaciones: "",
+    roles: ["garante"],
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  }
+);
+
 } else {
 
   // EDITANDO CONTRATO
@@ -891,6 +947,10 @@ if (!formData.contratoId) {
   garanteRef = {
     id: contratoActual.garanteId
   };
+
+garante2Ref = contratoActual.garante2Id
+  ? { id: contratoActual.garante2Id }
+  : null;
 }
       // =====================================================
       // DATOS CONTRATO
@@ -917,12 +977,10 @@ if (!formData.contratoId) {
         // CLIENTES
         // =================================================
 
-        locadorId: locadorRef.id,
-        locatarioId: locatarioRef.id,
-        garanteId: garanteRef.id,
-
-        // =================================================
-        // LOCADOR
+locadorId: locadorRef?.id || null,
+locatarioId: locatarioRef?.id || null,
+garanteId: garanteRef?.id || null,
+garante2Id: garante2Ref?.id || null,       // LOCADOR
         // =================================================
 
         locador: formData.locador || "",
@@ -963,6 +1021,15 @@ if (!formData.contratoId) {
         garanteTelefono2: formData.garanteTelefono2 || "",
 
         garanteArchivos,
+
+        // GARANTE 2
+        garante2: formData.garante2Nombre || "",
+        garante2Dni: formData.garante2Dni || "",
+        garante2Cuil: formData.garante2Cuil || "",
+        garante2Email: formData.garante2Email || "",
+        garante2Telefono1: formData.garante2Telefono1 || "",
+        garante2Telefono2: formData.garante2Telefono2 || "",
+        garante2Archivos: garante2Archivos || [],
 
         // =================================================
         // FECHAS
@@ -1031,9 +1098,14 @@ if (!formData.contratoId) {
       // CREAR CONTRATO
       // =====================================================
 
-let contratoRef;
-
 if (formData.contratoId) {
+
+
+  Object.entries(contratoData).forEach(([key, value]) => {
+    if (value === undefined) {
+      console.log("❌ UNDEFINED:", key);
+    }
+  });
 
   await updateDoc(
     doc(db, "Contratos", formData.contratoId),
@@ -1041,17 +1113,6 @@ if (formData.contratoId) {
       ...contratoData,
       updatedAt: serverTimestamp(),
     }
-  );
-
-  contratoRef = {
-    id: formData.contratoId
-  };
-
-} else {
-
-  contratoRef = await addDoc(
-    collection(db, "Contratos"),
-    contratoData
   );
 
 }
@@ -1319,6 +1380,14 @@ if (formData.contratoId) {
 
         garanteArchivos: [],
 
+        garante2Nombre: "",
+        garante2Dni: "",
+        garante2Cuil: "",
+        garante2Email: "",
+        garante2Telefono1: "",
+        garante2Telefono2: "",
+        garante2Archivos: [],
+
         fechaInicio: "",
         fechaFin: "",
 
@@ -1388,6 +1457,7 @@ setFormData({
     locadorId: contrato.locadorId || null,
   locatarioId: contrato.locatarioId || null,
   garanteId: contrato.garanteId || null,
+  garante2Id: contrato.garante2Id || null,
 
   // ==========================
   // LOCADOR
@@ -1422,6 +1492,15 @@ setFormData({
   garanteTelefono1: contrato.garanteTelefono1 || "",
   garanteTelefono2: contrato.garanteTelefono2 || "",
   garanteArchivos: contrato.garanteArchivos || [],
+
+  // GARANTE 2
+  garante2Nombre: contrato.garante2 || "",
+  garante2Dni: contrato.garante2Dni || "",
+  garante2Cuil: contrato.garante2Cuil || "",
+  garante2Email: contrato.garante2Email || "",
+  garante2Telefono1: contrato.garante2Telefono1 || "",
+  garante2Telefono2: contrato.garante2Telefono2 || "",
+  garante2Archivos: contrato.garante2Archivos || [],
 
   // ==========================
   // FECHAS

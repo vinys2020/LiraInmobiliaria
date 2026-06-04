@@ -282,7 +282,7 @@ const TablaContratos = ({
                                                         </div>
 
                                                         {/* LOCATARIO */}
-                                                        <div className="col-md-4">
+                                                        <div className="col-md-3">
                                                             <h6 className="fw-semibold text-dark mb-2">
                                                                 <i className="bi bi-person-badge me-2 text-success"></i>
                                                                 Inquilino
@@ -297,7 +297,7 @@ const TablaContratos = ({
                                                         </div>
 
                                                         {/* LOCADOR */}
-                                                        <div className="col-md-4">
+                                                        <div className="col-md-3">
                                                             <h6 className="fw-semibold text-dark mb-2">
                                                                 <i className="bi bi-person-badge me-2 text-primary"></i>
                                                                 Propietario
@@ -313,10 +313,10 @@ const TablaContratos = ({
 
 
                                                         {/* GARANTE */}
-                                                        <div className="col-md-4">
+                                                        <div className="col-md-3">
                                                             <h6 className="fw-semibold text-dark mb-2">
                                                                 <i className="bi bi-shield-check me-2 text-warning"></i>
-                                                                Garante
+                                                                Garante 1
                                                             </h6>
                                                             <p className="text-muted small mb-1">Nombre: {c.garante || "No registrado"}</p>
                                                             <p className="text-muted small mb-1">DNI: {c.garanteDni || "No registrado"}</p>
@@ -324,6 +324,21 @@ const TablaContratos = ({
                                                             <p className="text-muted small mb-1">Email: {c.garanteEmail || "No registrado"}</p>
                                                             <p className="text-muted small mb-0">Teléfono1: {c.garanteTelefono1 || "No registrado"}</p>
                                                             <p className="text-muted small mb-0">Teléfono2: {c.garanteTelefono2 || "No registrado"}</p>
+
+                                                        </div>
+
+                                                        {/* GARANTE 2 */}
+                                                        <div className="col-md-3">
+                                                            <h6 className="fw-semibold text-dark mb-2">
+                                                                <i className="bi bi-shield-check me-2 text-secondary"></i>
+                                                                Garante 2
+                                                            </h6>
+                                                            <p className="text-muted small mb-1">Nombre: {c.garante2 || "No registrado"}</p>
+                                                            <p className="text-muted small mb-1">DNI: {c.garante2Dni || "No registrado"}</p>
+                                                            <p className="text-muted small mb-1">CUIL: {c.garante2Cuil || "No registrado"}</p>
+                                                            <p className="text-muted small mb-1">Email: {c.garante2Email || "No registrado"}</p>
+                                                            <p className="text-muted small mb-0">Teléfono1: {c.garante2Telefono1 || "No registrado"}</p>
+                                                            <p className="text-muted small mb-0">Teléfono2: {c.garante2Telefono2 || "No registrado"}</p>
 
                                                         </div>
 
