@@ -1098,8 +1098,9 @@ garante2Id: garante2Ref?.id || null,       // LOCADOR
       // CREAR CONTRATO
       // =====================================================
 
-if (formData.contratoId) {
+let contratoRef;
 
+if (formData.contratoId) {
 
   Object.entries(contratoData).forEach(([key, value]) => {
     if (value === undefined) {
@@ -1107,12 +1108,28 @@ if (formData.contratoId) {
     }
   });
 
+  const {
+    createdAt,
+    ...contratoDataLimpio
+  } = contratoData;
+
   await updateDoc(
     doc(db, "Contratos", formData.contratoId),
     {
-      ...contratoData,
+      ...contratoDataLimpio,
       updatedAt: serverTimestamp(),
     }
+  );
+
+  contratoRef = {
+    id: formData.contratoId
+  };
+
+} else {
+
+  contratoRef = await addDoc(
+    collection(db, "Contratos"),
+    contratoData
   );
 
 }
