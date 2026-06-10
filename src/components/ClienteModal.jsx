@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import {
     doc,
     updateDoc,
+    deleteDoc,
     serverTimestamp
 } from "firebase/firestore";
 import { guardarRecibo } from "../utils/recibos";
@@ -59,37 +60,37 @@ export default function ClienteModal({
         return String(value).trim();
     };
 
-const calcularInteresAutomatico = (pago) => {
+    const calcularInteresAutomatico = (pago) => {
 
-    const hoy = new Date(); // 1 junio 2026
-    hoy.setHours(0, 0, 0, 0);
+        const hoy = new Date(); // 1 junio 2026
+        hoy.setHours(0, 0, 0, 0);
 
-    const anio = Number(pago.anio);
-const mes = Number(pago.mes) - 1;
-    // 🔥 inicio del mes de deuda (1 del mes vencido)
-    const inicioMes = new Date(anio, mes, 1);
-    inicioMes.setHours(0, 0, 0, 0);
+        const anio = Number(pago.anio);
+        const mes = Number(pago.mes) - 1;
+        // 🔥 inicio del mes de deuda (1 del mes vencido)
+        const inicioMes = new Date(anio, mes, 1);
+        inicioMes.setHours(0, 0, 0, 0);
 
-    // si todavía no llegó ese mes → sin interés
-    if (hoy < inicioMes) return 0;
+        // si todavía no llegó ese mes → sin interés
+        if (hoy < inicioMes) return 0;
 
-    // 🔥 FIN REAL: hoy
-    const fin = new Date(hoy);
-    fin.setHours(0, 0, 0, 0);
+        // 🔥 FIN REAL: hoy
+        const fin = new Date(hoy);
+        fin.setHours(0, 0, 0, 0);
 
-    // 🔥 diferencia en días EXACTA
-    const diasMora = Math.floor(
-        (fin - inicioMes) / (1000 * 60 * 60 * 24)
-    )+1;
+        // 🔥 diferencia en días EXACTA
+        const diasMora = Math.floor(
+            (fin - inicioMes) / (1000 * 60 * 60 * 24)
+        ) + 1;
 
-    const montoBase = Number(pago.montoBase || 0);
+        const montoBase = Number(pago.montoBase || 0);
 
-    const interes = montoBase * (diasMora / 100);
+        const interes = montoBase * (diasMora / 100);
 
 
 
-    return interes;
-};
+        return interes;
+    };
 
     const normalizeLiquidacion = (p) => {
 
@@ -865,7 +866,7 @@ const mes = Number(pago.mes) - 1;
                                                                                                                                 p.interesGenerado ?? 0,
                                                                                                                         };
 
-                                                                                                                  
+
 
                                                                                                                         setPagoSeleccionado(liquidacionData);
 
@@ -999,6 +1000,42 @@ const mes = Number(pago.mes) - 1;
                                                                                                                 >
                                                                                                                     Crear Recibo
                                                                                                                 </button>
+
+                                                                                                                <button
+    className="btn btn-sm btn-outline-danger"
+    onClick={async () => {
+
+        const confirmar = window.confirm(
+            `¿Eliminar la liquidación ${String(liq.mes).padStart(2, "0")}/${liq.anio}?`
+        );
+
+        if (!confirmar) return;
+
+        try {
+
+            await deleteDoc(
+                doc(db, "Liquidaciones", liq.id)
+            );
+
+            setClienteSeleccionado({
+                ...clienteSeleccionado,
+                liquidaciones: clienteSeleccionado.liquidaciones.filter(
+                    (l) => l.id !== liq.id
+                ),
+            });
+
+            toast.success("Liquidación eliminada");
+
+        } catch (error) {
+
+            console.error(error);
+            toast.error("Error al eliminar liquidación");
+
+        }
+    }}
+>
+    Eliminar
+</button>
                                                                                                             </div>
 
                                                                                                         )}
@@ -1035,19 +1072,19 @@ const mes = Number(pago.mes) - 1;
 
                                                         {clienteSeleccionado.tipo === "Locatario" && (
 
-<div
-    className="card border-0 shadow-sm mb-4"
-    style={{
-        height: "900px",
-        width: "1050px",
-        maxWidth: "1350px",
+                                                            <div
+                                                                className="card border-0 shadow-sm mb-4"
+                                                                style={{
+                                                                    height: "900px",
+                                                                    width: "1050px",
+                                                                    maxWidth: "1350px",
 
-        overflowY: "auto",
-        overflowX: "auto",
+                                                                    overflowY: "auto",
+                                                                    overflowX: "auto",
 
-        padding: "0px",
-    }}
->
+                                                                    padding: "0px",
+                                                                }}
+                                                            >
                                                                 <div className="card-header bg-primary text-white">
                                                                     <h5 className="mb-0">Tabla de Pagos</h5>
                                                                 </div>
@@ -1061,19 +1098,19 @@ const mes = Number(pago.mes) - 1;
                                                                             <table className="table table-hover align-middle mb-0">
 
                                                                                 <thead className="table-light">
-<tr>
-    <th>Periodo</th>
-    <th>Fecha</th>
-    <th>Vencimiento</th>
-    <th>Monto</th>
-    <th>Servicios</th>
+                                                                                    <tr>
+                                                                                        <th>Periodo</th>
+                                                                                        <th>Fecha</th>
+                                                                                        <th>Vencimiento</th>
+                                                                                        <th>Monto</th>
+                                                                                        <th>Servicios</th>
 
-    <th>Interés</th>
+                                                                                        <th>Interés</th>
 
-    <th>Total</th>
-    <th>Estado</th>
-    <th>Acciones</th>
-</tr>
+                                                                                        <th>Total</th>
+                                                                                        <th>Estado</th>
+                                                                                        <th>Acciones</th>
+                                                                                    </tr>
                                                                                 </thead>
 
                                                                                 <tbody>
@@ -1196,168 +1233,168 @@ const mes = Number(pago.mes) - 1;
                                                                                                         )}
                                                                                                     </td>
 
- 
- 
- 
-{/* INTERES */}
-<td>
 
-    {editando ? (
 
-        <div className="d-flex align-items-center gap-2">
 
-            {/* TOGGLE AUTOMÁTICO */}
-            <input
-                className="form-check-input"
-                type="checkbox"
-                checked={pagoForm?.interesAutomatico ?? false}
-                title="Interés Automático"
-                onChange={(e) => {
+                                                                                                    {/* INTERES */}
+                                                                                                    <td>
 
-                    const activo = e.target.checked;
+                                                                                                        {editando ? (
 
-                    const interesAuto = activo
-                        ? calcularInteresAutomatico({
-                            ...pago,
-                            ...pagoForm,
-                        })
-                        : 0;
+                                                                                                            <div className="d-flex align-items-center gap-2">
 
-                    setPagoForm({
-                        ...pagoForm,
-                        interesAutomatico: activo,
-                        interesGenerado: interesAuto,
+                                                                                                                {/* TOGGLE AUTOMÁTICO */}
+                                                                                                                <input
+                                                                                                                    className="form-check-input"
+                                                                                                                    type="checkbox"
+                                                                                                                    checked={pagoForm?.interesAutomatico ?? false}
+                                                                                                                    title="Interés Automático"
+                                                                                                                    onChange={(e) => {
 
-                        montoFinal:
-                            Number(pagoForm?.montoBase || 0) +
-                            interesAuto +
-                            Number(pagoForm?.servicios || 0),
-                    });
-                }}
-            />
+                                                                                                                        const activo = e.target.checked;
 
-            {/* INPUT MANUAL */}
-            <input
-                type="number"
-                className="form-control form-control-sm"
-                style={{ width: "90px" }}
-                disabled={pagoForm?.interesAutomatico}
-                value={
-                    pagoForm?.interesAutomatico
-                        ? calcularInteresAutomatico({
-                            ...pago,
-                            ...pagoForm,
-                        })
-                        : (pagoForm?.interesGenerado ?? 0)
-                }
-                onChange={(e) => {
+                                                                                                                        const interesAuto = activo
+                                                                                                                            ? calcularInteresAutomatico({
+                                                                                                                                ...pago,
+                                                                                                                                ...pagoForm,
+                                                                                                                            })
+                                                                                                                            : 0;
 
-                    const interesGenerado = Number(e.target.value);
+                                                                                                                        setPagoForm({
+                                                                                                                            ...pagoForm,
+                                                                                                                            interesAutomatico: activo,
+                                                                                                                            interesGenerado: interesAuto,
 
-                    setPagoForm({
-                        ...pagoForm,
-                        interesAutomatico: false,
-                        interesGenerado,
+                                                                                                                            montoFinal:
+                                                                                                                                Number(pagoForm?.montoBase || 0) +
+                                                                                                                                interesAuto +
+                                                                                                                                Number(pagoForm?.servicios || 0),
+                                                                                                                        });
+                                                                                                                    }}
+                                                                                                                />
 
-                        montoFinal:
-                            Number(pagoForm?.montoBase || 0) +
-                            interesGenerado +
-                            Number(pagoForm?.servicios || 0),
-                    });
-                }}
-            />
+                                                                                                                {/* INPUT MANUAL */}
+                                                                                                                <input
+                                                                                                                    type="number"
+                                                                                                                    className="form-control form-control-sm"
+                                                                                                                    style={{ width: "90px" }}
+                                                                                                                    disabled={pagoForm?.interesAutomatico}
+                                                                                                                    value={
+                                                                                                                        pagoForm?.interesAutomatico
+                                                                                                                            ? calcularInteresAutomatico({
+                                                                                                                                ...pago,
+                                                                                                                                ...pagoForm,
+                                                                                                                            })
+                                                                                                                            : (pagoForm?.interesGenerado ?? 0)
+                                                                                                                    }
+                                                                                                                    onChange={(e) => {
 
-            {/* BOTÓN RESET */}
-            <button
-                type="button"
-                className="btn btn-sm btn-outline-danger px-2"
-                onClick={() =>
-                    setPagoForm({
-                        ...pagoForm,
-                        interesAutomatico: false,
-                        interesGenerado: 0,
-                        montoFinal:
-                            Number(pagoForm?.montoBase || 0) +
-                            Number(pagoForm?.servicios || 0),
-                    })
-                }
-            >
-                0
-            </button>
+                                                                                                                        const interesGenerado = Number(e.target.value);
 
-        </div>
+                                                                                                                        setPagoForm({
+                                                                                                                            ...pagoForm,
+                                                                                                                            interesAutomatico: false,
+                                                                                                                            interesGenerado,
 
-    ) : (
+                                                                                                                            montoFinal:
+                                                                                                                                Number(pagoForm?.montoBase || 0) +
+                                                                                                                                interesGenerado +
+                                                                                                                                Number(pagoForm?.servicios || 0),
+                                                                                                                        });
+                                                                                                                    }}
+                                                                                                                />
 
-        <div className="d-flex align-items-center gap-2">
+                                                                                                                {/* BOTÓN RESET */}
+                                                                                                                <button
+                                                                                                                    type="button"
+                                                                                                                    className="btn btn-sm btn-outline-danger px-2"
+                                                                                                                    onClick={() =>
+                                                                                                                        setPagoForm({
+                                                                                                                            ...pagoForm,
+                                                                                                                            interesAutomatico: false,
+                                                                                                                            interesGenerado: 0,
+                                                                                                                            montoFinal:
+                                                                                                                                Number(pagoForm?.montoBase || 0) +
+                                                                                                                                Number(pagoForm?.servicios || 0),
+                                                                                                                        })
+                                                                                                                    }
+                                                                                                                >
+                                                                                                                    0
+                                                                                                                </button>
 
-            {(pago.interesAutomatico ?? false) && (
-                <span
-                    className="badge bg-success"
-                    title="Interés Automático"
-                >
-                    ✓
-                </span>
-            )}
+                                                                                                            </div>
 
-            <span className="text-danger fw-bold">
-                {formatCurrency(
-                    pago.interesAutomatico
-                        ? calcularInteresAutomatico(pago)
-                        : (pago.interesGenerado || 0)
-                )}
-            </span>
+                                                                                                        ) : (
 
-        </div>
+                                                                                                            <div className="d-flex align-items-center gap-2">
 
-    )}
+                                                                                                                {(pago.interesAutomatico ?? false) && (
+                                                                                                                    <span
+                                                                                                                        className="badge bg-success"
+                                                                                                                        title="Interés Automático"
+                                                                                                                    >
+                                                                                                                        ✓
+                                                                                                                    </span>
+                                                                                                                )}
 
-</td>
-{/* TOTAL */}
-<td className="fw-bold text-success">
+                                                                                                                <span className="text-danger fw-bold">
+                                                                                                                    {formatCurrency(
+                                                                                                                        pago.interesAutomatico
+                                                                                                                            ? calcularInteresAutomatico(pago)
+                                                                                                                            : (pago.interesGenerado || 0)
+                                                                                                                    )}
+                                                                                                                </span>
 
-    {editando ? (
+                                                                                                            </div>
 
-        <input
-            type="number"
-            className="form-control form-control-sm"
-            value={
-                pagoForm?.montoFinal ??
-                (
-                    Number(pagoForm?.montoBase || 0) +
-                    Number(pagoForm?.servicios || 0) +
-                    (
-                        pagoForm?.interesAutomatico
-                            ? calcularInteresAutomatico(pago)
-                            : Number(pagoForm?.interesGenerado || 0)
-                    )
-                )
-            }
-            onChange={(e) =>
-                setPagoForm({
-                    ...pagoForm,
-                    montoFinal: Number(e.target.value),
-                })
-            }
-        />
+                                                                                                        )}
 
-    ) : (
+                                                                                                    </td>
+                                                                                                    {/* TOTAL */}
+                                                                                                    <td className="fw-bold text-success">
 
-        formatCurrency(
+                                                                                                        {editando ? (
 
-            Number(pago.montoBase || 0) +
-            Number(pago.servicios || 0) +
-            (
-                pago.interesAutomatico
-                    ? calcularInteresAutomatico(pago)
-                    : Number(pago.interesGenerado || 0)
-            )
+                                                                                                            <input
+                                                                                                                type="number"
+                                                                                                                className="form-control form-control-sm"
+                                                                                                                value={
+                                                                                                                    pagoForm?.montoFinal ??
+                                                                                                                    (
+                                                                                                                        Number(pagoForm?.montoBase || 0) +
+                                                                                                                        Number(pagoForm?.servicios || 0) +
+                                                                                                                        (
+                                                                                                                            pagoForm?.interesAutomatico
+                                                                                                                                ? calcularInteresAutomatico(pago)
+                                                                                                                                : Number(pagoForm?.interesGenerado || 0)
+                                                                                                                        )
+                                                                                                                    )
+                                                                                                                }
+                                                                                                                onChange={(e) =>
+                                                                                                                    setPagoForm({
+                                                                                                                        ...pagoForm,
+                                                                                                                        montoFinal: Number(e.target.value),
+                                                                                                                    })
+                                                                                                                }
+                                                                                                            />
 
-        )
+                                                                                                        ) : (
 
-    )}
+                                                                                                            formatCurrency(
 
-</td>
+                                                                                                                Number(pago.montoBase || 0) +
+                                                                                                                Number(pago.servicios || 0) +
+                                                                                                                (
+                                                                                                                    pago.interesAutomatico
+                                                                                                                        ? calcularInteresAutomatico(pago)
+                                                                                                                        : Number(pago.interesGenerado || 0)
+                                                                                                                )
+
+                                                                                                            )
+
+                                                                                                        )}
+
+                                                                                                    </td>
 
                                                                                                     {/* ESTADO */}
                                                                                                     <td>
@@ -1515,13 +1552,13 @@ const mes = Number(pago.mes) - 1;
 
                                                                                                                         setCobroForm({
                                                                                                                             montoBase: pagoNormalizado.montoBase || 0,
-                                                                                                                            interesGenerado: calcularInteresAutomatico(pago),                                                                                                                            
+                                                                                                                            interesGenerado: calcularInteresAutomatico(pago),
                                                                                                                             servicios: pagoNormalizado.servicios || 0,
 
-montoFinal:
-    Number(pagoNormalizado.montoBase || 0) +
-    calcularInteresAutomatico(pago) +
-    Number(pagoNormalizado.servicios || 0),
+                                                                                                                            montoFinal:
+                                                                                                                                Number(pagoNormalizado.montoBase || 0) +
+                                                                                                                                calcularInteresAutomatico(pago) +
+                                                                                                                                Number(pagoNormalizado.servicios || 0),
 
                                                                                                                             metodoPago: "Efectivo",
                                                                                                                             estado: pagoNormalizado.estado || "pendiente",
@@ -1635,6 +1672,41 @@ montoFinal:
                                                                                                                 >
                                                                                                                     +R
                                                                                                                 </button>
+
+
+                                                                                                                <button
+    className="btn btn-sm btn-outline-danger"
+    onClick={async () => {
+
+        const confirmar = window.confirm(
+            `¿Eliminar el pago ${String(pago.mes).padStart(2, "0")}/${pago.anio}?`
+        );
+
+        if (!confirmar) return;
+
+        try {
+
+            await deleteDoc(doc(db, "Pagos", pago.id));
+
+            setClienteSeleccionado({
+                ...clienteSeleccionado,
+                pagos: clienteSeleccionado.pagos.filter(
+                    (p) => p.id !== pago.id
+                ),
+            });
+
+            toast.success("Pago eliminado");
+
+        } catch (error) {
+
+            console.error(error);
+            toast.error("Error al eliminar pago");
+
+        }
+    }}
+>
+    Eliminar
+</button>
 
                                                                                                             </div>
 

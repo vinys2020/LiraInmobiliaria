@@ -45,27 +45,56 @@ export default function PropietariosPage() {
     archivos: [],
   });
 
-  useEffect(() => {
-    const ref = collection(db, "Clientes");
+useEffect(() => {
+  const refClientes = collection(db, "Clientes");
 
-    const unsub = onSnapshot(ref, (snapshot) => {
-      const data = snapshot.docs
-        .map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
-        .filter(
-          (c) =>
-            Array.isArray(c.roles) &&
-            c.roles.includes("locador")
-        );
+  const unsub = onSnapshot(refClientes, (snapshot) => {
 
-      setPropietarios(data);
-      setLoading(false);
+    const data = snapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      .filter(
+        (c) =>
+          Array.isArray(c.roles) &&
+          c.roles.includes("locador")
+      );
+
+    // Eliminar duplicados
+    const propietariosUnicos = [];
+    const vistos = new Set();
+
+    data.forEach((cliente) => {
+
+      const clave =
+        cliente.dni?.trim() ||
+        cliente.cuil?.trim() ||
+        cliente.nombre?.trim().toLowerCase();
+
+      if (!vistos.has(clave)) {
+        vistos.add(clave);
+        propietariosUnicos.push(cliente);
+      }
+
     });
 
-    return () => unsub();
-  }, []);
+    propietariosUnicos.sort((a, b) =>
+      (a.nombre || "").localeCompare(
+        b.nombre || "",
+        "es",
+        { sensitivity: "base" }
+      )
+    );
+
+    setPropietarios(propietariosUnicos);
+    setLoading(false);
+
+  });
+
+  return () => unsub();
+
+}, []);
 
 const guardarCambiosCliente = async () => {
   try {

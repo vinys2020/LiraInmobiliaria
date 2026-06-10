@@ -104,13 +104,17 @@ const TablaContratos = ({
                                                     <i className="bi bi-cash-coin"></i>
                                                 </button>
 
-                                                {/* Nombre */}
-                                                <button
-                                                    className="btn btn-link p-0 text-decoration-none text-dark"
-                                                    onClick={() => ("locatario", c)}
-                                                >
-                                                    {c.locatario?.split(" ")[0]}
-                                                </button>
+{/* Nombre */}
+<button
+    className="btn btn-link p-0 text-decoration-none text-primary small"
+    style={{
+        fontSize: "0.85rem",
+        fontWeight: "500",
+    }}
+    onClick={() => abrirCliente("locatario", c)}
+>
+    {c.locatario || "Sin nombre"}
+</button>
 
                                             </div>
 
@@ -147,13 +151,17 @@ const TablaContratos = ({
                                                     <i className="bi bi-cash-coin"></i>
                                                 </button>
 
-                                                {/* Nombre */}
-                                                <button
-                                                    className="btn btn-link p-0 text-decoration-none text-dark"
-                                                    onClick={() => abrirCliente("locador", c)}
-                                                >
-                                                    {c.locador?.split(" ")[0]}
-                                                </button>
+{/* Nombre */}
+<button
+    className="btn btn-link p-0 text-decoration-none text-primary small"
+    style={{
+        fontSize: "0.85rem",
+        fontWeight: "500",
+    }}
+    onClick={() => abrirCliente("locador", c)}
+>
+    {c.locador || "Sin nombre"}
+</button>
 
                                             </div>
 
@@ -377,6 +385,20 @@ const TablaContratos = ({
                                                             </h6>
                                                             <p className="text-muted small mb-0">{c.observaciones || "Sin observaciones"}</p>
                                                         </div>
+
+                                                        {/* ÍNDICE DE ACTUALIZACIÓN */}
+<div className="col-md-4">
+    <h6 className="fw-semibold text-dark mb-2">
+        <i className="bi bi-graph-up-arrow me-2 text-info"></i>
+        Índice de Actualización
+    </h6>
+
+    <p className="text-muted small mb-0">
+        {c.indiceActualizacion || "No definido"}
+    </p>
+</div>
+
+                                                        
 
                                                         {/* ARCHIVO */}
                                                         <div className="col-12 mt-3">

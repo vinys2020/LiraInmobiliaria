@@ -41,30 +41,57 @@ export default function InquilinosPage() {
   // =====================================
   // LISTAR SOLO INQUILINOS
   // =====================================
-  useEffect(() => {
+useEffect(() => {
 
-    const refClientes = collection(db, "Clientes");
+  const refClientes = collection(db, "Clientes");
 
-    const unsub = onSnapshot(refClientes, (snapshot) => {
+  const unsub = onSnapshot(refClientes, (snapshot) => {
 
-      const data = snapshot.docs
-        .map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }))
-        .filter(
-          (c) =>
-            Array.isArray(c.roles) &&
-            c.roles.includes("locatario")   // 👈 CLAVE
-        );
+    const data = snapshot.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }))
+      .filter(
+        (c) =>
+          Array.isArray(c.roles) &&
+          c.roles.includes("locatario")
+      );
 
-      setInquilinos(data);
-      setLoading(false);
+    // Eliminar duplicados
+    const inquilinosUnicos = [];
+    const vistos = new Set();
+
+    data.forEach((cliente) => {
+
+      const clave =
+        cliente.dni?.trim() ||
+        cliente.cuil?.trim() ||
+        cliente.nombre?.trim().toLowerCase();
+
+      if (!vistos.has(clave)) {
+        vistos.add(clave);
+        inquilinosUnicos.push(cliente);
+      }
+
     });
 
-    return () => unsub();
+    inquilinosUnicos.sort((a, b) =>
+      (a.nombre || "").localeCompare(
+        b.nombre || "",
+        "es",
+        { sensitivity: "base" }
+      )
+    );
 
-  }, []);
+    setInquilinos(inquilinosUnicos);
+    setLoading(false);
+
+  });
+
+  return () => unsub();
+
+}, []);
 
   // =====================================
   // GUARDAR CAMBIOS

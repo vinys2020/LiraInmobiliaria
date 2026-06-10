@@ -60,6 +60,9 @@ export default function CustomerDashboard() {
   const [eliminandoContrato, setEliminandoContrato] = useState(null);
   const [creandoContrato, setCreandoContrato] = useState(false);
 const [cantidadProximosPeriodos, setCantidadProximosPeriodos] = useState(0);
+const [modoLocador, setModoLocador] = useState("existente");
+const [modoLocatario, setModoLocatario] = useState("existente");
+const [clientes, setClientes] = useState([]);
 
 
 const verRecibosPropietario = (contrato) => {
@@ -216,7 +219,7 @@ const cargarCantidadProximosPeriodos = async () => {
     moneda: "ARS",
 
     // CONFIGURACIÓN FINANCIERA
-    porcentajeIncremento: "",
+indiceActualizacion: "IPC",
     periodoActualizacion: 6,
     cantidadPeriodos: 1,
 
@@ -261,6 +264,35 @@ garante2Id: null,
   useEffect(() => {
     cargarCantidadProximosPeriodos();
   }, []);
+
+  useEffect(() => {
+
+  const cargarClientes = async () => {
+
+    try {
+
+      const snap = await getDocs(
+        collection(db, "Clientes")
+      );
+
+      const data = snap.docs.map((doc) => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      setClientes(data);
+
+    } catch (error) {
+
+      console.error(error);
+
+    }
+
+  };
+
+  cargarClientes();
+
+}, []);
 
   const normalizeFull = (str) =>
     str
@@ -639,7 +671,7 @@ const eliminarCarpetaStorage = async (ruta) => {
       // CONFIGURACIÓN FINANCIERA
 
       periodoActualizacion: 6,
-      porcentajeIncremento: "",
+indiceActualizacion: "IPC",
       cantidadPeriodos: 1,
 
       interesMoraDiario: "",
@@ -849,6 +881,38 @@ let garante2Ref;
 if (!formData.contratoId) {
 
   // CREAR CLIENTES SOLO CUANDO ES UN CONTRATO NUEVO
+// LOCADOR
+if (formData.locadorId) {
+
+  const clienteExistente = clientes.find(
+    c => c.id === formData.locadorId
+  );
+
+  locadorRef = await addDoc(
+    collection(db, "Clientes"),
+    {
+      nombre: clienteExistente.nombre || "",
+      dni: clienteExistente.dni || "",
+      cuil: clienteExistente.cuil || "",
+      email: clienteExistente.email || "",
+      telefono1: clienteExistente.telefono1 || "",
+      telefono2: clienteExistente.telefono2 || "",
+      archivos: clienteExistente.archivos || [],
+      estado: clienteExistente.estado ?? true,
+      imagenPerfil: clienteExistente.imagenPerfil || "",
+      observaciones: clienteExistente.observaciones || "",
+
+      roles: ["locador"],
+
+      // opcional
+      clienteOrigenId: clienteExistente.id,
+
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
+    }
+  );
+
+} else {
 
   locadorRef = await addDoc(
     collection(db, "Clientes"),
@@ -868,6 +932,8 @@ if (!formData.contratoId) {
       updatedAt: serverTimestamp(),
     }
   );
+
+}
 
   locatarioRef = await addDoc(
     collection(db, "Clientes"),
@@ -1046,10 +1112,8 @@ garante2Id: garante2Ref?.id || null,       // LOCADOR
         periodoActualizacion: Number(
           formData.periodoActualizacion || 6
         ),
-
-        porcentajeIncremento: Number(
-          formData.porcentajeIncremento || 0
-        ),
+indiceActualizacion:
+  formData.indiceActualizacion || "IPC",
 
         cantidadPeriodos: Number(
           formData.cantidadPeriodos || 1
@@ -1530,7 +1594,7 @@ setFormData({
   // ==========================
   precioMensual: contrato.precioMensual || "",
   periodoActualizacion: contrato.periodoActualizacion || "",
-  porcentajeIncremento: contrato.porcentajeIncremento || "",
+  indiceActualizacion: contrato.indiceActualizacion || "IPC",
   cantidadPeriodos: contrato.cantidadPeriodos || 1,
 
   plazoPagoDesde: contrato.plazoPagoDesde || 1,
@@ -2122,34 +2186,40 @@ await eliminarCarpetaStorage(`contratos/${contrato.id}`);
 
             />
 
-            <ContratoModal
+<ContratoModal
 
-              showModal={showModal}
-              setShowModal={setShowModal}
+  showModal={showModal}
+  setShowModal={setShowModal}
 
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
+  searchTerm={searchTerm}
+  setSearchTerm={setSearchTerm}
 
-              handleSearch={handleSearch}
+  handleSearch={handleSearch}
 
-              loadingSearch={loadingSearch}
-              searchResults={searchResults}
+  loadingSearch={loadingSearch}
+  searchResults={searchResults}
 
-              selectedProperty={selectedProperty}
-              setSelectedProperty={setSelectedProperty}
+  selectedProperty={selectedProperty}
+  setSelectedProperty={setSelectedProperty}
 
-              handleBackToSearch={handleBackToSearch}
+  handleBackToSearch={handleBackToSearch}
 
-              formData={formData}
-              setFormData={setFormData}
+  formData={formData}
+  setFormData={setFormData}
 
-              handleSaveContract={handleSaveContract}
-              creandoContrato={creandoContrato}
+  handleSaveContract={handleSaveContract}
+  creandoContrato={creandoContrato}
 
+  CardSeleccionPropiedad={CardSeleccionPropiedad}
 
-              CardSeleccionPropiedad={CardSeleccionPropiedad}
+  modoLocador={modoLocador}
+  setModoLocador={setModoLocador}
+  modoLocatario={modoLocatario}
+  setModoLocatario={setModoLocatario}
 
-            />
+  clientes={clientes}   // 👈 AGREGAR ESTO
+
+/>
 
             {/* ====================================================== */}
             {/* MODAL CLIENTE */}
