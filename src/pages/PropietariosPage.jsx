@@ -34,7 +34,9 @@ export default function PropietariosPage() {
     email: "",
     telefono1: "",
     telefono2: "",
+    
     observaciones: "",
+    
 
     estado: true,
 

@@ -178,6 +178,7 @@ const cargarCantidadProximosPeriodos = async () => {
     locadorEmail: "",
     locadorTelefono1: "",
     locadorTelefono2: "",
+    comisionInmobiliaria: "",
     locadorArchivos: [],
 
     // LOCATARIO
@@ -535,6 +536,10 @@ const eliminarCarpetaStorage = async (ruta) => {
           contrato.garanteTelefono2 ||
           "",
 
+          comisionInmobiliaria:
+          clienteData.comisionInmobiliaria || "",
+
+
           deposito:
           clienteData.deposito || "",
 
@@ -632,6 +637,7 @@ const eliminarCarpetaStorage = async (ruta) => {
       locadorEmail: "",
       locadorTelefono1: "",
       locadorTelefono2: "",
+      comisionInmobiliaria: "",
       locadorArchivos: [],
 
       // LOCATARIO
@@ -897,6 +903,7 @@ if (formData.locadorId) {
       email: clienteExistente.email || "",
       telefono1: clienteExistente.telefono1 || "",
       telefono2: clienteExistente.telefono2 || "",
+      comisionInmobiliaria: clienteExistente.comisionInmobiliaria || "",
       archivos: clienteExistente.archivos || [],
       estado: clienteExistente.estado ?? true,
       imagenPerfil: clienteExistente.imagenPerfil || "",
@@ -923,6 +930,7 @@ if (formData.locadorId) {
       email: formData.locadorEmail || "",
       telefono1: formData.locadorTelefono1 || "",
       telefono2: formData.locadorTelefono2 || "",
+      comisionInmobiliaria: formData.comisionInmobiliaria || "",
       archivos: locadorArchivos,
       estado: true,
       imagenPerfil: "",
@@ -1056,6 +1064,7 @@ garante2Id: garante2Ref?.id || null,       // LOCADOR
 
         locadorTelefono1: formData.locadorTelefono1 || "",
         locadorTelefono2: formData.locadorTelefono2 || "",
+        comisionInmobiliaria: formData.comisionInmobiliaria || "",
 
         locadorArchivos,
 
@@ -1437,6 +1446,7 @@ if (formData.contratoId) {
 
         locadorTelefono1: "",
         locadorTelefono2: "",
+        comisionInmobiliaria: "",
 
         locadorArchivos: [],
 
@@ -1549,6 +1559,7 @@ setFormData({
   locadorEmail: contrato.locadorEmail || "",
   locadorTelefono1: contrato.locadorTelefono1 || "",
   locadorTelefono2: contrato.locadorTelefono2 || "",
+  comisionInmobiliaria: contrato.comisionInmobiliaria || "",
   locadorArchivos: contrato.locadorArchivos || [],
 
   // ==========================

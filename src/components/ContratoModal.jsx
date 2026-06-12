@@ -287,6 +287,7 @@ export default function ContratoModal({
                     locadorEmail: "",
                     locadorTelefono1: "",
                     locadorTelefono2: "",
+                    comisionInmobiliaria: "",
                 });
             }}
         >
@@ -327,6 +328,8 @@ export default function ContratoModal({
             locadorEmail: locador.email || "",
             locadorTelefono1: locador.telefono1 || "",
             locadorTelefono2: locador.telefono2 || "",
+            comisionInmobiliaria: locador.comisionInmobiliaria || ""
+
         });
     }}
 >
@@ -460,6 +463,32 @@ export default function ContratoModal({
             })
         }
     />
+</div>
+{/* COMISIÓN INMOBILIARIA */}
+<div className="col-md-4">
+    <label className="form-label">
+        Comisión Inmobiliaria
+    </label>
+
+    <div className="input-group">
+        <input
+            type="number"
+            min="0"
+            step="0.01"
+            className="form-control"
+            value={formData.comisionInmobiliaria || ""}
+            onChange={(e) =>
+                setFormData({
+                    ...formData,
+                    comisionInmobiliaria: e.target.value
+                })
+            }
+        />
+
+        <span className="input-group-text">
+            %
+        </span>
+    </div>
 </div>
 
 <div className="col-12">
@@ -1665,6 +1694,20 @@ export default function ContratoModal({
                                                                                         }
                                                                                     />
                                                                                 </label>
+
+                                                                                    <button
+        type="button"
+        className="btn btn-outline-danger btn-sm"
+        onClick={() =>
+            setFormData({
+                ...formData,
+                archivoUrl: "",
+                archivo: null
+            })
+        }
+    >
+        <i className="bi bi-trash"></i>
+    </button>
 
                                                                             </div>
 
