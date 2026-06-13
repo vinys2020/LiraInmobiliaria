@@ -31,6 +31,9 @@ import RecibosInquilinoModal from "../components/RecibosInquilinoModal";
 import RecibosLiquidacionModal from "../components/RecibosLiquidacionModal";
 import TablaContratos from "../components/TablaContratos";
 import toast from "react-hot-toast";
+import CalculadoraAlquiler from "../components/CalculadoraAlquiler";
+import IndicesAlquiler from "../components/IndicesAlquiler";
+
 
 
 import "./CustomerDashboard.css";
@@ -330,28 +333,49 @@ garante2Id: null,
   };
 
 
-  let contratosFiltrados = contratos.filter((c) => {
+let contratosFiltrados = contratos.filter((c) => {
 
-    const texto = searchContrato.toLowerCase();
+  const texto = searchContrato.toLowerCase();
 
-    const coincideBusqueda =
-      c.propiedadTitulo?.toLowerCase().includes(texto) ||
-      c.locador?.toLowerCase().includes(texto) ||
-      c.locatario?.toLowerCase().includes(texto) ||
+  const coincideBusqueda =
+    c.propiedadTitulo?.toLowerCase().includes(texto) ||
+    c.locador?.toLowerCase().includes(texto) ||
+    c.locatario?.toLowerCase().includes(texto) ||
+    c.propiedadDireccion?.calle?.toLowerCase().includes(texto) ||
+    c.propiedadDireccion?.localidad?.toLowerCase().includes(texto) ||
+    c.propiedadDireccion?.provincia?.toLowerCase().includes(texto) ||
+    c.propiedadDireccion?.codigoPostal?.toLowerCase().includes(texto);
 
-      c.propiedadDireccion?.calle?.toLowerCase().includes(texto) ||
-      c.propiedadDireccion?.localidad?.toLowerCase().includes(texto) ||
-      c.propiedadDireccion?.provincia?.toLowerCase().includes(texto) ||
-      c.propiedadDireccion?.codigoPostal?.toLowerCase().includes(texto);
+  const coincideEstado =
+    filtroEstado === "todos" ||
+    (filtroEstado === "porVencer"
+      ? (c.estado || "").toLowerCase() === "activo"
+      : c.estado === filtroEstado);
 
-    const coincideEstado =
-      filtroEstado === "todos" ||
-      filtroEstado === "porVencer" ||
-      c.estado === filtroEstado;
+  return coincideBusqueda && coincideEstado;
 
-    return coincideBusqueda && coincideEstado;
+});
+
+
+if (filtroEstado === "porVencer") {
+
+  contratosFiltrados.sort((a, b) => {
+
+    const fechaA =
+      a.fechaFin?.toDate
+        ? a.fechaFin.toDate()
+        : new Date(a.fechaFin);
+
+    const fechaB =
+      b.fechaFin?.toDate
+        ? b.fechaFin.toDate()
+        : new Date(b.fechaFin);
+
+    return fechaA - fechaB;
 
   });
+
+}
 
 
 
@@ -1832,73 +1856,75 @@ await eliminarCarpetaStorage(`contratos/${contrato.id}`);
 
     <article className="container-fluid">
 
-      <article className="container py-4">
-        <div className="row g-4 justify-content-center text-center">
+<div className="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-6">
 
-          <div className="col-6 col-md-4 col-lg-2">
-            <div className="card h-100 shadow-sm border-0 rounded-3 p-3" data-bs-toggle="tooltip" title="Índice de Contratos de Locación (BCRA)">
-              <div className="card-header bg-transparent border-0 fw-bold">ICL</div>
-              <div className="card-body">
-                <div className="h3 text-primary mb-2">32.02%</div>
-                <div className="text-muted small text-capitalize">Junio de 2026</div>
-              </div>
-            </div>
-          </div>
+  <div className="col">
+    <div className="card border-0 shadow-sm text-center h-100">
+      <div className="card-body py-3">
+        <h6 className="fw-bold mb-1">Casa Propia</h6>
+        <h4 className="fw-bold mb-1">47,64%</h4>
+        <small className="text-muted">Abril 2026</small>
+      </div>
+    </div>
+  </div>
 
-          <div className="col-6 col-md-4 col-lg-2">
-            <div className="card h-100 shadow-sm border-0 rounded-3 p-3" data-bs-toggle="tooltip" title="Índice Casa Propia – Créditos UVA">
-              <div className="card-header bg-transparent border-0 fw-bold">Casa Propia</div>
-              <div className="card-body">
-                <div className="h3 text-primary mb-2">36.89%</div>
-                <div className="text-muted small text-capitalize">Julio de 2026</div>
-              </div>
-            </div>
-          </div>
+  <div className="col">
+    <div className="card border-0 shadow-sm text-center h-100">
+      <div className="card-body py-3">
+        <h6 className="fw-bold mb-1">IPC</h6>
+        <h4 className="fw-bold mb-1">32,35%</h4>
+        <small className="text-muted">Abril 2026</small>
+      </div>
+    </div>
+  </div>
 
-          <div className="col-6 col-md-4 col-lg-2">
-            <div className="card h-100 shadow-sm border-0 rounded-3 p-3" data-bs-toggle="tooltip" title="Índice de Precios al Consumidor (INDEC)">
-              <div className="card-header bg-transparent border-0 fw-bold">IPC</div>
-              <div className="card-body">
-                <div className="h3 text-primary mb-2">32.35%</div>
-                <div className="text-muted small text-capitalize">Abril de 2026</div>
-              </div>
-            </div>
-          </div>
+  <div className="col">
+    <div className="card border-0 shadow-sm text-center h-100">
+      <div className="card-body py-3">
+        <h6 className="fw-bold mb-1">CÁC</h6>
+        <h4 className="fw-bold mb-1">26,08%</h4>
+        <small className="text-muted">Abril 2026</small>
+      </div>
+    </div>
+  </div>
 
-          <div className="col-6 col-md-4 col-lg-2">
-            <div className="card h-100 shadow-sm border-0 rounded-3 p-3" data-bs-toggle="tooltip" title="Remuneración Imponible Promedio (ANSES)">
-              <div className="card-header bg-transparent border-0 fw-bold">RIPTE</div>
-              <div className="card-body">
-                <div className="h3 text-primary mb-2">30.23%</div>
-                <div className="text-muted small text-capitalize">Marzo de 2026</div>
-              </div>
-            </div>
-          </div>
+  <div className="col">
+    <div className="card border-0 shadow-sm text-center h-100">
+      <div className="card-body py-3">
+        <h6 className="fw-bold mb-1">UVA</h6>
+        <h4 className="fw-bold mb-1">32,71%</h4>
+        <small className="text-muted">Abril 2026</small>
+      </div>
+    </div>
+  </div>
 
-          <div className="col-6 col-md-4 col-lg-2">
-            <div className="card h-100 shadow-sm border-0 rounded-3 p-3" data-bs-toggle="tooltip" title="Costo de Construcción (Cámara Argentina)">
-              <div className="card-header bg-transparent border-0 fw-bold">CÁC</div>
-              <div className="card-body">
-                <div className="h3 text-success mb-2">26.08%</div>
-                <div className="text-muted small text-capitalize">Abril de 2026</div>
-              </div>
-            </div>
-          </div>
+  <div className="col">
+    <div className="card border-0 shadow-sm text-center h-100">
+      <div className="card-body py-3">
+        <h6 className="fw-bold mb-1">CER</h6>
+        <h4 className="fw-bold mb-1">32,73%</h4>
+        <small className="text-muted">Abril 2026</small>
+      </div>
+    </div>
+  </div>
 
-          <div className="col-6 col-md-4 col-lg-2">
-            <div className="card h-100 shadow-sm border-0 rounded-3 p-3" data-bs-toggle="tooltip" title="Unidad de Valor Adquisitivo (BCRA)">
-              <div className="card-header bg-transparent border-0 fw-bold">UVA</div>
-              <div className="card-body">
-                <div className="h3 text-primary mb-2">32.40%</div>
-                <div className="text-muted small text-capitalize">Junio de 2026</div>
-              </div>
-            </div>
-          </div>
+  <div className="col">
+    <div className="card border-0 shadow-sm text-center h-100">
+      <div className="card-body py-3">
+        <h6 className="fw-bold mb-1">ICL</h6>
+        <h4 className="fw-bold mb-1">33,3%</h4>
+        <small className="text-muted">Abril 2026</small>
+      </div>
+    </div>
+  </div>
 
-        </div>
-      </article>
+</div>
 
-      <article className="container py-4">
+
+
+      <CalculadoraAlquiler />
+
+    <article className="container py-4">
         <div className="row g-4 justify-content-center">
 
 <div className="col-12 col-sm-6 col-lg-4 col-xl-4">

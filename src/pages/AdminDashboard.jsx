@@ -33,7 +33,7 @@ export default function AdminDashboard() {
               <i className="bi bi-house-door-fill fs-1 text-primary mb-3"></i>
               <h5 className="card-title">Gestión de Propiedades</h5>
               <p className="card-text">
-                Agregá, editá o eliminá propiedades disponibles.
+                Agregá, editá o eliminá propiedades disponibles en la plataforma.
               </p>
               <Link to="/propiedades" className="btn btn-outline-primary w-100">
                 Ir a Propiedades
@@ -46,12 +46,12 @@ export default function AdminDashboard() {
         <div className="col-md-6 col-lg-4">
           <div className="card h-100 shadow-sm border-0">
             <div className="card-body text-center">
-              <i className="bi bi-people-fill fs-1 text-success mb-3"></i>
-              <h5 className="card-title">Clientes</h5>
+              <i className="bi bi-journal-text fs-1 text-success mb-3"></i>
+              <h5 className="card-title">Contratos</h5>
               <p className="card-text">
-                Administrá datos de propietarios e interesados.
+                Administrá datos de contratos propietarios e interesados.
               </p>
-              <Link to="/clientes" className="btn btn-outline-success w-100">Ver Clientes</Link>
+              <Link to="/clientes" className="btn btn-outline-success w-100">Ver Contratos</Link>
 
             </div>
           </div>
@@ -64,7 +64,7 @@ export default function AdminDashboard() {
               <i className="bi bi-calendar-event-fill fs-1 text-warning mb-3"></i>
               <h5 className="card-title">Citas y Visitas</h5>
               <p className="card-text">
-                Programá y gestioná las visitas agendadas.
+                Programá y gestioná las visitas agendadas para propietarios e interesados.
               </p>
               <button className="btn btn-outline-warning w-100">Ver Citas</button>
             </div>
@@ -106,7 +106,7 @@ export default function AdminDashboard() {
               <i className="bi bi-file-earmark-text fs-1 text-secondary mb-3"></i>
               <h5 className="card-title">Documentación</h5>
               <p className="card-text">
-                Subí contratos, escrituras y documentos legales.
+                Subí contratos, escrituras y documentos legales a la plataforma.
               </p>
               <button className="btn btn-outline-secondary w-100">Ver Archivos</button>
             </div>
