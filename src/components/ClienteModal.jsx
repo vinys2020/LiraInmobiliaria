@@ -1132,38 +1132,46 @@ export default function ClienteModal({
                                                                                                         })()}
                                                                                                     </td>
 
-                                                                                                    {/* MONTO */}
-                                                                                                    <td>
-                                                                                                        {editando ? (
+<td>
+    {editando ? (
 
-                                                                                                            <input
-                                                                                                                type="number"
-                                                                                                                className="form-control form-control-sm"
-                                                                                                                value={pagoForm?.montoBase || ""}
-                                                                                                                onChange={(e) => {
+        <input
+            type="text"
+            className="form-control form-control-sm"
+            value={
+                pagoForm?.montoBase
+                    ? Number(pagoForm.montoBase).toLocaleString("es-AR", {
+                          minimumFractionDigits: 2,
+                          maximumFractionDigits: 2,
+                      })
+                    : ""
+            }
+            onChange={(e) => {
 
-                                                                                                                    const montoBase = Number(e.target.value);
+                const valor = e.target.value
+                    .replace(/\./g, "")      // elimina separador de miles
+                    .replace(",", ".");      // convierte coma decimal
 
-                                                                                                                    setPagoForm({
-                                                                                                                        ...pagoForm,
+                const montoBase = Number(valor) || 0;
 
-                                                                                                                        montoBase,
+                setPagoForm({
+                    ...pagoForm,
+                    montoBase,
+                    montoFinal:
+                        montoBase +
+                        Number(pagoForm?.interesGenerado || 0),
+                });
+            }}
+        />
 
-                                                                                                                        montoFinal:
-                                                                                                                            montoBase +
-                                                                                                                            Number(pagoForm?.interesGenerado || 0),
-                                                                                                                    });
-                                                                                                                }}
-                                                                                                            />
+    ) : (
 
-                                                                                                        ) : (
+        <span>
+            {formatCurrency(pago.montoBase || 0)}
+        </span>
 
-                                                                                                            <span>
-                                                                                                                {formatCurrency(pago.montoBase || 0)}
-                                                                                                            </span>
-
-                                                                                                        )}
-                                                                                                    </td>
+    )}
+</td>
 
                                                                                                     {/* SERVICIOS */}
                                                                                                     <td>
