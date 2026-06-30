@@ -19,6 +19,7 @@ import { db, storage } from "../config/firebase";
 
 export default function GarantesPage() {
 
+  const [busqueda, setBusqueda] = useState("");
   const [garantes, setGarantes] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -57,10 +58,33 @@ export default function GarantesPage() {
           (c) =>
             Array.isArray(c.roles) &&
             c.roles.includes("garante")
-        );
+        )
+        // Ocultar garantes sin datos
+        .filter((c) => {
+
+          const tieneDatos =
+            (c.nombre || "").trim() ||
+            (c.dni || "").trim() ||
+            (c.cuil || "").trim() ||
+            (c.email || "").trim() ||
+            (c.telefono1 || "").trim() ||
+            (c.telefono2 || "").trim();
+
+          return Boolean(tieneDatos);
+
+        });
+
+      data.sort((a, b) =>
+        (a.nombre || "").localeCompare(
+          b.nombre || "",
+          "es",
+          { sensitivity: "base" }
+        )
+      );
 
       setGarantes(data);
       setLoading(false);
+
     });
 
     return () => unsub();
@@ -164,6 +188,21 @@ export default function GarantesPage() {
     }
   };
 
+  const garantesFiltrados = garantes.filter((cliente) => {
+
+    const texto = busqueda.toLowerCase().trim();
+
+    return (
+      (cliente.nombre || "").toLowerCase().includes(texto) ||
+      (cliente.dni || "").toLowerCase().includes(texto) ||
+      (cliente.cuil || "").toLowerCase().includes(texto) ||
+      (cliente.email || "").toLowerCase().includes(texto) ||
+      (cliente.telefono1 || "").toLowerCase().includes(texto) ||
+      (cliente.telefono2 || "").toLowerCase().includes(texto)
+    );
+
+  });
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ minHeight: "100vh" }}>
@@ -187,6 +226,30 @@ export default function GarantesPage() {
         </p>
       </div>
 
+      <div className="row mb-4">
+
+        <div className="col-md-6">
+
+          <div className="input-group">
+
+            <span className="input-group-text">
+              <i className="bi bi-search"></i>
+            </span>
+
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Buscar garante..."
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+            />
+
+          </div>
+
+        </div>
+
+      </div>
+
       {/* TABLE */}
       <div className="card shadow border-0">
         <div className="card-body table-responsive">
@@ -208,61 +271,59 @@ export default function GarantesPage() {
 
             <tbody>
 
-              {garantes.length === 0 ? (
-                <tr>
-                  <td colSpan="8" className="text-center">
-                    No hay garantes registrados
-                  </td>
-                </tr>
+              {garantesFiltrados.length === 0 ? (<tr>
+                <td colSpan="8" className="text-center">
+                  No hay garantes registrados
+                </td>
+              </tr>
               ) : (
-                garantes.map((cliente) => (
-                  <tr key={cliente.id}>
+                garantesFiltrados.map((cliente) => (<tr key={cliente.id}>
 
-                    <td>
-                      {cliente.imagenPerfil ? (
-                        <img
-                          src={cliente.imagenPerfil}
-                          width="50"
-                          height="50"
-                          className="rounded-circle object-fit-cover"
-                        />
-                      ) : (
-                        <div
-                          className="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center"
-                          style={{ width: 50, height: 50 }}
-                        >
-                          <i className="bi bi-shield-fill"></i>
-                        </div>
-                      )}
-                    </td>
-
-                    <td>{cliente.nombre || "-"}</td>
-                    <td>{cliente.dni || "-"}</td>
-                    <td>{cliente.email || "-"}</td>
-                    <td>{cliente.telefono1 || "-"}</td>
-
-                    <td>
-                      <span className={`badge ${cliente.estado ? "bg-success" : "bg-danger"}`}>
-                        {cliente.estado ? "Activo" : "Inactivo"}
-                      </span>
-                    </td>
-
-                    <td>
-                      <span className="badge bg-primary">
-                        {cliente.archivos?.length || 0}
-                      </span>
-                    </td>
-
-                    <td>
-                      <button
-                        className="btn btn-sm btn-outline-primary"
-                        onClick={() => setClienteArchivos(cliente)}
+                  <td>
+                    {cliente.imagenPerfil ? (
+                      <img
+                        src={cliente.imagenPerfil}
+                        width="50"
+                        height="50"
+                        className="rounded-circle object-fit-cover"
+                      />
+                    ) : (
+                      <div
+                        className="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center"
+                        style={{ width: 50, height: 50 }}
                       >
-                        Ver Detalle
-                      </button>
-                    </td>
+                        <i className="bi bi-shield-fill"></i>
+                      </div>
+                    )}
+                  </td>
 
-                  </tr>
+                  <td>{cliente.nombre || "-"}</td>
+                  <td>{cliente.dni || "-"}</td>
+                  <td>{cliente.email || "-"}</td>
+                  <td>{cliente.telefono1 || "-"}</td>
+
+                  <td>
+                    <span className={`badge ${cliente.estado ? "bg-success" : "bg-danger"}`}>
+                      {cliente.estado ? "Activo" : "Inactivo"}
+                    </span>
+                  </td>
+
+                  <td>
+                    <span className="badge bg-primary">
+                      {cliente.archivos?.length || 0}
+                    </span>
+                  </td>
+
+                  <td>
+                    <button
+                      className="btn btn-sm btn-outline-primary"
+                      onClick={() => setClienteArchivos(cliente)}
+                    >
+                      Ver Detalle
+                    </button>
+                  </td>
+
+                </tr>
                 ))
               )}
 
@@ -273,404 +334,404 @@ export default function GarantesPage() {
         </div>
       </div>
 
-{/* MODAL */}
-{clienteArchivos && (
-  <>
-    <div className="modal-backdrop fade show"></div>
+      {/* MODAL */}
+      {clienteArchivos && (
+        <>
+          <div className="modal-backdrop fade show"></div>
 
-    <div className="modal d-block">
-      <div className="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+          <div className="modal d-block">
+            <div className="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
 
-        <div className="modal-content">
+              <div className="modal-content">
 
-          {/* HEADER */}
-          <div className="modal-header">
+                {/* HEADER */}
+                <div className="modal-header">
 
-            <h5 className="modal-title">
-              <i className="bi bi-shield-lock-fill me-2"></i>
-              {modoEdicion
-                ? `Editar Garante - ${clienteArchivos.nombre}`
-                : clienteArchivos.nombre}
-            </h5>
+                  <h5 className="modal-title">
+                    <i className="bi bi-shield-lock-fill me-2"></i>
+                    {modoEdicion
+                      ? `Editar Garante - ${clienteArchivos.nombre}`
+                      : clienteArchivos.nombre}
+                  </h5>
 
-            <button
-              className="btn-close"
-              onClick={() => {
-                setModoEdicion(false);
-                setClienteArchivos(null);
-              }}
-            />
-
-          </div>
-
-          {/* BODY */}
-          <div className="modal-body">
-
-            {/* ================= DATOS ================= */}
-            <div className="card mb-4 border-0 shadow-sm">
-
-              <div className="card-header bg-dark text-white">
-                Datos del Garante
-              </div>
-
-              <div className="card-body">
-
-                {/* PERFIL */}
-                <div className="text-center mb-4">
-
-                  {clienteArchivos.imagenPerfil ? (
-                    <img
-                      src={clienteArchivos.imagenPerfil}
-                      alt={clienteArchivos.nombre}
-                      className="rounded-circle border shadow-sm"
-                      style={{
-                        width: "120px",
-                        height: "120px",
-                        objectFit: "cover"
-                      }}
-                    />
-                  ) : (
-                    <div
-                      className="bg-secondary text-white rounded-circle d-inline-flex align-items-center justify-content-center"
-                      style={{
-                        width: "120px",
-                        height: "120px",
-                        fontSize: "40px"
-                      }}
-                    >
-                      <i className="bi bi-shield-fill"></i>
-                    </div>
-                  )}
+                  <button
+                    className="btn-close"
+                    onClick={() => {
+                      setModoEdicion(false);
+                      setClienteArchivos(null);
+                    }}
+                  />
 
                 </div>
 
-                <div className="row g-3">
+                {/* BODY */}
+                <div className="modal-body">
 
-                  {/* NOMBRE */}
-                  <div className="col-md-6">
-                    <strong>Nombre:</strong><br />
-                    {modoEdicion ? (
-                      <input
-                        className="form-control"
-                        value={formEdicion.nombre}
-                        onChange={(e) =>
-                          setFormEdicion({
-                            ...formEdicion,
-                            nombre: e.target.value
-                          })
-                        }
-                      />
-                    ) : (
-                      clienteArchivos.nombre || "-"
-                    )}
-                  </div>
+                  {/* ================= DATOS ================= */}
+                  <div className="card mb-4 border-0 shadow-sm">
 
-                  {/* DNI */}
-                  <div className="col-md-6">
-                    <strong>DNI:</strong><br />
-                    {modoEdicion ? (
-                      <input
-                        className="form-control"
-                        value={formEdicion.dni}
-                        onChange={(e) =>
-                          setFormEdicion({
-                            ...formEdicion,
-                            dni: e.target.value
-                          })
-                        }
-                      />
-                    ) : (
-                      clienteArchivos.dni || "-"
-                    )}
-                  </div>
-
-                  {/* CUIL */}
-                  <div className="col-md-6">
-                    <strong>CUIL:</strong><br />
-                    {modoEdicion ? (
-                      <input
-                        className="form-control"
-                        value={formEdicion.cuil}
-                        onChange={(e) =>
-                          setFormEdicion({
-                            ...formEdicion,
-                            cuil: e.target.value
-                          })
-                        }
-                      />
-                    ) : (
-                      clienteArchivos.cuil || "-"
-                    )}
-                  </div>
-
-                  {/* EMAIL */}
-                  <div className="col-md-6">
-                    <strong>Email:</strong><br />
-                    {modoEdicion ? (
-                      <input
-                        type="email"
-                        className="form-control"
-                        value={formEdicion.email}
-                        onChange={(e) =>
-                          setFormEdicion({
-                            ...formEdicion,
-                            email: e.target.value
-                          })
-                        }
-                      />
-                    ) : (
-                      clienteArchivos.email || "-"
-                    )}
-                  </div>
-
-                  {/* TELÉFONOS */}
-                  <div className="col-md-6">
-                    <strong>Teléfono 1:</strong><br />
-                    {modoEdicion ? (
-                      <input
-                        className="form-control"
-                        value={formEdicion.telefono1}
-                        onChange={(e) =>
-                          setFormEdicion({
-                            ...formEdicion,
-                            telefono1: e.target.value
-                          })
-                        }
-                      />
-                    ) : (
-                      clienteArchivos.telefono1 || "-"
-                    )}
-                  </div>
-
-                  <div className="col-md-6">
-                    <strong>Teléfono 2:</strong><br />
-                    {modoEdicion ? (
-                      <input
-                        className="form-control"
-                        value={formEdicion.telefono2}
-                        onChange={(e) =>
-                          setFormEdicion({
-                            ...formEdicion,
-                            telefono2: e.target.value
-                          })
-                        }
-                      />
-                    ) : (
-                      clienteArchivos.telefono2 || "-"
-                    )}
-                  </div>
-
-                  {/* ESTADO */}
-                  <div className="col-md-6">
-                    <strong>Estado:</strong><br />
-                    <span className={`badge ${clienteArchivos.estado ? "bg-success" : "bg-danger"}`}>
-                      {clienteArchivos.estado ? "Activo" : "Inactivo"}
-                    </span>
-                  </div>
-
-                  {/* ROLES */}
-                  <div className="col-md-6">
-                    <strong>Roles:</strong><br />
-                    {clienteArchivos.roles?.length > 0
-                      ? clienteArchivos.roles.map((rol, i) => (
-                          <span key={i} className="badge bg-primary me-1">
-                            {rol}
-                          </span>
-                        ))
-                      : "-"}
-                  </div>
-
-                  {/* FECHAS */}
-                  <div className="col-md-6">
-                    <strong>Creado:</strong><br />
-                    {formatFecha(clienteArchivos.createdAt)}
-                  </div>
-
-                  <div className="col-md-6">
-                    <strong>Actualizado:</strong><br />
-                    {formatFecha(clienteArchivos.updatedAt)}
-                  </div>
-
-                  {/* OBSERVACIONES */}
-                  <div className="col-12">
-                    <strong>Observaciones:</strong>
-
-                    {modoEdicion ? (
-                      <textarea
-                        rows="4"
-                        className="form-control mt-2"
-                        value={formEdicion.observaciones}
-                        onChange={(e) =>
-                          setFormEdicion({
-                            ...formEdicion,
-                            observaciones: e.target.value
-                          })
-                        }
-                      />
-                    ) : (
-                      <div className="border rounded p-2 mt-1 bg-light">
-                        {clienteArchivos.observaciones || "Sin observaciones"}
-                      </div>
-                    )}
-                  </div>
-
-                </div>
-              </div>
-            </div>
-
-            {/* ================= ARCHIVOS ================= */}
-            <div className="card border-0 shadow-sm">
-
-              <div className="card-header bg-primary text-white">
-                Archivos Adjuntos
-              </div>
-
-              <div className="card-body">
-
-                {!modoEdicion ? (
-                  !clienteArchivos.archivos?.length ? (
-                    <div className="alert alert-warning mb-0">
-                      Este garante no posee archivos cargados.
+                    <div className="card-header bg-dark text-white">
+                      Datos del Garante
                     </div>
-                  ) : (
-                    <div className="list-group">
-                      {clienteArchivos.archivos.map((archivo, index) => (
-                        <a
-                          key={index}
-                          href={archivo.url}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="list-group-item list-group-item-action"
-                        >
-                          <i className="bi bi-file-earmark-pdf-fill text-danger me-2"></i>
-                          {archivo.nombre}
-                        </a>
-                      ))}
-                    </div>
-                  )
-                ) : (
-                  <>
-                    {formEdicion.archivos?.length > 0 && (
-                      <div className="list-group mb-3">
 
-                        {formEdicion.archivos.map((archivo, index) => (
+                    <div className="card-body">
+
+                      {/* PERFIL */}
+                      <div className="text-center mb-4">
+
+                        {clienteArchivos.imagenPerfil ? (
+                          <img
+                            src={clienteArchivos.imagenPerfil}
+                            alt={clienteArchivos.nombre}
+                            className="rounded-circle border shadow-sm"
+                            style={{
+                              width: "120px",
+                              height: "120px",
+                              objectFit: "cover"
+                            }}
+                          />
+                        ) : (
                           <div
-                            key={index}
-                            className="list-group-item d-flex justify-content-between align-items-center"
+                            className="bg-secondary text-white rounded-circle d-inline-flex align-items-center justify-content-center"
+                            style={{
+                              width: "120px",
+                              height: "120px",
+                              fontSize: "40px"
+                            }}
                           >
-                            <div>
-                              <i className="bi bi-file-earmark-pdf-fill text-danger me-2"></i>
-                              {archivo.nombre}
-                            </div>
+                            <i className="bi bi-shield-fill"></i>
+                          </div>
+                        )}
 
-                            <button
-                              className="btn btn-sm btn-danger"
-                              onClick={() => {
+                      </div>
+
+                      <div className="row g-3">
+
+                        {/* NOMBRE */}
+                        <div className="col-md-6">
+                          <strong>Nombre:</strong><br />
+                          {modoEdicion ? (
+                            <input
+                              className="form-control"
+                              value={formEdicion.nombre}
+                              onChange={(e) =>
                                 setFormEdicion({
                                   ...formEdicion,
-                                  archivos: formEdicion.archivos.filter((_, i) => i !== index)
-                                });
-                              }}
-                            >
-                              <i className="bi bi-trash-fill"></i>
-                            </button>
-                          </div>
-                        ))}
+                                  nombre: e.target.value
+                                })
+                              }
+                            />
+                          ) : (
+                            clienteArchivos.nombre || "-"
+                          )}
+                        </div>
+
+                        {/* DNI */}
+                        <div className="col-md-6">
+                          <strong>DNI:</strong><br />
+                          {modoEdicion ? (
+                            <input
+                              className="form-control"
+                              value={formEdicion.dni}
+                              onChange={(e) =>
+                                setFormEdicion({
+                                  ...formEdicion,
+                                  dni: e.target.value
+                                })
+                              }
+                            />
+                          ) : (
+                            clienteArchivos.dni || "-"
+                          )}
+                        </div>
+
+                        {/* CUIL */}
+                        <div className="col-md-6">
+                          <strong>CUIL:</strong><br />
+                          {modoEdicion ? (
+                            <input
+                              className="form-control"
+                              value={formEdicion.cuil}
+                              onChange={(e) =>
+                                setFormEdicion({
+                                  ...formEdicion,
+                                  cuil: e.target.value
+                                })
+                              }
+                            />
+                          ) : (
+                            clienteArchivos.cuil || "-"
+                          )}
+                        </div>
+
+                        {/* EMAIL */}
+                        <div className="col-md-6">
+                          <strong>Email:</strong><br />
+                          {modoEdicion ? (
+                            <input
+                              type="email"
+                              className="form-control"
+                              value={formEdicion.email}
+                              onChange={(e) =>
+                                setFormEdicion({
+                                  ...formEdicion,
+                                  email: e.target.value
+                                })
+                              }
+                            />
+                          ) : (
+                            clienteArchivos.email || "-"
+                          )}
+                        </div>
+
+                        {/* TELÉFONOS */}
+                        <div className="col-md-6">
+                          <strong>Teléfono 1:</strong><br />
+                          {modoEdicion ? (
+                            <input
+                              className="form-control"
+                              value={formEdicion.telefono1}
+                              onChange={(e) =>
+                                setFormEdicion({
+                                  ...formEdicion,
+                                  telefono1: e.target.value
+                                })
+                              }
+                            />
+                          ) : (
+                            clienteArchivos.telefono1 || "-"
+                          )}
+                        </div>
+
+                        <div className="col-md-6">
+                          <strong>Teléfono 2:</strong><br />
+                          {modoEdicion ? (
+                            <input
+                              className="form-control"
+                              value={formEdicion.telefono2}
+                              onChange={(e) =>
+                                setFormEdicion({
+                                  ...formEdicion,
+                                  telefono2: e.target.value
+                                })
+                              }
+                            />
+                          ) : (
+                            clienteArchivos.telefono2 || "-"
+                          )}
+                        </div>
+
+                        {/* ESTADO */}
+                        <div className="col-md-6">
+                          <strong>Estado:</strong><br />
+                          <span className={`badge ${clienteArchivos.estado ? "bg-success" : "bg-danger"}`}>
+                            {clienteArchivos.estado ? "Activo" : "Inactivo"}
+                          </span>
+                        </div>
+
+                        {/* ROLES */}
+                        <div className="col-md-6">
+                          <strong>Roles:</strong><br />
+                          {clienteArchivos.roles?.length > 0
+                            ? clienteArchivos.roles.map((rol, i) => (
+                              <span key={i} className="badge bg-primary me-1">
+                                {rol}
+                              </span>
+                            ))
+                            : "-"}
+                        </div>
+
+                        {/* FECHAS */}
+                        <div className="col-md-6">
+                          <strong>Creado:</strong><br />
+                          {formatFecha(clienteArchivos.createdAt)}
+                        </div>
+
+                        <div className="col-md-6">
+                          <strong>Actualizado:</strong><br />
+                          {formatFecha(clienteArchivos.updatedAt)}
+                        </div>
+
+                        {/* OBSERVACIONES */}
+                        <div className="col-12">
+                          <strong>Observaciones:</strong>
+
+                          {modoEdicion ? (
+                            <textarea
+                              rows="4"
+                              className="form-control mt-2"
+                              value={formEdicion.observaciones}
+                              onChange={(e) =>
+                                setFormEdicion({
+                                  ...formEdicion,
+                                  observaciones: e.target.value
+                                })
+                              }
+                            />
+                          ) : (
+                            <div className="border rounded p-2 mt-1 bg-light">
+                              {clienteArchivos.observaciones || "Sin observaciones"}
+                            </div>
+                          )}
+                        </div>
 
                       </div>
-                    )}
+                    </div>
+                  </div>
 
-                    <div className="border rounded p-3 bg-light">
+                  {/* ================= ARCHIVOS ================= */}
+                  <div className="card border-0 shadow-sm">
 
-                      <label className="form-label fw-bold">
-                        Agregar archivos
-                      </label>
+                    <div className="card-header bg-primary text-white">
+                      Archivos Adjuntos
+                    </div>
 
-                      <input
-                        type="file"
-                        multiple
-                        className="form-control"
-                        onChange={(e) => {
-                          const nuevos = Array.from(e.target.files || []).map(file => ({
-                            nombre: file.name,
-                            file
-                          }));
+                    <div className="card-body">
 
-                          setFormEdicion({
-                            ...formEdicion,
-                            archivos: [
-                              ...(formEdicion.archivos || []),
-                              ...nuevos
-                            ]
-                          });
-                        }}
-                      />
+                      {!modoEdicion ? (
+                        !clienteArchivos.archivos?.length ? (
+                          <div className="alert alert-warning mb-0">
+                            Este garante no posee archivos cargados.
+                          </div>
+                        ) : (
+                          <div className="list-group">
+                            {clienteArchivos.archivos.map((archivo, index) => (
+                              <a
+                                key={index}
+                                href={archivo.url}
+                                target="_blank"
+                                rel="noreferrer"
+                                className="list-group-item list-group-item-action"
+                              >
+                                <i className="bi bi-file-earmark-pdf-fill text-danger me-2"></i>
+                                {archivo.nombre}
+                              </a>
+                            ))}
+                          </div>
+                        )
+                      ) : (
+                        <>
+                          {formEdicion.archivos?.length > 0 && (
+                            <div className="list-group mb-3">
+
+                              {formEdicion.archivos.map((archivo, index) => (
+                                <div
+                                  key={index}
+                                  className="list-group-item d-flex justify-content-between align-items-center"
+                                >
+                                  <div>
+                                    <i className="bi bi-file-earmark-pdf-fill text-danger me-2"></i>
+                                    {archivo.nombre}
+                                  </div>
+
+                                  <button
+                                    className="btn btn-sm btn-danger"
+                                    onClick={() => {
+                                      setFormEdicion({
+                                        ...formEdicion,
+                                        archivos: formEdicion.archivos.filter((_, i) => i !== index)
+                                      });
+                                    }}
+                                  >
+                                    <i className="bi bi-trash-fill"></i>
+                                  </button>
+                                </div>
+                              ))}
+
+                            </div>
+                          )}
+
+                          <div className="border rounded p-3 bg-light">
+
+                            <label className="form-label fw-bold">
+                              Agregar archivos
+                            </label>
+
+                            <input
+                              type="file"
+                              multiple
+                              className="form-control"
+                              onChange={(e) => {
+                                const nuevos = Array.from(e.target.files || []).map(file => ({
+                                  nombre: file.name,
+                                  file
+                                }));
+
+                                setFormEdicion({
+                                  ...formEdicion,
+                                  archivos: [
+                                    ...(formEdicion.archivos || []),
+                                    ...nuevos
+                                  ]
+                                });
+                              }}
+                            />
+
+                          </div>
+                        </>
+                      )}
 
                     </div>
-                  </>
-                )}
+                  </div>
+
+                </div>
+
+                {/* FOOTER */}
+                <div className="modal-footer">
+
+                  {!modoEdicion ? (
+                    <button
+                      className="btn btn-warning"
+                      onClick={() => {
+                        setModoEdicion(true);
+                        setFormEdicion(clienteArchivos);
+                      }}
+                    >
+                      <i className="bi bi-pencil-fill me-2"></i>
+                      Modificar
+                    </button>
+                  ) : (
+                    <>
+                      <button
+                        className="btn btn-secondary"
+                        onClick={() => setModoEdicion(false)}
+                      >
+                        Cancelar
+                      </button>
+
+                      <button
+                        className="btn btn-success"
+                        onClick={guardarCambiosCliente}
+                      >
+                        Guardar Cambios
+                      </button>
+                    </>
+                  )}
+
+                  <button
+                    className="btn btn-danger"
+                    onClick={eliminarCliente}
+                  >
+                    Eliminar
+                  </button>
+
+                  <button
+                    className="btn btn-dark"
+                    onClick={() => {
+                      setModoEdicion(false);
+                      setClienteArchivos(null);
+                    }}
+                  >
+                    Cerrar
+                  </button>
+
+                </div>
 
               </div>
             </div>
-
           </div>
-
-          {/* FOOTER */}
-          <div className="modal-footer">
-
-            {!modoEdicion ? (
-              <button
-                className="btn btn-warning"
-                onClick={() => {
-                  setModoEdicion(true);
-                  setFormEdicion(clienteArchivos);
-                }}
-              >
-                <i className="bi bi-pencil-fill me-2"></i>
-                Modificar
-              </button>
-            ) : (
-              <>
-                <button
-                  className="btn btn-secondary"
-                  onClick={() => setModoEdicion(false)}
-                >
-                  Cancelar
-                </button>
-
-                <button
-                  className="btn btn-success"
-                  onClick={guardarCambiosCliente}
-                >
-                  Guardar Cambios
-                </button>
-              </>
-            )}
-
-            <button
-              className="btn btn-danger"
-              onClick={eliminarCliente}
-            >
-              Eliminar
-            </button>
-
-            <button
-              className="btn btn-dark"
-              onClick={() => {
-                setModoEdicion(false);
-                setClienteArchivos(null);
-              }}
-            >
-              Cerrar
-            </button>
-
-          </div>
-
-        </div>
-      </div>
-    </div>
-  </>
-)}
+        </>
+      )}
 
     </div>
   );

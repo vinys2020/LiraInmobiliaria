@@ -62,19 +62,19 @@ export default function CustomerDashboard() {
   const [pagoForm, setPagoForm] = useState(null);
   const [eliminandoContrato, setEliminandoContrato] = useState(null);
   const [creandoContrato, setCreandoContrato] = useState(false);
-const [cantidadProximosPeriodos, setCantidadProximosPeriodos] = useState(0);
-const [modoLocador, setModoLocador] = useState("existente");
-const [modoLocatario, setModoLocatario] = useState("existente");
-const [clientes, setClientes] = useState([]);
+  const [cantidadProximosPeriodos, setCantidadProximosPeriodos] = useState(0);
+  const [modoLocador, setModoLocador] = useState("existente");
+  const [modoLocatario, setModoLocatario] = useState("existente");
+  const [clientes, setClientes] = useState([]);
 
 
-const verRecibosPropietario = (contrato) => {
+  const verRecibosPropietario = (contrato) => {
 
-  setContratoRecibosLiquidacion(contrato);
+    setContratoRecibosLiquidacion(contrato);
 
-  setMostrarRecibos(true);
+    setMostrarRecibos(true);
 
-};
+  };
 
 
 
@@ -107,70 +107,70 @@ const verRecibosPropietario = (contrato) => {
   const [showClienteModal, setShowClienteModal] = useState(false);
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
 
-const cargarCantidadProximosPeriodos = async () => {
-  try {
-    const pagosSnap = await getDocs(collection(db, "Pagos"));
-    const contratosSnap = await getDocs(collection(db, "Contratos"));
+  const cargarCantidadProximosPeriodos = async () => {
+    try {
+      const pagosSnap = await getDocs(collection(db, "Pagos"));
+      const contratosSnap = await getDocs(collection(db, "Contratos"));
 
-    const contratosMap = {};
+      const contratosMap = {};
 
-    contratosSnap.docs.forEach((doc) => {
-      contratosMap[doc.id] = doc.data();
-    });
+      contratosSnap.docs.forEach((doc) => {
+        contratosMap[doc.id] = doc.data();
+      });
 
-    const pagosPorContrato = {};
+      const pagosPorContrato = {};
 
-    pagosSnap.docs.forEach((doc) => {
-      const pago = doc.data();
+      pagosSnap.docs.forEach((doc) => {
+        const pago = doc.data();
 
-      if (
-        !pago.contratoId ||
-        String(pago.estado || "").toLowerCase() === "pagado"
-      ) {
-        return;
-      }
+        if (
+          !pago.contratoId ||
+          String(pago.estado || "").toLowerCase() === "pagado"
+        ) {
+          return;
+        }
 
-      if (!pagosPorContrato[pago.contratoId]) {
-        pagosPorContrato[pago.contratoId] = [];
-      }
+        if (!pagosPorContrato[pago.contratoId]) {
+          pagosPorContrato[pago.contratoId] = [];
+        }
 
-      pagosPorContrato[pago.contratoId].push(pago);
-    });
+        pagosPorContrato[pago.contratoId].push(pago);
+      });
 
-    let cantidad = 0;
+      let cantidad = 0;
 
-    Object.keys(pagosPorContrato).forEach((contratoId) => {
-      const contrato = contratosMap[contratoId];
+      Object.keys(pagosPorContrato).forEach((contratoId) => {
+        const contrato = contratosMap[contratoId];
 
-      if (!contrato) return;
+        if (!contrato) return;
 
-      const periodoActualizacion = Number(
-        contrato.periodoActualizacion || 0
-      );
+        const periodoActualizacion = Number(
+          contrato.periodoActualizacion || 0
+        );
 
-      if (!periodoActualizacion) return;
+        if (!periodoActualizacion) return;
 
-      const primerPendiente = pagosPorContrato[contratoId]
-        .sort(
-          (a, b) =>
-            Number(a.numeroCuota || 0) -
-            Number(b.numeroCuota || 0)
-        )[0];
+        const primerPendiente = pagosPorContrato[contratoId]
+          .sort(
+            (a, b) =>
+              Number(a.numeroCuota || 0) -
+              Number(b.numeroCuota || 0)
+          )[0];
 
-      const proximaCuota =
-        Number(primerPendiente.numeroCuota || 0) + 1;
+        const proximaCuota =
+          Number(primerPendiente.numeroCuota || 0) + 1;
 
-      if (proximaCuota % periodoActualizacion === 0) {
-        cantidad++;
-      }
-    });
+        if (proximaCuota % periodoActualizacion === 0) {
+          cantidad++;
+        }
+      });
 
-    setCantidadProximosPeriodos(cantidad);
+      setCantidadProximosPeriodos(cantidad);
 
-  } catch (error) {
-    console.error(error);
-  }
-};
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const [formData, setFormData] = useState({
 
@@ -193,9 +193,9 @@ const cargarCantidadProximosPeriodos = async () => {
     locatarioTelefono2: "",
     locatarioArchivos: [],
     deposito: "",
-    
 
-    
+
+
 
     // GARANTE
     garanteNombre: "",
@@ -223,7 +223,7 @@ const cargarCantidadProximosPeriodos = async () => {
     moneda: "ARS",
 
     // CONFIGURACIÓN FINANCIERA
-indiceActualizacion: "IPC",
+    indiceActualizacion: "IPC",
     periodoActualizacion: 6,
     cantidadPeriodos: 1,
 
@@ -249,9 +249,9 @@ indiceActualizacion: "IPC",
     contratoId: null,
 
     locadorId: null,
-locatarioId: null,
-garanteId: null,
-garante2Id: null,
+    locatarioId: null,
+    garanteId: null,
+    garante2Id: null,
 
   });
 
@@ -264,39 +264,39 @@ garante2Id: null,
     };
   }, []);
 
-    // 👇 AGREGAR AQUÍ
+  // 👇 AGREGAR AQUÍ
   useEffect(() => {
     cargarCantidadProximosPeriodos();
   }, []);
 
   useEffect(() => {
 
-  const cargarClientes = async () => {
+    const cargarClientes = async () => {
 
-    try {
+      try {
 
-      const snap = await getDocs(
-        collection(db, "Clientes")
-      );
+        const snap = await getDocs(
+          collection(db, "Clientes")
+        );
 
-      const data = snap.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+        const data = snap.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
 
-      setClientes(data);
+        setClientes(data);
 
-    } catch (error) {
+      } catch (error) {
 
-      console.error(error);
+        console.error(error);
 
-    }
+      }
 
-  };
+    };
 
-  cargarClientes();
+    cargarClientes();
 
-}, []);
+  }, []);
 
   const normalizeFull = (str) =>
     str
@@ -333,49 +333,49 @@ garante2Id: null,
   };
 
 
-let contratosFiltrados = contratos.filter((c) => {
+  let contratosFiltrados = contratos.filter((c) => {
 
-  const texto = searchContrato.toLowerCase();
+    const texto = searchContrato.toLowerCase();
 
-  const coincideBusqueda =
-    c.propiedadTitulo?.toLowerCase().includes(texto) ||
-    c.locador?.toLowerCase().includes(texto) ||
-    c.locatario?.toLowerCase().includes(texto) ||
-    c.propiedadDireccion?.calle?.toLowerCase().includes(texto) ||
-    c.propiedadDireccion?.localidad?.toLowerCase().includes(texto) ||
-    c.propiedadDireccion?.provincia?.toLowerCase().includes(texto) ||
-    c.propiedadDireccion?.codigoPostal?.toLowerCase().includes(texto);
+    const coincideBusqueda =
+      c.propiedadTitulo?.toLowerCase().includes(texto) ||
+      c.locador?.toLowerCase().includes(texto) ||
+      c.locatario?.toLowerCase().includes(texto) ||
+      c.propiedadDireccion?.calle?.toLowerCase().includes(texto) ||
+      c.propiedadDireccion?.localidad?.toLowerCase().includes(texto) ||
+      c.propiedadDireccion?.provincia?.toLowerCase().includes(texto) ||
+      c.propiedadDireccion?.codigoPostal?.toLowerCase().includes(texto);
 
-  const coincideEstado =
-    filtroEstado === "todos" ||
-    (filtroEstado === "porVencer"
-      ? (c.estado || "").toLowerCase() === "activo"
-      : c.estado === filtroEstado);
+    const coincideEstado =
+      filtroEstado === "todos" ||
+      (filtroEstado === "porVencer"
+        ? (c.estado || "").toLowerCase() === "activo"
+        : c.estado === filtroEstado);
 
-  return coincideBusqueda && coincideEstado;
-
-});
-
-
-if (filtroEstado === "porVencer") {
-
-  contratosFiltrados.sort((a, b) => {
-
-    const fechaA =
-      a.fechaFin?.toDate
-        ? a.fechaFin.toDate()
-        : new Date(a.fechaFin);
-
-    const fechaB =
-      b.fechaFin?.toDate
-        ? b.fechaFin.toDate()
-        : new Date(b.fechaFin);
-
-    return fechaA - fechaB;
+    return coincideBusqueda && coincideEstado;
 
   });
 
-}
+
+  if (filtroEstado === "porVencer") {
+
+    contratosFiltrados.sort((a, b) => {
+
+      const fechaA =
+        a.fechaFin?.toDate
+          ? a.fechaFin.toDate()
+          : new Date(a.fechaFin);
+
+      const fechaB =
+        b.fechaFin?.toDate
+          ? b.fechaFin.toDate()
+          : new Date(b.fechaFin);
+
+      return fechaA - fechaB;
+
+    });
+
+  }
 
 
 
@@ -385,21 +385,21 @@ if (filtroEstado === "porVencer") {
     fetchContratos();
   }, []);
 
-const eliminarCarpetaStorage = async (ruta) => {
-  const folderRef = ref(storage, ruta);
+  const eliminarCarpetaStorage = async (ruta) => {
+    const folderRef = ref(storage, ruta);
 
-  const lista = await listAll(folderRef);
+    const lista = await listAll(folderRef);
 
-  // borrar archivos
-  for (const item of lista.items) {
-    await deleteObject(item);
-  }
+    // borrar archivos
+    for (const item of lista.items) {
+      await deleteObject(item);
+    }
 
-  // borrar subcarpetas (recursivo)
-  for (const folder of lista.prefixes) {
-    await eliminarCarpetaStorage(folder.fullPath);
-  }
-};
+    // borrar subcarpetas (recursivo)
+    for (const folder of lista.prefixes) {
+      await eliminarCarpetaStorage(folder.fullPath);
+    }
+  };
 
   const abrirCliente = async (tipo, contrato) => {
 
@@ -475,17 +475,39 @@ const eliminarCarpetaStorage = async (ruta) => {
           orderBy("mes", "desc")
         );
 
-        const liquidacionesSnap =
-          await getDocs(liquidacionesQuery);
+        const liquidacionesSnap = await getDocs(liquidacionesQuery);
 
-        liquidaciones =
-          liquidacionesSnap.docs.map((doc) => ({
+        liquidaciones = await Promise.all(
+          liquidacionesSnap.docs.map(async (documento) => {
 
-            id: doc.id,
+            const liq = {
+              id: documento.id,
+              ...documento.data(),
+            };
 
-            ...doc.data(),
+            if (liq.contratoId) {
 
-          }));
+              const contratoSnap = await getDoc(
+                doc(db, "Contratos", liq.contratoId)
+              );
+
+              if (contratoSnap.exists()) {
+
+                const contrato = contratoSnap.data();
+
+                const porcentaje = Number(
+                  contrato.comisionInmobiliaria || 0
+                );
+
+                liq.montoComision =
+                  Number(liq.montoCobrado || 0) *
+                  porcentaje / 100;
+              }
+            }
+
+            return liq;
+          })
+        );
       }
 
       // ============================================
@@ -560,11 +582,11 @@ const eliminarCarpetaStorage = async (ruta) => {
           contrato.garanteTelefono2 ||
           "",
 
-          comisionInmobiliaria:
+        comisionInmobiliaria:
           clienteData.comisionInmobiliaria || "",
 
 
-          deposito:
+        deposito:
           clienteData.deposito || "",
 
 
@@ -672,7 +694,7 @@ const eliminarCarpetaStorage = async (ruta) => {
       locatarioTelefono1: "",
       locatarioTelefono2: "",
       locatarioArchivos: [],
-        deposito: "",
+      deposito: "",
 
       // GARANTE
       garanteNombre: "",
@@ -701,7 +723,7 @@ const eliminarCarpetaStorage = async (ruta) => {
       // CONFIGURACIÓN FINANCIERA
 
       periodoActualizacion: 6,
-indiceActualizacion: "IPC",
+      indiceActualizacion: "IPC",
       cantidadPeriodos: 1,
 
       interesMoraDiario: "",
@@ -785,10 +807,10 @@ indiceActualizacion: "IPC",
 
     if (!selectedProperty) return;
 
-    
+
 
     try {
-       setCreandoContrato(true);
+      setCreandoContrato(true);
 
       // =====================================================
       // VALIDACIONES
@@ -869,187 +891,187 @@ indiceActualizacion: "IPC",
         );
       };
 
-const locadorArchivos = formData.contratoId
-  ? (formData.locadorArchivos || [])
-  : await subirArchivos(
-      formData.locadorArchivos,
-      "locador"
-    );
+      const locadorArchivos = formData.contratoId
+        ? (formData.locadorArchivos || [])
+        : await subirArchivos(
+          formData.locadorArchivos,
+          "locador"
+        );
 
-const locatarioArchivos = formData.contratoId
-  ? (formData.locatarioArchivos || [])
-  : await subirArchivos(
-      formData.locatarioArchivos,
-      "locatario"
-    );
+      const locatarioArchivos = formData.contratoId
+        ? (formData.locatarioArchivos || [])
+        : await subirArchivos(
+          formData.locatarioArchivos,
+          "locatario"
+        );
 
-const garanteArchivos = formData.contratoId
-  ? (formData.garanteArchivos || [])
-  : await subirArchivos(
-      formData.garanteArchivos,
-      "garante"
-    );
+      const garanteArchivos = formData.contratoId
+        ? (formData.garanteArchivos || [])
+        : await subirArchivos(
+          formData.garanteArchivos,
+          "garante"
+        );
 
-const garante2Archivos = formData.contratoId
-  ? (formData.garante2Archivos || [])
-  : await subirArchivos(
-      formData.garante2Archivos,
-      "garante2"
-    );
+      const garante2Archivos = formData.contratoId
+        ? (formData.garante2Archivos || [])
+        : await subirArchivos(
+          formData.garante2Archivos,
+          "garante2"
+        );
 
-      
+
 
       // =====================================================
-// CLIENTES
-// =====================================================
+      // CLIENTES
+      // =====================================================
 
-let locadorRef;
-let locatarioRef;
-let garanteRef;
-let garante2Ref;
+      let locadorRef;
+      let locatarioRef;
+      let garanteRef;
+      let garante2Ref;
 
-if (!formData.contratoId) {
+      if (!formData.contratoId) {
 
-  // CREAR CLIENTES SOLO CUANDO ES UN CONTRATO NUEVO
-// LOCADOR
-if (formData.locadorId) {
+        // CREAR CLIENTES SOLO CUANDO ES UN CONTRATO NUEVO
+        // LOCADOR
+        if (formData.locadorId) {
 
-  const clienteExistente = clientes.find(
-    c => c.id === formData.locadorId
-  );
+          const clienteExistente = clientes.find(
+            c => c.id === formData.locadorId
+          );
 
-  locadorRef = await addDoc(
-    collection(db, "Clientes"),
-    {
-      nombre: clienteExistente.nombre || "",
-      dni: clienteExistente.dni || "",
-      cuil: clienteExistente.cuil || "",
-      email: clienteExistente.email || "",
-      telefono1: clienteExistente.telefono1 || "",
-      telefono2: clienteExistente.telefono2 || "",
-      comisionInmobiliaria: clienteExistente.comisionInmobiliaria || "",
-      archivos: clienteExistente.archivos || [],
-      estado: clienteExistente.estado ?? true,
-      imagenPerfil: clienteExistente.imagenPerfil || "",
-      observaciones: clienteExistente.observaciones || "",
+          locadorRef = await addDoc(
+            collection(db, "Clientes"),
+            {
+              nombre: clienteExistente.nombre || "",
+              dni: clienteExistente.dni || "",
+              cuil: clienteExistente.cuil || "",
+              email: clienteExistente.email || "",
+              telefono1: clienteExistente.telefono1 || "",
+              telefono2: clienteExistente.telefono2 || "",
+              comisionInmobiliaria: clienteExistente.comisionInmobiliaria || "",
+              archivos: clienteExistente.archivos || [],
+              estado: clienteExistente.estado ?? true,
+              imagenPerfil: clienteExistente.imagenPerfil || "",
+              observaciones: clienteExistente.observaciones || "",
 
-      roles: ["locador"],
+              roles: ["locador"],
 
-      // opcional
-      clienteOrigenId: clienteExistente.id,
+              // opcional
+              clienteOrigenId: clienteExistente.id,
 
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    }
-  );
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            }
+          );
 
-} else {
+        } else {
 
-  locadorRef = await addDoc(
-    collection(db, "Clientes"),
-    {
-      nombre: formData.locador || "",
-      dni: formData.locadorDni || "",
-      cuil: formData.locadorCuil || "",
-      email: formData.locadorEmail || "",
-      telefono1: formData.locadorTelefono1 || "",
-      telefono2: formData.locadorTelefono2 || "",
-      comisionInmobiliaria: formData.comisionInmobiliaria || "",
-      archivos: locadorArchivos,
-      estado: true,
-      imagenPerfil: "",
-      observaciones: "",
-      roles: ["locador"],
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    }
-  );
+          locadorRef = await addDoc(
+            collection(db, "Clientes"),
+            {
+              nombre: formData.locador || "",
+              dni: formData.locadorDni || "",
+              cuil: formData.locadorCuil || "",
+              email: formData.locadorEmail || "",
+              telefono1: formData.locadorTelefono1 || "",
+              telefono2: formData.locadorTelefono2 || "",
+              comisionInmobiliaria: formData.comisionInmobiliaria || "",
+              archivos: locadorArchivos,
+              estado: true,
+              imagenPerfil: "",
+              observaciones: "",
+              roles: ["locador"],
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            }
+          );
 
-}
+        }
 
-  locatarioRef = await addDoc(
-    collection(db, "Clientes"),
-    {
-      nombre: formData.locatario || "",
-      dni: formData.locatarioDni || "",
-      cuil: formData.locatarioCuil || "",
-      email: formData.locatarioEmail || "",
-      telefono1: formData.locatarioTelefono1 || "",
-      telefono2: formData.locatarioTelefono2 || "",
-      deposito: formData.deposito || "",
-      archivos: locatarioArchivos,
-      estado: true,
-      imagenPerfil: "",
-      observaciones: "",
-      roles: ["locatario"],
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    }
-  );
+        locatarioRef = await addDoc(
+          collection(db, "Clientes"),
+          {
+            nombre: formData.locatario || "",
+            dni: formData.locatarioDni || "",
+            cuil: formData.locatarioCuil || "",
+            email: formData.locatarioEmail || "",
+            telefono1: formData.locatarioTelefono1 || "",
+            telefono2: formData.locatarioTelefono2 || "",
+            deposito: formData.deposito || "",
+            archivos: locatarioArchivos,
+            estado: true,
+            imagenPerfil: "",
+            observaciones: "",
+            roles: ["locatario"],
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          }
+        );
 
-  garanteRef = await addDoc(
-    collection(db, "Clientes"),
-    {
-      nombre: formData.garanteNombre || "",
-      dni: formData.garanteDni || "",
-      cuil: formData.garanteCuil || "",
-      email: formData.garanteEmail || "",
-      telefono1: formData.garanteTelefono1 || "",
-      telefono2: formData.garanteTelefono2 || "",
-      archivos: garanteArchivos,
-      estado: true,
-      imagenPerfil: "",
-      observaciones: "",
-      roles: ["garante"],
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    }
-  );
+        garanteRef = await addDoc(
+          collection(db, "Clientes"),
+          {
+            nombre: formData.garanteNombre || "",
+            dni: formData.garanteDni || "",
+            cuil: formData.garanteCuil || "",
+            email: formData.garanteEmail || "",
+            telefono1: formData.garanteTelefono1 || "",
+            telefono2: formData.garanteTelefono2 || "",
+            archivos: garanteArchivos,
+            estado: true,
+            imagenPerfil: "",
+            observaciones: "",
+            roles: ["garante"],
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          }
+        );
 
-  garante2Ref = await addDoc(
-  collection(db, "Clientes"),
-  {
-    nombre: formData.garante2Nombre || "",
-    dni: formData.garante2Dni || "",
-    cuil: formData.garante2Cuil || "",
-    email: formData.garante2Email || "",
-    telefono1: formData.garante2Telefono1 || "",
-    telefono2: formData.garante2Telefono2 || "",
-    archivos: garante2Archivos,
-    estado: true,
-    imagenPerfil: "",
-    observaciones: "",
-    roles: ["garante"],
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp(),
-  }
-);
+        garante2Ref = await addDoc(
+          collection(db, "Clientes"),
+          {
+            nombre: formData.garante2Nombre || "",
+            dni: formData.garante2Dni || "",
+            cuil: formData.garante2Cuil || "",
+            email: formData.garante2Email || "",
+            telefono1: formData.garante2Telefono1 || "",
+            telefono2: formData.garante2Telefono2 || "",
+            archivos: garante2Archivos,
+            estado: true,
+            imagenPerfil: "",
+            observaciones: "",
+            roles: ["garante"],
+            createdAt: serverTimestamp(),
+            updatedAt: serverTimestamp(),
+          }
+        );
 
-} else {
+      } else {
 
-  // EDITANDO CONTRATO
-  // NO CREAR CLIENTES NUEVOS
+        // EDITANDO CONTRATO
+        // NO CREAR CLIENTES NUEVOS
 
-  const contratoActual = contratos.find(
-    c => c.id === formData.contratoId
-  );
+        const contratoActual = contratos.find(
+          c => c.id === formData.contratoId
+        );
 
-  locadorRef = {
-    id: contratoActual.locadorId
-  };
+        locadorRef = {
+          id: contratoActual.locadorId
+        };
 
-  locatarioRef = {
-    id: contratoActual.locatarioId
-  };
+        locatarioRef = {
+          id: contratoActual.locatarioId
+        };
 
-  garanteRef = {
-    id: contratoActual.garanteId
-  };
+        garanteRef = {
+          id: contratoActual.garanteId
+        };
 
-garante2Ref = contratoActual.garante2Id
-  ? { id: contratoActual.garante2Id }
-  : null;
-}
+        garante2Ref = contratoActual.garante2Id
+          ? { id: contratoActual.garante2Id }
+          : null;
+      }
       // =====================================================
       // DATOS CONTRATO
       // =====================================================
@@ -1075,10 +1097,10 @@ garante2Ref = contratoActual.garante2Id
         // CLIENTES
         // =================================================
 
-locadorId: locadorRef?.id || null,
-locatarioId: locatarioRef?.id || null,
-garanteId: garanteRef?.id || null,
-garante2Id: garante2Ref?.id || null,       // LOCADOR
+        locadorId: locadorRef?.id || null,
+        locatarioId: locatarioRef?.id || null,
+        garanteId: garanteRef?.id || null,
+        garante2Id: garante2Ref?.id || null,       // LOCADOR
         // =================================================
 
         locador: formData.locador || "",
@@ -1145,8 +1167,8 @@ garante2Id: garante2Ref?.id || null,       // LOCADOR
         periodoActualizacion: Number(
           formData.periodoActualizacion || 6
         ),
-indiceActualizacion:
-  formData.indiceActualizacion || "IPC",
+        indiceActualizacion:
+          formData.indiceActualizacion || "IPC",
 
         cantidadPeriodos: Number(
           formData.cantidadPeriodos || 1
@@ -1195,253 +1217,253 @@ indiceActualizacion:
       // CREAR CONTRATO
       // =====================================================
 
-let contratoRef;
+      let contratoRef;
 
-if (formData.contratoId) {
+      if (formData.contratoId) {
 
-  Object.entries(contratoData).forEach(([key, value]) => {
-    if (value === undefined) {
-      console.log("❌ UNDEFINED:", key);
-    }
-  });
+        Object.entries(contratoData).forEach(([key, value]) => {
+          if (value === undefined) {
+            console.log("❌ UNDEFINED:", key);
+          }
+        });
 
-  const {
-    createdAt,
-    ...contratoDataLimpio
-  } = contratoData;
+        const {
+          createdAt,
+          ...contratoDataLimpio
+        } = contratoData;
 
-  await updateDoc(
-    doc(db, "Contratos", formData.contratoId),
-    {
-      ...contratoDataLimpio,
-      updatedAt: serverTimestamp(),
-    }
-  );
+        await updateDoc(
+          doc(db, "Contratos", formData.contratoId),
+          {
+            ...contratoDataLimpio,
+            updatedAt: serverTimestamp(),
+          }
+        );
 
-  contratoRef = {
-    id: formData.contratoId
-  };
+        contratoRef = {
+          id: formData.contratoId
+        };
 
-} else {
+      } else {
 
-  contratoRef = await addDoc(
-    collection(db, "Contratos"),
-    contratoData
-  );
+        contratoRef = await addDoc(
+          collection(db, "Contratos"),
+          contratoData
+        );
 
-}
+      }
 
-            // =====================================================
+      // =====================================================
       // GENERAR PAGOS Y LIQUIDACIONES
       // =====================================================
 
       if (!formData.contratoId) {
 
-      let fechaPeriodo = new Date(fechaInicio);
+        let fechaPeriodo = new Date(fechaInicio);
 
-      fechaPeriodo.setDate(1);
-      fechaPeriodo.setHours(12, 0, 0, 0);
+        fechaPeriodo.setDate(1);
+        fechaPeriodo.setHours(12, 0, 0, 0);
 
-      let montoActual = Number(formData.precioMensual || 0);
+        let montoActual = Number(formData.precioMensual || 0);
 
-      const mesesAumento = Number(
-        formData.periodoActualizacion
-      );
+        const mesesAumento = Number(
+          formData.periodoActualizacion
+        );
 
 
-      const porcentajeAumento = Number(
-        formData.porcentajeIncremento || 0
-      );
+        const porcentajeAumento = Number(
+          formData.porcentajeIncremento || 0
+        );
 
-      let periodoNumero = 1;
+        let periodoNumero = 1;
 
-      let mesesTranscurridos = 0;
+        let mesesTranscurridos = 0;
 
-      const totalCuotas =
-        (fechaFin.getFullYear() - fechaInicio.getFullYear()) * 12 +
-        (fechaFin.getMonth() - fechaInicio.getMonth()) + 1;
+        const totalCuotas =
+          (fechaFin.getFullYear() - fechaInicio.getFullYear()) * 12 +
+          (fechaFin.getMonth() - fechaInicio.getMonth()) + 1;
 
-      while (fechaPeriodo <= fechaFin) {
+        while (fechaPeriodo <= fechaFin) {
 
-        // =================================================
-        // AUMENTO AUTOMÁTICO
-        // =================================================
+          // =================================================
+          // AUMENTO AUTOMÁTICO
+          // =================================================
 
-        if (
-          mesesAumento > 0 &&
-          mesesTranscurridos > 0 &&
-          mesesTranscurridos % mesesAumento === 0
-        ) {
+          if (
+            mesesAumento > 0 &&
+            mesesTranscurridos > 0 &&
+            mesesTranscurridos % mesesAumento === 0
+          ) {
 
-          montoActual =
-            montoActual +
-            (montoActual * porcentajeAumento / 100);
+            montoActual =
+              montoActual +
+              (montoActual * porcentajeAumento / 100);
 
-          periodoNumero++;
+            periodoNumero++;
+          }
+          // =================================================
+          // VENCIMIENTO
+          // =================================================
+
+          const fechaVencimiento = new Date(
+            fechaPeriodo.getFullYear(),
+            fechaPeriodo.getMonth(),
+            Number(formData.plazoPagoHasta || 10),
+            12,
+            0,
+            0
+          );
+
+          // =================================================
+          // PAGO
+          // =================================================
+
+          const pagoRef = await addDoc(
+            collection(db, "Pagos"),
+            {
+
+              contratoId: contratoRef.id,
+
+              propiedadId: selectedProperty.id,
+
+              propiedadTitulo: selectedProperty.titulo,
+
+              propiedadDireccion: {
+                calle: selectedProperty?.direccion?.calle || "",
+                localidad: selectedProperty?.direccion?.localidad || "",
+                provincia: selectedProperty?.direccion?.provincia || "",
+              },
+              clienteId: locatarioRef.id,
+
+              clienteNombre: formData.locatario,
+
+              clienteCuil: formData.locatarioCuil || "",
+
+
+              locadorId: locadorRef.id,
+
+              locadorNombre: formData.locador,
+
+              locadorCuil: formData.locadorCuil || "",
+
+              tipo: "alquiler",
+
+
+
+
+              periodoNumero,
+              numeroCuota: mesesTranscurridos + 1,
+              totalCuotas,
+
+              mes: fechaPeriodo.getMonth() + 1,
+
+              anio: fechaPeriodo.getFullYear(),
+
+              montoBase: montoActual,
+
+              montoFinal: montoActual,
+
+              porcentajeAplicado:
+                mesesTranscurridos > 0
+                  ? porcentajeAumento
+                  : 0,
+
+              fechaVencimiento,
+
+              fechaPago: null,
+
+              diasRetraso: 0,
+
+              interesGenerado: 0,
+
+              moneda: formData.moneda || "ARS",
+
+              estado: "pendiente",
+
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            }
+          );
+
+          // =================================================
+          // LIQUIDACIÓN
+          // =================================================
+
+          await addDoc(
+            collection(db, "Liquidaciones"),
+            {
+
+              contratoId: contratoRef.id,
+
+
+
+              pagoId: pagoRef.id,
+
+              propiedadId: selectedProperty.id,
+
+              propiedadTitulo: selectedProperty.titulo,
+
+              propiedadDireccion: {
+                calle: selectedProperty?.direccion?.calle || "",
+                localidad: selectedProperty?.direccion?.localidad || "",
+                provincia: selectedProperty?.direccion?.provincia || "",
+              },
+
+              locadorId: locadorRef.id,
+
+              locadorNombre: formData.locador,
+
+              locatarioId: locatarioRef.id,
+
+              locatarioNombre: formData.locatario,
+
+
+
+              periodoNumero,
+              numeroCuota: mesesTranscurridos + 1,
+              totalCuotas,
+
+
+              mes: fechaPeriodo.getMonth() + 1,
+
+              anio: fechaPeriodo.getFullYear(),
+
+              montoCobrado: montoActual,
+
+              porcentajeComision: 0,
+
+              montoComision: 0,
+
+              montoLiquidado: montoActual,
+
+              moneda: formData.moneda || "ARS",
+
+              fechaLiquidacion: null,
+
+              estado: "pendiente",
+
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp(),
+            }
+          );
+
+          // =================================================
+          // SIGUIENTE MES
+          // =================================================
+
+          fechaPeriodo = new Date(
+            fechaPeriodo.getFullYear(),
+            fechaPeriodo.getMonth() + 1,
+            1,
+            12,
+            0,
+            0
+          );
+
+          mesesTranscurridos++;
         }
-        // =================================================
-        // VENCIMIENTO
-        // =================================================
-
-        const fechaVencimiento = new Date(
-          fechaPeriodo.getFullYear(),
-          fechaPeriodo.getMonth(),
-          Number(formData.plazoPagoHasta || 10),
-          12,
-          0,
-          0
-        );
-
-        // =================================================
-        // PAGO
-        // =================================================
-
-        const pagoRef = await addDoc(
-          collection(db, "Pagos"),
-          {
-
-            contratoId: contratoRef.id,
-
-            propiedadId: selectedProperty.id,
-
-            propiedadTitulo: selectedProperty.titulo,
-
-            propiedadDireccion: {
-              calle: selectedProperty?.direccion?.calle || "",
-              localidad: selectedProperty?.direccion?.localidad || "",
-              provincia: selectedProperty?.direccion?.provincia || "",
-            },
-            clienteId: locatarioRef.id,
-
-            clienteNombre: formData.locatario,
-
-            clienteCuil: formData.locatarioCuil || "",
-
-
-            locadorId: locadorRef.id,
-
-            locadorNombre: formData.locador,
-
-            locadorCuil: formData.locadorCuil || "",
-
-            tipo: "alquiler",
-
-
-
-
-            periodoNumero,
-            numeroCuota: mesesTranscurridos + 1,
-            totalCuotas,
-
-            mes: fechaPeriodo.getMonth() + 1,
-
-            anio: fechaPeriodo.getFullYear(),
-
-            montoBase: montoActual,
-
-            montoFinal: montoActual,
-
-            porcentajeAplicado:
-              mesesTranscurridos > 0
-                ? porcentajeAumento
-                : 0,
-
-            fechaVencimiento,
-
-            fechaPago: null,
-
-            diasRetraso: 0,
-
-            interesGenerado: 0,
-
-            moneda: formData.moneda || "ARS",
-
-            estado: "pendiente",
-
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-          }
-        );
-
-        // =================================================
-        // LIQUIDACIÓN
-        // =================================================
-
-        await addDoc(
-          collection(db, "Liquidaciones"),
-          {
-
-            contratoId: contratoRef.id,
-
-            
-
-            pagoId: pagoRef.id,
-
-            propiedadId: selectedProperty.id,
-
-            propiedadTitulo: selectedProperty.titulo,
-
-            propiedadDireccion: {
-              calle: selectedProperty?.direccion?.calle || "",
-              localidad: selectedProperty?.direccion?.localidad || "",
-              provincia: selectedProperty?.direccion?.provincia || "",
-            },
-
-            locadorId: locadorRef.id,
-
-            locadorNombre: formData.locador,
-
-            locatarioId: locatarioRef.id,
-
-            locatarioNombre: formData.locatario,
-
-
-
-            periodoNumero,
-            numeroCuota: mesesTranscurridos + 1,
-            totalCuotas,
-
-
-            mes: fechaPeriodo.getMonth() + 1,
-
-            anio: fechaPeriodo.getFullYear(),
-
-            montoCobrado: montoActual,
-
-            porcentajeComision: 0,
-
-            montoComision: 0,
-
-            montoLiquidado: montoActual,
-
-            moneda: formData.moneda || "ARS",
-
-            fechaLiquidacion: null,
-
-            estado: "pendiente",
-
-            createdAt: serverTimestamp(),
-            updatedAt: serverTimestamp(),
-          }
-        );
-
-        // =================================================
-        // SIGUIENTE MES
-        // =================================================
-
-        fechaPeriodo = new Date(
-          fechaPeriodo.getFullYear(),
-          fechaPeriodo.getMonth() + 1,
-          1,
-          12,
-          0,
-          0
-        );
-
-        mesesTranscurridos++;
       }
-    }
-      
+
 
       // =====================================================
       // RECARGAR
@@ -1531,13 +1553,13 @@ if (formData.contratoId) {
         contratoId: null,
       });
 
-  } catch (error) {
-    console.error("Error guardando contrato:", error);
-    toast.error("Hubo un error al guardar el contrato");
-  } finally {
-    setCreandoContrato(false);
-  }
-};
+    } catch (error) {
+      console.error("Error guardando contrato:", error);
+      toast.error("Hubo un error al guardar el contrato");
+    } finally {
+      setCreandoContrato(false);
+    }
+  };
 
   const handleEditContract = async (contrato) => {
     try {
@@ -1566,93 +1588,93 @@ if (formData.contratoId) {
         : new Date(contrato.fechaFin).toISOString().split("T")[0] || "";
 
       // Aquí usamos **precio y moneda del contrato**, no de la propiedad
-setFormData({
-  contratoId: contrato.id,
+      setFormData({
+        contratoId: contrato.id,
 
-    locadorId: contrato.locadorId || null,
-  locatarioId: contrato.locatarioId || null,
-  garanteId: contrato.garanteId || null,
-  garante2Id: contrato.garante2Id || null,
+        locadorId: contrato.locadorId || null,
+        locatarioId: contrato.locatarioId || null,
+        garanteId: contrato.garanteId || null,
+        garante2Id: contrato.garante2Id || null,
 
-  // ==========================
-  // LOCADOR
-  // ==========================
-  locador: contrato.locador || "",
-  locadorDni: contrato.locadorDni || "",
-  locadorCuil: contrato.locadorCuil || "",
-  locadorEmail: contrato.locadorEmail || "",
-  locadorTelefono1: contrato.locadorTelefono1 || "",
-  locadorTelefono2: contrato.locadorTelefono2 || "",
-  comisionInmobiliaria: contrato.comisionInmobiliaria || "",
-  locadorArchivos: contrato.locadorArchivos || [],
+        // ==========================
+        // LOCADOR
+        // ==========================
+        locador: contrato.locador || "",
+        locadorDni: contrato.locadorDni || "",
+        locadorCuil: contrato.locadorCuil || "",
+        locadorEmail: contrato.locadorEmail || "",
+        locadorTelefono1: contrato.locadorTelefono1 || "",
+        locadorTelefono2: contrato.locadorTelefono2 || "",
+        comisionInmobiliaria: contrato.comisionInmobiliaria || "",
+        locadorArchivos: contrato.locadorArchivos || [],
 
-  // ==========================
-  // LOCATARIO
-  // ==========================
-  locatario: contrato.locatario || "",
-  locatarioDni: contrato.locatarioDni || "",
-  locatarioCuil: contrato.locatarioCuil || "",
-  locatarioEmail: contrato.locatarioEmail || "",
-  locatarioTelefono1: contrato.locatarioTelefono1 || "",
-  locatarioTelefono2: contrato.locatarioTelefono2 || "",
-  locatarioArchivos: contrato.locatarioArchivos || [],
-  deposito: contrato.deposito || "",
+        // ==========================
+        // LOCATARIO
+        // ==========================
+        locatario: contrato.locatario || "",
+        locatarioDni: contrato.locatarioDni || "",
+        locatarioCuil: contrato.locatarioCuil || "",
+        locatarioEmail: contrato.locatarioEmail || "",
+        locatarioTelefono1: contrato.locatarioTelefono1 || "",
+        locatarioTelefono2: contrato.locatarioTelefono2 || "",
+        locatarioArchivos: contrato.locatarioArchivos || [],
+        deposito: contrato.deposito || "",
 
-  // ==========================
-  // GARANTE
-  // ==========================
-  garanteNombre: contrato.garante || "",
-  garanteDni: contrato.garanteDni || "",
-  garanteCuil: contrato.garanteCuil || "",
-  garanteEmail: contrato.garanteEmail || "",
-  garanteTelefono1: contrato.garanteTelefono1 || "",
-  garanteTelefono2: contrato.garanteTelefono2 || "",
-  garanteArchivos: contrato.garanteArchivos || [],
+        // ==========================
+        // GARANTE
+        // ==========================
+        garanteNombre: contrato.garante || "",
+        garanteDni: contrato.garanteDni || "",
+        garanteCuil: contrato.garanteCuil || "",
+        garanteEmail: contrato.garanteEmail || "",
+        garanteTelefono1: contrato.garanteTelefono1 || "",
+        garanteTelefono2: contrato.garanteTelefono2 || "",
+        garanteArchivos: contrato.garanteArchivos || [],
 
-  // GARANTE 2
-  garante2Nombre: contrato.garante2 || "",
-  garante2Dni: contrato.garante2Dni || "",
-  garante2Cuil: contrato.garante2Cuil || "",
-  garante2Email: contrato.garante2Email || "",
-  garante2Telefono1: contrato.garante2Telefono1 || "",
-  garante2Telefono2: contrato.garante2Telefono2 || "",
-  garante2Archivos: contrato.garante2Archivos || [],
+        // GARANTE 2
+        garante2Nombre: contrato.garante2 || "",
+        garante2Dni: contrato.garante2Dni || "",
+        garante2Cuil: contrato.garante2Cuil || "",
+        garante2Email: contrato.garante2Email || "",
+        garante2Telefono1: contrato.garante2Telefono1 || "",
+        garante2Telefono2: contrato.garante2Telefono2 || "",
+        garante2Archivos: contrato.garante2Archivos || [],
 
-  // ==========================
-  // FECHAS
-  // ==========================
-  fechaInicio,
-  fechaFin,
+        // ==========================
+        // FECHAS
+        // ==========================
+        fechaInicio,
+        fechaFin,
 
-  // ==========================
-  // FINANCIERO
-  // ==========================
-  precioMensual: contrato.precioMensual || "",
-  periodoActualizacion: contrato.periodoActualizacion || "",
-  indiceActualizacion: contrato.indiceActualizacion || "IPC",
-  cantidadPeriodos: contrato.cantidadPeriodos || 1,
+        // ==========================
+        // FINANCIERO
+        // ==========================
+        precioMensual: contrato.precioMensual || "",
+        periodoActualizacion: contrato.periodoActualizacion || "",
+        indiceActualizacion: contrato.indiceActualizacion || "IPC",
+        cantidadPeriodos: contrato.cantidadPeriodos || 1,
 
-  plazoPagoDesde: contrato.plazoPagoDesde || 1,
-  plazoPagoHasta: contrato.plazoPagoHasta || 10,
+        plazoPagoDesde: contrato.plazoPagoDesde || 1,
+        plazoPagoHasta: contrato.plazoPagoHasta || 10,
 
-  interesMoraDiario: contrato.interesMoraDiario || "",
+        interesMoraDiario: contrato.interesMoraDiario || "",
 
-  moneda: contrato.moneda || "ARS",
+        moneda: contrato.moneda || "ARS",
 
-  // ==========================
-  // TEXTO
-  // ==========================
-  detalles: contrato.detalles || "",
-  acuerdos: contrato.acuerdos || "",
-  clausulas: contrato.clausulas || "",
-  observaciones: contrato.observaciones || "",
+        // ==========================
+        // TEXTO
+        // ==========================
+        detalles: contrato.detalles || "",
+        acuerdos: contrato.acuerdos || "",
+        clausulas: contrato.clausulas || "",
+        observaciones: contrato.observaciones || "",
 
-  // ==========================
-  // ARCHIVO CONTRATO
-  // ==========================
-  archivo: null,
-  archivoUrl: contrato.archivoUrl || null,
-});
+        // ==========================
+        // ARCHIVO CONTRATO
+        // ==========================
+        archivo: null,
+        archivoUrl: contrato.archivoUrl || null,
+      });
       setShowModal(true);
     } catch (error) {
       console.error("Error cargando propiedad para editar contrato:", error);
@@ -1732,107 +1754,107 @@ setFormData({
 
 
 
-const eliminarContrato = (contrato) => {
+  const eliminarContrato = (contrato) => {
 
-  toast((t) => (
-    <div>
-      <p className="mb-2">
-        ¿Seguro que querés eliminar este contrato?
-      </p>
+    toast((t) => (
+      <div>
+        <p className="mb-2">
+          ¿Seguro que querés eliminar este contrato?
+        </p>
 
-      <div className="d-flex gap-2 justify-content-end">
+        <div className="d-flex gap-2 justify-content-end">
 
-        <button
-          className="btn btn-sm btn-secondary"
-          onClick={() => toast.dismiss(t.id)}
-        >
-          Cancelar
-        </button>
+          <button
+            className="btn btn-sm btn-secondary"
+            onClick={() => toast.dismiss(t.id)}
+          >
+            Cancelar
+          </button>
 
-        <button
-          className="btn btn-sm btn-danger"
-          onClick={async () => {
-            toast.dismiss(t.id);
+          <button
+            className="btn btn-sm btn-danger"
+            onClick={async () => {
+              toast.dismiss(t.id);
 
-            try {
+              try {
 
-              setEliminandoContrato(contrato.id);
+                setEliminandoContrato(contrato.id);
 
-              // PAGOS
-              const pagosSnap = await getDocs(
-                query(
-                  collection(db, "Pagos"),
-                  where("contratoId", "==", contrato.id)
-                )
-              );
+                // PAGOS
+                const pagosSnap = await getDocs(
+                  query(
+                    collection(db, "Pagos"),
+                    where("contratoId", "==", contrato.id)
+                  )
+                );
 
-              for (const pagoDoc of pagosSnap.docs) {
-                await deleteDoc(doc(db, "Pagos", pagoDoc.id));
-              }
+                for (const pagoDoc of pagosSnap.docs) {
+                  await deleteDoc(doc(db, "Pagos", pagoDoc.id));
+                }
 
-              // LIQUIDACIONES
-              const liqSnap = await getDocs(
-                query(
-                  collection(db, "Liquidaciones"),
-                  where("contratoId", "==", contrato.id)
-                )
-              );
+                // LIQUIDACIONES
+                const liqSnap = await getDocs(
+                  query(
+                    collection(db, "Liquidaciones"),
+                    where("contratoId", "==", contrato.id)
+                  )
+                );
 
-              for (const liqDoc of liqSnap.docs) {
-                await deleteDoc(doc(db, "Liquidaciones", liqDoc.id));
-              }
+                for (const liqDoc of liqSnap.docs) {
+                  await deleteDoc(doc(db, "Liquidaciones", liqDoc.id));
+                }
 
-              // ARCHIVOS
-              if (contrato.archivos?.length) {
-                for (const archivo of contrato.archivos) {
-                  try {
-                    if (archivo.url) {
-                      const fileRef = ref(storage, archivo.url);
-                      await deleteObject(fileRef);
+                // ARCHIVOS
+                if (contrato.archivos?.length) {
+                  for (const archivo of contrato.archivos) {
+                    try {
+                      if (archivo.url) {
+                        const fileRef = ref(storage, archivo.url);
+                        await deleteObject(fileRef);
+                      }
+                    } catch (e) {
+                      console.warn("No se pudo borrar archivo:", e);
                     }
-                  } catch (e) {
-                    console.warn("No se pudo borrar archivo:", e);
                   }
                 }
-              }
 
-              // PDF PRINCIPAL
-              if (contrato.archivoUrl) {
-                try {
-                  const fileRef = ref(storage, contrato.archivoUrl);
-                  await deleteObject(fileRef);
-                } catch (e) {
-                  console.warn("No se pudo borrar PDF:", e);
+                // PDF PRINCIPAL
+                if (contrato.archivoUrl) {
+                  try {
+                    const fileRef = ref(storage, contrato.archivoUrl);
+                    await deleteObject(fileRef);
+                  } catch (e) {
+                    console.warn("No se pudo borrar PDF:", e);
+                  }
                 }
+
+                // 🔥 NUEVO: borra toda la carpeta del contrato
+                await eliminarCarpetaStorage(`contratos/${contrato.id}`);
+
+                // CONTRATO
+                await deleteDoc(doc(db, "Contratos", contrato.id));
+
+                toast.success("Contrato eliminado correctamente ✅");
+
+                await fetchContratos();
+
+              } catch (error) {
+                console.error("Error eliminando contrato:", error);
+                toast.error("Error al eliminar el contrato");
+              } finally {
+                setEliminandoContrato(null);
               }
+            }}
+          >
+            Eliminar
+          </button>
 
-              // 🔥 NUEVO: borra toda la carpeta del contrato
-await eliminarCarpetaStorage(`contratos/${contrato.id}`);
-
-              // CONTRATO
-              await deleteDoc(doc(db, "Contratos", contrato.id));
-
-              toast.success("Contrato eliminado correctamente ✅");
-
-              await fetchContratos();
-
-            } catch (error) {
-              console.error("Error eliminando contrato:", error);
-              toast.error("Error al eliminar el contrato");
-            } finally {
-              setEliminandoContrato(null);
-            }
-          }}
-        >
-          Eliminar
-        </button>
-
+        </div>
       </div>
-    </div>
-  ), {
-    duration: Infinity,
-  });
-};
+    ), {
+      duration: Infinity,
+    });
+  };
 
 
   const [formCobranza, setFormCobranza] = useState({
@@ -1844,7 +1866,7 @@ await eliminarCarpetaStorage(`contratos/${contrato.id}`);
     comision: 10
   });
 
-  
+
 
 
 
@@ -1856,245 +1878,245 @@ await eliminarCarpetaStorage(`contratos/${contrato.id}`);
 
     <article className="container-fluid">
 
-<div className="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-6">
+      <div className="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-6">
 
-  <div className="col">
-    <div className="card border-0 shadow-sm text-center h-100">
-      <div className="card-body py-3">
-        <h6 className="fw-bold mb-1">Casa Propia</h6>
-        <h4 className="fw-bold mb-1">47,64%</h4>
-        <small className="text-muted">Abril 2026</small>
+        <div className="col">
+          <div className="card border-0 shadow-sm text-center h-100">
+            <div className="card-body py-3">
+              <h6 className="fw-bold mb-1">Casa Propia</h6>
+              <h4 className="fw-bold mb-1">47,64%</h4>
+              <small className="text-muted">Abril 2026</small>
+            </div>
+          </div>
+        </div>
+
+        <div className="col">
+          <div className="card border-0 shadow-sm text-center h-100">
+            <div className="card-body py-3">
+              <h6 className="fw-bold mb-1">IPC</h6>
+              <h4 className="fw-bold mb-1">32,35%</h4>
+              <small className="text-muted">Abril 2026</small>
+            </div>
+          </div>
+        </div>
+
+        <div className="col">
+          <div className="card border-0 shadow-sm text-center h-100">
+            <div className="card-body py-3">
+              <h6 className="fw-bold mb-1">CÁC</h6>
+              <h4 className="fw-bold mb-1">26,08%</h4>
+              <small className="text-muted">Abril 2026</small>
+            </div>
+          </div>
+        </div>
+
+        <div className="col">
+          <div className="card border-0 shadow-sm text-center h-100">
+            <div className="card-body py-3">
+              <h6 className="fw-bold mb-1">UVA</h6>
+              <h4 className="fw-bold mb-1">32,71%</h4>
+              <small className="text-muted">Abril 2026</small>
+            </div>
+          </div>
+        </div>
+
+        <div className="col">
+          <div className="card border-0 shadow-sm text-center h-100">
+            <div className="card-body py-3">
+              <h6 className="fw-bold mb-1">CER</h6>
+              <h4 className="fw-bold mb-1">32,73%</h4>
+              <small className="text-muted">Abril 2026</small>
+            </div>
+          </div>
+        </div>
+
+        <div className="col">
+          <div className="card border-0 shadow-sm text-center h-100">
+            <div className="card-body py-3">
+              <h6 className="fw-bold mb-1">ICL</h6>
+              <h4 className="fw-bold mb-1">33,3%</h4>
+              <small className="text-muted">Abril 2026</small>
+            </div>
+          </div>
+        </div>
+
       </div>
-    </div>
-  </div>
-
-  <div className="col">
-    <div className="card border-0 shadow-sm text-center h-100">
-      <div className="card-body py-3">
-        <h6 className="fw-bold mb-1">IPC</h6>
-        <h4 className="fw-bold mb-1">32,35%</h4>
-        <small className="text-muted">Abril 2026</small>
-      </div>
-    </div>
-  </div>
-
-  <div className="col">
-    <div className="card border-0 shadow-sm text-center h-100">
-      <div className="card-body py-3">
-        <h6 className="fw-bold mb-1">CÁC</h6>
-        <h4 className="fw-bold mb-1">26,08%</h4>
-        <small className="text-muted">Abril 2026</small>
-      </div>
-    </div>
-  </div>
-
-  <div className="col">
-    <div className="card border-0 shadow-sm text-center h-100">
-      <div className="card-body py-3">
-        <h6 className="fw-bold mb-1">UVA</h6>
-        <h4 className="fw-bold mb-1">32,71%</h4>
-        <small className="text-muted">Abril 2026</small>
-      </div>
-    </div>
-  </div>
-
-  <div className="col">
-    <div className="card border-0 shadow-sm text-center h-100">
-      <div className="card-body py-3">
-        <h6 className="fw-bold mb-1">CER</h6>
-        <h4 className="fw-bold mb-1">32,73%</h4>
-        <small className="text-muted">Abril 2026</small>
-      </div>
-    </div>
-  </div>
-
-  <div className="col">
-    <div className="card border-0 shadow-sm text-center h-100">
-      <div className="card-body py-3">
-        <h6 className="fw-bold mb-1">ICL</h6>
-        <h4 className="fw-bold mb-1">33,3%</h4>
-        <small className="text-muted">Abril 2026</small>
-      </div>
-    </div>
-  </div>
-
-</div>
 
 
 
       <CalculadoraAlquiler />
 
-    <article className="container py-4">
+      <article className="container py-4">
         <div className="row g-4 justify-content-center">
 
-<div className="col-12 col-sm-6 col-lg-4 col-xl-4">
-  <a
-    href="/estado"
-    className="text-decoration-none hvr-grow d-block h-100"
-  >
-    <div className="card border-0 shadow-sm h-100 text-center">
-      <div className="card-body d-flex align-items-center justify-content-center gap-3">
+          <div className="col-12 col-sm-6 col-lg-4 col-xl-4">
+            <a
+              href="/estado"
+              className="text-decoration-none hvr-grow d-block h-100"
+            >
+              <div className="card border-0 shadow-sm h-100 text-center">
+                <div className="card-body d-flex align-items-center justify-content-center gap-3">
 
-        <div>
-          <img
-            src="https://res.cloudinary.com/dxdnsblj6/image/upload/v1773354181/estado_de_caja_l6kb95.png"
-            alt="Estado de Caja"
-            width="40"
-          />
-        </div>
+                  <div>
+                    <img
+                      src="https://res.cloudinary.com/dxdnsblj6/image/upload/v1773354181/estado_de_caja_l6kb95.png"
+                      alt="Estado de Caja"
+                      width="40"
+                    />
+                  </div>
 
-        <div>
-          <div className="fw-semibold">
-            Estado de Caja
+                  <div>
+                    <div className="fw-semibold">
+                      Estado de Caja
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </a>
           </div>
-        </div>
 
-      </div>
-    </div>
-  </a>
-</div>
+          <div className="col-12 col-sm-6 col-lg-4 col-xl-4">
+            <a
+              href="/reporte-morosos"
+              className="hvr-grow d-block h-100 text-decoration-none"
+            >
+              <div className="card border-0 shadow-sm h-100 text-center">
 
-<div className="col-12 col-sm-6 col-lg-4 col-xl-4">
-  <a
-    href="/reporte-morosos"
-    className="hvr-grow d-block h-100 text-decoration-none"
-  >
-    <div className="card border-0 shadow-sm h-100 text-center">
+                <div className="card-body d-flex align-items-center justify-content-center gap-3">
 
-      <div className="card-body d-flex align-items-center justify-content-center gap-3">
+                  <img
+                    src="https://res.cloudinary.com/dxdnsblj6/image/upload/v1773354181/reporte_morosos_wgk4vy.png"
+                    alt="Reporte Morosos"
+                    width="40"
+                  />
 
-        <img
-          src="https://res.cloudinary.com/dxdnsblj6/image/upload/v1773354181/reporte_morosos_wgk4vy.png"
-          alt="Reporte Morosos"
-          width="40"
-        />
+                  <div className="fw-semibold">
+                    Reporte de Morosos
+                  </div>
 
-        <div className="fw-semibold">
-          Reporte de Morosos
-        </div>
+                </div>
 
-      </div>
-
-    </div>
-  </a>
-</div>
-
-
-
-
-
-
-{/* PROPIETARIOS */}
-<div className="col-12 col-sm-6 col-lg-4 col-xl-4">
-  <a
-    href="/propietarios"
-    className="text-decoration-none hvr-grow d-block h-100"
-  >
-    <div className="card border-0 shadow-sm h-100 text-center">
-      <div className="card-body d-flex align-items-center justify-content-center gap-3">
-
-        <i
-          className="bi bi-person-fill"
-          style={{
-            fontSize: "2rem",
-            color: "#198754",
-          }}
-        ></i>
-
-        <div>
-          <div className="fw-semibold">
-            Propietarios
+              </div>
+            </a>
           </div>
-        </div>
 
-      </div>
-    </div>
-  </a>
-</div>
 
-{/* INQUILINOS */}
-<div className="col-12 col-sm-6 col-lg-4 col-xl-4">
-  <a
-    href="/inquilinos"
-    className="text-decoration-none hvr-grow d-block h-100"
-  >
-    <div className="card border-0 shadow-sm h-100 text-center">
-      <div className="card-body d-flex align-items-center justify-content-center gap-3">
 
-        <i
-          className="bi bi-people-fill"
-          style={{
-            fontSize: "2rem",
-                        color: "#0d6efd",
 
-          }}
-        ></i>
 
-        <div>
-          <div className="fw-semibold">
-            Inquilinos
+
+          {/* PROPIETARIOS */}
+          <div className="col-12 col-sm-6 col-lg-4 col-xl-4">
+            <a
+              href="/propietarios"
+              className="text-decoration-none hvr-grow d-block h-100"
+            >
+              <div className="card border-0 shadow-sm h-100 text-center">
+                <div className="card-body d-flex align-items-center justify-content-center gap-3">
+
+                  <i
+                    className="bi bi-person-fill"
+                    style={{
+                      fontSize: "2rem",
+                      color: "#198754",
+                    }}
+                  ></i>
+
+                  <div>
+                    <div className="fw-semibold">
+                      Propietarios
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </a>
           </div>
-        </div>
 
-      </div>
-    </div>
-  </a>
-</div>
-{/* GARANTES */}
-<div className="col-12 col-sm-6 col-lg-4 col-xl-4">
-  <a
-    href="/garantes"
-    className="text-decoration-none hvr-grow d-block h-100"
-  >
-    <div className="card border-0 shadow-sm h-100 text-center">
-      <div className="card-body d-flex align-items-center justify-content-center gap-3">
+          {/* INQUILINOS */}
+          <div className="col-12 col-sm-6 col-lg-4 col-xl-4">
+            <a
+              href="/inquilinos"
+              className="text-decoration-none hvr-grow d-block h-100"
+            >
+              <div className="card border-0 shadow-sm h-100 text-center">
+                <div className="card-body d-flex align-items-center justify-content-center gap-3">
 
-        <i
-          className="bi bi-shield-check"
-          style={{
-            fontSize: "2rem",
-            color: "#0d6efd",
-          }}
-        ></i>
+                  <i
+                    className="bi bi-people-fill"
+                    style={{
+                      fontSize: "2rem",
+                      color: "#0d6efd",
 
-        <div className="fw-semibold">
-          Garantes
-        </div>
+                    }}
+                  ></i>
 
-      </div>
-    </div>
-  </a>
-</div>
+                  <div>
+                    <div className="fw-semibold">
+                      Inquilinos
+                    </div>
+                  </div>
 
-<div className="col-12 col-sm-6 col-lg-4 col-xl-4">
-  <a
-    href="/proximos-periodos"
-    className="text-decoration-none hvr-grow d-block h-100"
-  >
-    <div className="card border-0 shadow-sm h-100 text-center">
+                </div>
+              </div>
+            </a>
+          </div>
+          {/* GARANTES */}
+          <div className="col-12 col-sm-6 col-lg-4 col-xl-4">
+            <a
+              href="/garantes"
+              className="text-decoration-none hvr-grow d-block h-100"
+            >
+              <div className="card border-0 shadow-sm h-100 text-center">
+                <div className="card-body d-flex align-items-center justify-content-center gap-3">
 
-      <div className="card-body d-flex align-items-center justify-content-center gap-3">
+                  <i
+                    className="bi bi-shield-check"
+                    style={{
+                      fontSize: "2rem",
+                      color: "#0d6efd",
+                    }}
+                  ></i>
 
-        <img
-          src="https://res.cloudinary.com/dxdnsblj6/image/upload/v1773354181/cambio_de_periodo_kwg1zs.png"
-          alt="Cambio de Período"
-          width="40"
-        />
+                  <div className="fw-semibold">
+                    Garantes
+                  </div>
 
-        <div className="fw-semibold">
-          Próximos Período
+                </div>
+              </div>
+            </a>
+          </div>
 
-<span className="badge bg-danger ms-2">
-  {cantidadProximosPeriodos}
-</span>
+          <div className="col-12 col-sm-6 col-lg-4 col-xl-4">
+            <a
+              href="/proximos-periodos"
+              className="text-decoration-none hvr-grow d-block h-100"
+            >
+              <div className="card border-0 shadow-sm h-100 text-center">
 
-        </div>
+                <div className="card-body d-flex align-items-center justify-content-center gap-3">
 
-      </div>
+                  <img
+                    src="https://res.cloudinary.com/dxdnsblj6/image/upload/v1773354181/cambio_de_periodo_kwg1zs.png"
+                    alt="Cambio de Período"
+                    width="40"
+                  />
 
-    </div>
-  </a>
-</div>
+                  <div className="fw-semibold">
+                    Próximos Período
+
+                    <span className="badge bg-danger ms-2">
+                      {cantidadProximosPeriodos}
+                    </span>
+
+                  </div>
+
+                </div>
+
+              </div>
+            </a>
+          </div>
 
 
         </div>
@@ -2223,40 +2245,40 @@ await eliminarCarpetaStorage(`contratos/${contrato.id}`);
 
             />
 
-<ContratoModal
+            <ContratoModal
 
-  showModal={showModal}
-  setShowModal={setShowModal}
+              showModal={showModal}
+              setShowModal={setShowModal}
 
-  searchTerm={searchTerm}
-  setSearchTerm={setSearchTerm}
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
 
-  handleSearch={handleSearch}
+              handleSearch={handleSearch}
 
-  loadingSearch={loadingSearch}
-  searchResults={searchResults}
+              loadingSearch={loadingSearch}
+              searchResults={searchResults}
 
-  selectedProperty={selectedProperty}
-  setSelectedProperty={setSelectedProperty}
+              selectedProperty={selectedProperty}
+              setSelectedProperty={setSelectedProperty}
 
-  handleBackToSearch={handleBackToSearch}
+              handleBackToSearch={handleBackToSearch}
 
-  formData={formData}
-  setFormData={setFormData}
+              formData={formData}
+              setFormData={setFormData}
 
-  handleSaveContract={handleSaveContract}
-  creandoContrato={creandoContrato}
+              handleSaveContract={handleSaveContract}
+              creandoContrato={creandoContrato}
 
-  CardSeleccionPropiedad={CardSeleccionPropiedad}
+              CardSeleccionPropiedad={CardSeleccionPropiedad}
 
-  modoLocador={modoLocador}
-  setModoLocador={setModoLocador}
-  modoLocatario={modoLocatario}
-  setModoLocatario={setModoLocatario}
+              modoLocador={modoLocador}
+              setModoLocador={setModoLocador}
+              modoLocatario={modoLocatario}
+              setModoLocatario={setModoLocatario}
 
-  clientes={clientes}   // 👈 AGREGAR ESTO
+              clientes={clientes}   // 👈 AGREGAR ESTO
 
-/>
+            />
 
             {/* ====================================================== */}
             {/* MODAL CLIENTE */}
@@ -2299,11 +2321,11 @@ await eliminarCarpetaStorage(`contratos/${contrato.id}`);
             />
 
 
-<RecibosInquilinoModal
-  mostrarRecibosInquilino={mostrarRecibosInquilino}
-  setMostrarRecibosInquilino={setMostrarRecibosInquilino}
-  contratoRecibosInquilino={contratoRecibosInquilino}
-/>
+            <RecibosInquilinoModal
+              mostrarRecibosInquilino={mostrarRecibosInquilino}
+              setMostrarRecibosInquilino={setMostrarRecibosInquilino}
+              contratoRecibosInquilino={contratoRecibosInquilino}
+            />
 
             <LiquidacionModal
               mostrarCaja={mostrarCaja}

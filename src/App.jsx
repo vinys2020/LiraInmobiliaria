@@ -26,6 +26,7 @@ import GarantesPage from "./pages/GarantesPage";
 import EstadoCajaPage from "./pages/EstadoCajaPage";
 import ReporteMorosos from "./pages/ReporteMorosos";
 import ProximosPeriodos from "./pages/ProximosPeriodos";
+import PrivateRoute from "./routes/PrivateRoute";
 
 
 import NormalizeTrailingSlash from "./components/NormalizeTrailingSlash";
@@ -68,29 +69,65 @@ function App() {
         <Route path="/propiedades-en-venta" element={<PropiedadesEnVenta />} />
         <Route path="/politica-de-privacidad" element={<Politicadeprivacidad />} />
         <Route path="/condiciones-del-servicio" element={<Condicionesdelservicio />} />
-        <Route path="/clientes" element={<CustomerDashboard />} />
-        <Route path="/LotesEnVenta" element={<LotesEnVenta />} />
+<Route
+  path="/clientes"
+  element={
+    <PrivateRoute>
+      <CustomerDashboard />
+    </PrivateRoute>
+  }
+/>       <Route path="/LotesEnVenta" element={<LotesEnVenta />} />
         <Route path="/lotes-en-venta" element={<LotesEnVenta />} />
         <Route path="/SobreNosotros" element={<SobreNosotros />} />
         <Route path="/contacto" element={<Contactos />} />
         <Route path="/todaspropiedades" element={<TodasPropiedades />} />
         <Route path="/detalle-propiedad/:id" element={<DetallePropiedad />} />
-        <Route
-  path="/propietarios"
-  element={<PropietariosPage />}
-/>
-        <Route
-  path="/inquilinos"
-  element={<InquilinosPage />}
-/>
-
-<Route path="/garantes" element={<GarantesPage />} />
-
-<Route path="/estado" element={<EstadoCajaPage />} />
-<Route path="/reporte-morosos" element={<ReporteMorosos />} />
 <Route
+  path="/propietarios"
+  element={
+    <PrivateRoute>
+      <PropietariosPage />
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/inquilinos"
+  element={
+    <PrivateRoute>
+      <InquilinosPage />
+    </PrivateRoute>
+  }
+/>
+
+<Route
+  path="/garantes"
+  element={
+    <PrivateRoute>
+      <GarantesPage />
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/estado"
+  element={
+    <PrivateRoute>
+      <EstadoCajaPage />
+    </PrivateRoute>
+  }
+/><Route
+  path="/reporte-morosos"
+  element={
+    <PrivateRoute>
+      <ReporteMorosos />
+    </PrivateRoute>
+  }
+/><Route
   path="/proximos-periodos"
-  element={<ProximosPeriodos />}
+  element={
+    <PrivateRoute>
+      <ProximosPeriodos />
+    </PrivateRoute>
+  }
 />
 
 
@@ -110,8 +147,14 @@ function App() {
             </EmpleadoRoute>
           }
         />
-        <Route path="/propiedades" element={<Propiedades />} />
-      </Routes>
+<Route
+  path="/propiedades"
+  element={
+    <PrivateRoute>
+      <Propiedades />
+    </PrivateRoute>
+  }
+/>      </Routes>
       <WhatsAppButton />
       <PreFooter />
       <Footer />

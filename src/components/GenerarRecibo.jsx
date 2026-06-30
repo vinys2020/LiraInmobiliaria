@@ -19,56 +19,61 @@ import {
 
 const GenerarRecibo = (pago, formatCurrency) => {
 
-const p = pago;
+    const p = pago;
 
-const isValid = (v) =>
-    v !== undefined &&
-    v !== null &&
-    v !== "" &&
-    v !== "-";
+    const observaciones =
+        (p.observaciones ?? "").toString().trim() ||
+        (p.notas ?? "").toString().trim() ||
+        "";
 
-// =========================
-// CLIENTE (PROPIETARIO)
-// =========================
-const clienteNombre =
-    isValid(p.clienteNombre)
-        ? p.clienteNombre
-        : isValid(p.locadorNombre)
+    const isValid = (v) =>
+        v !== undefined &&
+        v !== null &&
+        v !== "" &&
+        v !== "-";
+
+    // =========================
+    // CLIENTE (PROPIETARIO)
+    // =========================
+    const clienteNombre =
+        isValid(p.clienteNombre)
+            ? p.clienteNombre
+            : isValid(p.locadorNombre)
+                ? p.locadorNombre
+                : isValid(p.propietarioNombre)
+                    ? p.propietarioNombre
+                    : "Cliente sin nombre";
+
+    // =========================
+    // INQUILINO
+    // =========================
+    const locatarioNombre =
+        isValid(p.locatarioNombre)
+            ? p.locatarioNombre
+            : isValid(p.inquilinoNombre)
+                ? p.inquilinoNombre
+                : isValid(p.nombreInquilino)
+                    ? p.nombreInquilino
+                    : isValid(p.inquilino?.nombre)
+                        ? p.inquilino.nombre
+                        : "Inquilino sin nombre";
+
+    // =========================
+    // LOCADOR (EXTRA SEGURO)
+    // =========================
+    const locadorNombre =
+        isValid(p.locadorNombre)
             ? p.locadorNombre
             : isValid(p.propietarioNombre)
                 ? p.propietarioNombre
-                : "Cliente sin nombre";
-
-// =========================
-// INQUILINO
-// =========================
-const locatarioNombre =
-    isValid(p.locatarioNombre)
-        ? p.locatarioNombre
-        : isValid(p.inquilinoNombre)
-            ? p.inquilinoNombre
-            : isValid(p.nombreInquilino)
-                ? p.nombreInquilino
-                : isValid(p.inquilino?.nombre)
-                    ? p.inquilino.nombre
-                    : "Inquilino sin nombre";
-
-// =========================
-// LOCADOR (EXTRA SEGURO)
-// =========================
-const locadorNombre =
-    isValid(p.locadorNombre)
-        ? p.locadorNombre
-        : isValid(p.propietarioNombre)
-            ? p.propietarioNombre
-            : "Propietario sin nombre";
+                : "Propietario sin nombre";
 
 
 
-// ✅ DETECTA TIPO Y CAMBIA EL TEXTO
+    // ✅ DETECTA TIPO Y CAMBIA EL TEXTO
     const esLiquidacion = p.tipo === "liquidacion";
 
-const textoFinal = esLiquidacion
+    const textoFinal = esLiquidacion
         ? `SE REGISTRA LA LIQUIDACIÓN...`
         : `POR MANDATO DEL LOCADOR RECIBÍ...`;
 
@@ -220,33 +225,33 @@ const textoFinal = esLiquidacion
         160,
         48
     );
-doc.text(
-    "Fecha:",
-    140,
-    55
-);
+    doc.text(
+        "Fecha:",
+        140,
+        55
+    );
 
-doc.setFont(
-    "helvetica",
-    "bold"
-);
+    doc.setFont(
+        "helvetica",
+        "bold"
+    );
 
-doc.text(
-    p.fechaCobro
-        ? new Date(
-            p.fechaCobro?.seconds
-                ? p.fechaCobro.seconds * 1000
-                : p.fechaCobro
-        ).toLocaleDateString("es-AR")
-        : "-",
-    157,
-    55
-);
+    doc.text(
+        p.fechaCobro
+            ? new Date(
+                p.fechaCobro?.seconds
+                    ? p.fechaCobro.seconds * 1000
+                    : p.fechaCobro
+            ).toLocaleDateString("es-AR")
+            : "-",
+        157,
+        55
+    );
 
-doc.setFont(
-    "helvetica",
-    "normal"
-);
+    doc.setFont(
+        "helvetica",
+        "normal"
+    );
 
     doc.text(
         "Periodo:",
@@ -276,56 +281,54 @@ doc.setFont(
         69
     );
 
-// =====================================================
-// CLIENTES
-// =====================================================
+    // =====================================================
+    // CLIENTES
+    // =====================================================
 
-doc.setDrawColor(200);
+    doc.setDrawColor(200);
 
-doc.rect(10, 78, 190, 40);
+    doc.rect(10, 78, 190, 40);
 
-// INQUILINO
-doc.setFont("helvetica", "normal");
-doc.text("Inquilino:", 14, 88);
+    // INQUILINO
+    doc.setFont("helvetica", "normal");
+    doc.text("Inquilino:", 14, 88);
 
-doc.setFont("helvetica", "bold");
-doc.text(locatarioNombre, 38, 88);
+    doc.setFont("helvetica", "bold");
+    doc.text(locatarioNombre, 38, 88);
 
-// CLIENTE
-doc.setFont("helvetica", "normal");
-doc.text("Cliente:", 14, 104);
+    // CLIENTE
+    doc.setFont("helvetica", "normal");
+    doc.text("Cliente:", 14, 104);
 
-doc.setFont("helvetica", "bold");
-doc.text(clienteNombre, 38, 104);
+    doc.setFont("helvetica", "bold");
+    doc.text(clienteNombre, 38, 104);
 
-// =====================================================
-// DIRECCION
-// =====================================================
+    // =====================================================
+    // DIRECCION
+    // =====================================================
 
-doc.setFont("helvetica", "normal");
+    doc.setFont("helvetica", "normal");
 
-doc.text(
-    "Dirección:",
-    110,
-    88
-);
+    doc.text(
+        "Dirección:",
+        110,
+        88
+    );
 
-doc.setFont("helvetica", "bold");
+    doc.setFont("helvetica", "bold");
 
-doc.text(
-    `${p.propiedadDireccion?.calle || p.propiedadTitulo || "-"}, ${
-        p.propiedadDireccion?.localidad || "-"
-    }, ${
-        p.propiedadDireccion?.provincia || "-"
-    }`,
-    132,
-    88,
-    {
-        maxWidth: 55
-    }
-);
+    doc.text(
+        `${p.propiedadDireccion?.calle || p.propiedadTitulo || "-"}, ${p.propiedadDireccion?.localidad || "-"
+        }, ${p.propiedadDireccion?.provincia || "-"
+        }`,
+        132,
+        88,
+        {
+            maxWidth: 55
+        }
+    );
 
-doc.setFont("helvetica", "normal");
+    doc.setFont("helvetica", "normal");
 
 
 
@@ -334,841 +337,875 @@ doc.setFont("helvetica", "normal");
     // =====================================================
 
 
-// =====================================================
-// FECHA DEL COBRO
-// =====================================================
+    // =====================================================
+    // FECHA DEL COBRO
+    // =====================================================
 
-const fechaPeriodo = p.fechaCobro
-    ? new Date(
-        p.fechaCobro?.seconds
-            ? p.fechaCobro.seconds * 1000
-            : p.fechaCobro
-    ).toLocaleDateString("es-AR")
-    : "-";
+    const fechaPeriodo = p.fechaCobro
+        ? new Date(
+            p.fechaCobro?.seconds
+                ? p.fechaCobro.seconds * 1000
+                : p.fechaCobro
+        ).toLocaleDateString("es-AR")
+        : "-";
 
     // =====================================================
-// TEXTO CUOTA
-// =====================================================
+    // TEXTO CUOTA
+    // =====================================================
 
-const meses = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre"
-];
+    const meses = [
+        "Enero",
+        "Febrero",
+        "Marzo",
+        "Abril",
+        "Mayo",
+        "Junio",
+        "Julio",
+        "Agosto",
+        "Septiembre",
+        "Octubre",
+        "Noviembre",
+        "Diciembre"
+    ];
 
-const descripcionCuota =
-    `Alquiler Cuota ${p.numeroCuota || "-"} de ${p.totalCuotas || "-"} - ${meses[(p.mes || 1) - 1]}/${p.anio || ""} - Periodo #${p.periodoNumero || "-"}`;
+    const descripcionCuota =
+        `Alquiler Cuota ${p.numeroCuota || "-"} de ${p.totalCuotas || "-"} - ${meses[(p.mes || 1) - 1]}/${p.anio || ""} - Periodo #${p.periodoNumero || "-"}`;
 
-// =====================================================
-// TABLA
-// =====================================================
+    // =====================================================
+    // TABLA
+    // =====================================================
 
-autoTable(doc, {
+    autoTable(doc, {
 
-    startY: 120,
+        startY: 120,
 
-    margin: {
-        left: 10,
-        right: 10,
-    },
+        margin: {
+            left: 10,
+            right: 10,
+        },
 
-    tableWidth: "auto",
+        tableWidth: "auto",
 
-    theme: "grid",
+        theme: "grid",
 
-    styles: {
+        styles: {
 
-        fontSize: 8.5,
+            fontSize: 8.5,
 
-        cellPadding: 2.5,
+            cellPadding: 2.5,
 
-        lineColor: [210, 210, 210],
+            lineColor: [210, 210, 210],
 
-        lineWidth: 0.2,
+            lineWidth: 0.2,
 
-        valign: "middle",
-    },
+            valign: "middle",
+        },
 
-    headStyles: {
+        headStyles: {
 
-        fillColor: [220, 220, 220],
+            fillColor: [220, 220, 220],
 
-        textColor: 40,
+            textColor: 40,
 
-        fontStyle: 9.5,
+            fontStyle: 9.5,
 
-        halign: "center",
-
-        lineColor: [0, 0, 0],
-
-        lineWidth: 0.3,
-    },
-
-    bodyStyles: {
-
-        textColor: 20,
-    },
-
-    footStyles: {
-
-        fillColor: [240, 240, 240],
-
-        textColor: 0,
-
-        fontStyle: "bold",
-
-        fontSize: 10,
-    },
-
-    columnStyles: {
-
-        // FECHA
-        0: {
-            cellWidth: 18,
             halign: "center",
+
+            lineColor: [0, 0, 0],
+
+            lineWidth: 0.3,
         },
 
-        // DESCRIPCION
-        1: {
-            cellWidth: 40,
+        bodyStyles: {
+
+            textColor: 20,
         },
 
-        // MONTO
-        2: {
-            cellWidth: 30,
-            halign: "right",
+        footStyles: {
+
+            fillColor: [240, 240, 240],
+
+            textColor: 0,
+
+            fontStyle: "bold",
+
+            fontSize: 10,
         },
 
-        // SERVICIOS
-        3: {
-            cellWidth: 23,
-            halign: "right",
+        columnStyles: {
+
+            // FECHA
+            0: {
+                cellWidth: 18,
+                halign: "center",
+            },
+
+            // DESCRIPCION
+            1: {
+                cellWidth: 40,
+            },
+
+            // MONTO
+            2: {
+                cellWidth: 30,
+                halign: "right",
+            },
+
+            // SERVICIOS
+            3: {
+                cellWidth: 23,
+                halign: "right",
+            },
+
+            // INTERES
+            4: {
+                cellWidth: 23,
+                halign: "right",
+            },
+
+            // ADMINISTRACION
+            5: {
+                cellWidth: 26,
+                halign: "right",
+            },
+
+            // TOTAL
+            6: {
+                cellWidth: 30,
+                halign: "right",
+            },
         },
 
-        // INTERES
-        4: {
-            cellWidth: 23,
-            halign: "right",
-        },
+        head: [[
 
-        // ADMINISTRACION
-        5: {
-            cellWidth: 26,
-            halign: "right",
-        },
+            "Fecha",
 
-        // TOTAL
-        6: {
-            cellWidth: 30,
-            halign: "right",
-        },
-    },
+            "Descripción",
 
-    head: [[
+            "Monto",
 
-        "Fecha",
+            "Servicios",
 
-        "Descripción",
+            "Punitorios",
 
-        "Monto",
+            "Administración",
 
-        "Servicios",
+            "Total"
+        ]],
 
-        "Punitorios",
+        body: [[
 
-        "Administración",
+            fechaPeriodo,
 
-        "Total"
-    ]],
+            descripcionCuota,
 
-    body: [[
+            formatCurrency(
+                p.montoBase || 0
+            ),
 
-        fechaPeriodo,
+            formatCurrency(
+                p.servicios || 0
+            ),
 
-    descripcionCuota,
+            formatCurrency(
+                p.interesGenerado || 0
+            ),
+            formatCurrency(
+                p.administracion ?? p.montoComision ?? 0
+            ),
+            formatCurrency(
+                p.montoFinal || 0
+            )
 
-        formatCurrency(
-            p.montoBase || 0
-        ),
+        ]],
 
-        formatCurrency(
-            p.servicios || 0
-        ),
+        foot: [[
 
-        formatCurrency(
-            p.interesGenerado || 0
-        ),
-formatCurrency(
-    p.administracion ?? p.montoComision ?? 0
-),
+            "",
+
+            "TOTAL",
+
+            "",
+
+            "",
+
+            "",
+
+            "",
+
+            formatCurrency(
+                p.montoFinal || 0
+            )
+
+        ]],
+    });
+    // =====================================================
+    // TEXTO RECIBI
+    // =====================================================
+
+    const finalY =
+        doc.lastAutoTable?.finalY ||
+        doc.previousAutoTable?.finalY ||
+        150;
+
+    // =====================================================
+    // RESUMEN MONTOS DERECHA
+    // =====================================================
+
+    doc.line(
+        132,
+        finalY + 18,
+        190,
+        finalY + 18
+    );
+
+    // LINEA ABAJO DE SALDO DEUDOR
+    doc.line(
+        132,
+        finalY + 28,
+        190,
+        finalY + 28
+    );
+
+    // TITULOS
+    doc.setFontSize(9);
+
+    doc.setFont(
+        "helvetica",
+        "bold"
+    );
+
+    doc.text(
+        "Monto a Abonar",
+        136,
+        finalY + 7
+    );
+
+    doc.text(
+        "TOTAL ABONADO",
+        136,
+        finalY + 15
+    );
+
+    doc.text(
+        "Saldo Deudor",
+        136,
+        finalY + 25
+    );
+
+    // VALORES
+    doc.setFont(
+        "helvetica",
+        "normal"
+    );
+
+    doc.text(
         formatCurrency(
             p.montoFinal || 0
-        )
+        ),
+        186,
+        finalY + 7,
+        {
+            align: "right"
+        }
+    );
 
-    ]],
-
-    foot: [[
-
-        "",
-
-        "TOTAL",
-
-        "",
-
-        "",
-
-        "",
-
-        "",
-
+    doc.text(
         formatCurrency(
             p.montoFinal || 0
-        )
+        ),
+        186,
+        finalY + 15,
+        {
+            align: "right"
+        }
+    );
 
-    ]],
-});
-// =====================================================
-// TEXTO RECIBI
-// =====================================================
+    doc.text(
+        formatCurrency(0),
+        186,
+        finalY + 25,
+        {
+            align: "right"
+        }
+    );
 
-const finalY =
-    doc.lastAutoTable?.finalY ||
-    doc.previousAutoTable?.finalY ||
-    150;
+    // =====================================================
+    // TEXTO ABAJO DE LA LINEA
+    // =====================================================
 
-// =====================================================
-// RESUMEN MONTOS DERECHA
-// =====================================================
+    doc.setFontSize(8);
 
-doc.line(
-    132,
-    finalY + 18,
-    190,
-    finalY + 18
-);
+    doc.text(
+        `POR MANDATO DEL LOCADOR RECIBÍ DEL LOCATARIO LA SUMA DE ${formatCurrency(
+            p.montoFinal || 0
+        )} (${p.montoLetras || ""}) POR EL ALQUILER DE UNA PROPIEDAD QUE OCUPA EN LA CALLE ${p.propiedadDireccion?.calle || "-"}, Dpto: ${p.propiedadDireccion?.departamento || "-"}, U.F.: ${p.propiedadDireccion?.unidadFuncional || "-"}.`,
+        14,
+        finalY + 35,
+        {
+            maxWidth: 176,
+            align: "justify"
+        }
+    );
 
-// LINEA ABAJO DE SALDO DEUDOR
-doc.line(
-    132,
-    finalY + 28,
-    190,
-    finalY + 28
-);
+    // =====================================================
+    // LINEA DE CORTE
+    // =====================================================
 
-// TITULOS
-doc.setFontSize(9);
+    const corteY = finalY + 42;
 
-doc.setFont(
-    "helvetica",
-    "bold"
-);
+    doc.setDrawColor(140);
 
-doc.text(
-    "Monto a Abonar",
-    136,
-    finalY + 7
-);
+    doc.setLineDashPattern([2, 2], 0);
 
-doc.text(
-    "TOTAL ABONADO",
-    136,
-    finalY + 15
-);
+    doc.line(
+        10,
+        corteY,
+        200,
+        corteY
+    );
 
-doc.text(
-    "Saldo Deudor",
-    136,
-    finalY + 25
-);
+    doc.setLineDashPattern([], 0);
+    // =====================================================
+    // DUPLICADO
+    // =====================================================
 
-// VALORES
-doc.setFont(
-    "helvetica",
-    "normal"
-);
+    const resumenY = corteY + 6;
 
-doc.text(
-    formatCurrency(
-        p.montoFinal || 0
-    ),
-    186,
-    finalY + 7,
-    {
-        align: "right"
-    }
-);
+    // BORDE
+    doc.setDrawColor(180);
+    doc.rect(
+        10,
+        resumenY,
+        190,
+        80  // Aumenté la altura para dar más espacio
+    );
 
-doc.text(
-    formatCurrency(
-        p.montoFinal || 0
-    ),
-    186,
-    finalY + 15,
-    {
-        align: "right"
-    }
-);
+    // =====================================================
+    // TITULO
+    // =====================================================
 
-doc.text(
-    formatCurrency(0),
-    186,
-    finalY + 25,
-    {
-        align: "right"
-    }
-);
+    doc.setFontSize(8);
 
-// =====================================================
-// TEXTO ABAJO DE LA LINEA
-// =====================================================
-
-doc.setFontSize(8);
-
-doc.text(
-    `POR MANDATO DEL LOCADOR RECIBÍ DEL LOCATARIO LA SUMA DE ${formatCurrency(
-        p.montoFinal || 0
-    )} (${p.montoLetras || ""}) POR EL ALQUILER DE UNA PROPIEDAD QUE OCUPA EN LA CALLE ${p.propiedadDireccion?.calle || "-"}, Dpto: ${p.propiedadDireccion?.departamento || "-"}, U.F.: ${p.propiedadDireccion?.unidadFuncional || "-"}.`,
-    14,
-    finalY + 35,
-    {
-        maxWidth: 176,
-        align: "justify"
-    }
-);
-
-// =====================================================
-// LINEA DE CORTE
-// =====================================================
-
-const corteY = finalY + 42;
-
-doc.setDrawColor(140);
-
-doc.setLineDashPattern([2, 2], 0);
-
-doc.line(
-    10,
-    corteY,
-    200,
-    corteY
-);
-
-doc.setLineDashPattern([], 0);
-// =====================================================
-// DUPLICADO
-// =====================================================
-
-const resumenY = corteY + 6;
-
-// BORDE
-doc.setDrawColor(180);
-doc.rect(
-    10,
-    resumenY,
-    190,
-    50  // Aumenté la altura para dar más espacio
-);
-
-// =====================================================
-// TITULO
-// =====================================================
-
-doc.setFontSize(8);
-
-doc.setFont(
-    "helvetica",
-    "bold"
-);
+    doc.setFont(
+        "helvetica",
+        "bold"
+    );
 
 
-// CONTENEDOR TITULO
-doc.setDrawColor(180);
+    // CONTENEDOR TITULO
+    doc.setDrawColor(180);
 
-doc.rect(
-    10,
-    resumenY,
-    190,
-    8
-);
+    doc.rect(
+        10,
+        resumenY,
+        190,
+        8
+    );
 
-// TITULO
-doc.text(
-    "RECIBO POR CUENTA Y ORDEN DE TERCEROS",
-    pageWidth / 2,
-    resumenY + 5,
-    {
-        align: "center"
-    }
-);
+    // TITULO
+    doc.text(
+        "RECIBO POR CUENTA Y ORDEN DE TERCEROS",
+        pageWidth / 2,
+        resumenY + 5,
+        {
+            align: "center"
+        }
+    );
 
-// =====================================================
-// DATOS SUPERIORES
-// =====================================================
+    // =====================================================
+    // DATOS SUPERIORES
+    // =====================================================
 
-doc.setFontSize(8.5);
-doc.setFont("helvetica", "bold");
+    doc.setFontSize(8.5);
+    doc.setFont("helvetica", "bold");
 
-doc.text(
-    `Fecha: ${
-        p.fechaCobro
+    doc.text(
+        `Fecha: ${p.fechaCobro
             ? new Date(
                 p.fechaCobro?.seconds
                     ? p.fechaCobro.seconds * 1000
                     : p.fechaCobro
             ).toLocaleDateString("es-AR")
             : "-"
-    }`,
-    14,
-    resumenY + 10
-);
+        }`,
+        14,
+        resumenY + 10
+    );
 
-doc.text(
-    `Recibo: ${p.numeroRecibo || "-"}`,
-    78,
-    resumenY + 10
-);
+    doc.text(
+        `Recibo: ${p.numeroRecibo || "-"}`,
+        78,
+        resumenY + 10
+    );
 
-doc.text(
-    `Periodo: #${p.periodoNumero || "-"}`,
-    145,
-    resumenY + 10
-);
-
-
-doc.text(
-    "Tipo: A",
-    175,
-    resumenY + 10
-);
-
-// =====================================================
-// CLIENTES
-// =====================================================
-doc.setFont("helvetica", "normal");
-
-doc.text(
-    "Cliente:",
-    14,
-    resumenY + 16
-);
-
-doc.setFont("helvetica", "bold");
-
-doc.text(
-    clienteNombre,
-    38,
-    resumenY + 16
-);
-
-doc.setFont("helvetica", "normal");
-
-doc.text(
-    "Inquilino:",
-    110,
-    resumenY + 16
-);
-
-doc.setFont("helvetica", "bold");
-
-doc.text(
-    locatarioNombre,
-    130,
-    resumenY + 16
-);
-
-// =====================================================
-// DIRECCION
-// =====================================================
-
-doc.setFont("helvetica","normal");  
-doc.text("Dirección:", 14, resumenY + 24);
-
-doc.setFont("helvetica", "bold");
-doc.text(
-    `${p.propiedadDireccion?.calle || "-"}, ${
-        p.propiedadDireccion?.localidad || "-"
-    }, ${p.propiedadDireccion?.provincia || "-"}`,
-    36,
-    resumenY + 24,
-    { maxWidth: 145 }
-);
+    doc.text(
+        `Periodo: #${p.periodoNumero || "-"}`,
+        145,
+        resumenY + 10
+    );
 
 
+    doc.text(
+        "Tipo: A",
+        175,
+        resumenY + 10
+    );
 
-// =====================================================
-// TABLA DUPLICADA
-// =====================================================
+    // =====================================================
+    // CLIENTES
+    // =====================================================
+    doc.setFont("helvetica", "normal");
 
-autoTable(doc, {
+    doc.text(
+        "Cliente:",
+        14,
+        resumenY + 16
+    );
 
-    startY: resumenY + 30,
+    doc.setFont("helvetica", "bold");
 
-    margin: {
-        left: 10,
-        right: 10,
-    },
+    doc.text(
+        clienteNombre,
+        38,
+        resumenY + 16
+    );
 
-    tableWidth: "auto",
+    doc.setFont("helvetica", "normal");
 
-    theme: "grid",
+    doc.text(
+        "Inquilino:",
+        110,
+        resumenY + 16
+    );
 
-    styles: {
+    doc.setFont("helvetica", "bold");
 
-        fontSize: 8.5,
+    doc.text(
+        locatarioNombre,
+        130,
+        resumenY + 16
+    );
 
-        cellPadding: 2.5,
+    // =====================================================
+    // DIRECCION
+    // =====================================================
 
-        lineColor: [210, 210, 210],
+    doc.setFont("helvetica", "normal");
+    doc.text("Dirección:", 14, resumenY + 24);
 
-        lineWidth: 0.2,
+    doc.setFont("helvetica", "bold");
+    doc.text(
+        `${p.propiedadDireccion?.calle || "-"}, ${p.propiedadDireccion?.localidad || "-"
+        }, ${p.propiedadDireccion?.provincia || "-"}`,
+        36,
+        resumenY + 24,
+        { maxWidth: 145 }
+    );
 
-        valign: "middle",
-    },
 
-    headStyles: {
 
-        fillColor: [220, 220, 220],
+    // =====================================================
+    // TABLA DUPLICADA
+    // =====================================================
 
-        textColor: 40,
+    autoTable(doc, {
 
-        fontStyle: 9.5,
+        startY: resumenY + 30,
 
-        halign: "center",
+        margin: {
+            left: 10,
+            right: 10,
+        },
 
-        lineColor: [0, 0, 0],
+        tableWidth: "auto",
 
-        lineWidth: 0.3,
-    },
+        theme: "grid",
 
-    bodyStyles: {
+        styles: {
 
-        textColor: 20,
-    },
+            fontSize: 8.5,
 
-    footStyles: {
+            cellPadding: 2.5,
 
-        fillColor: [240, 240, 240],
+            lineColor: [210, 210, 210],
 
-        textColor: 0,
+            lineWidth: 0.2,
 
-        fontStyle: "bold",
+            valign: "middle",
+        },
 
-        fontSize: 10,
-    },
+        headStyles: {
 
-    columnStyles: {
+            fillColor: [220, 220, 220],
 
-        // FECHA
-        0: {
-            cellWidth: 18,
+            textColor: 40,
+
+            fontStyle: 9.5,
+
             halign: "center",
+
+            lineColor: [0, 0, 0],
+
+            lineWidth: 0.3,
         },
 
-        // DESCRIPCION
-        1: {
-            cellWidth: 40,
+        bodyStyles: {
+
+            textColor: 20,
         },
 
-        // MONTO
-        2: {
-            cellWidth: 30,
-            halign: "right",
+        footStyles: {
+
+            fillColor: [240, 240, 240],
+
+            textColor: 0,
+
+            fontStyle: "bold",
+
+            fontSize: 10,
         },
 
-        // SERVICIOS
-        3: {
-            cellWidth: 23,
-            halign: "right",
+        columnStyles: {
+
+            // FECHA
+            0: {
+                cellWidth: 18,
+                halign: "center",
+            },
+
+            // DESCRIPCION
+            1: {
+                cellWidth: 40,
+            },
+
+            // MONTO
+            2: {
+                cellWidth: 30,
+                halign: "right",
+            },
+
+            // SERVICIOS
+            3: {
+                cellWidth: 23,
+                halign: "right",
+            },
+
+            // INTERES
+            4: {
+                cellWidth: 23,
+                halign: "right",
+            },
+
+            // ADMINISTRACION
+            5: {
+                cellWidth: 26,
+                halign: "right",
+            },
+
+            // TOTAL
+            6: {
+                cellWidth: 30,
+                halign: "right",
+            },
         },
 
-        // INTERES
-        4: {
-            cellWidth: 23,
-            halign: "right",
-        },
+        head: [[
 
-        // ADMINISTRACION
-        5: {
-            cellWidth: 26,
-            halign: "right",
-        },
+            "Fecha",
 
-        // TOTAL
-        6: {
-            cellWidth: 30,
-            halign: "right",
-        },
-    },
+            "Descripción",
 
-    head: [[
+            "Monto",
 
-        "Fecha",
+            "Servicios",
 
-        "Descripción",
+            "Punitorios",
 
-        "Monto",
+            "Administración",
 
-        "Servicios",
+            "Total"
+        ]],
 
-        "Punitorios",
+        body: [[
 
-        "Administración",
+            fechaPeriodo,
 
-        "Total"
-    ]],
+            descripcionCuota,
 
-    body: [[
+            formatCurrency(
+                p.montoBase || 0
+            ),
 
-        fechaPeriodo,
+            formatCurrency(
+                p.servicios || 0
+            ),
 
-        descripcionCuota,
+            formatCurrency(
+                p.interesGenerado || 0
+            ),
 
+            formatCurrency(
+                p.administracion ?? p.montoComision ?? 0
+            ),
+
+            formatCurrency(
+                p.montoFinal || 0
+            )
+
+        ]],
+
+        foot: [[
+
+            "",
+
+            "TOTAL",
+
+            "",
+
+            "",
+
+            "",
+
+            "",
+
+            formatCurrency(
+                p.montoFinal || 0
+            )
+
+        ]],
+    });
+    // =====================================================
+    // RESUMEN DERECHA
+    // =====================================================
+
+    const finalDuplicadoY =
+        doc.lastAutoTable.finalY;
+
+    // ALTURA PERSONALIZADA
+    const resumenMontosY =
+        finalDuplicadoY + 8;
+
+    // LINEAS
+    doc.line(
+        132,
+        resumenMontosY + 7,
+        190,
+        resumenMontosY + 7
+    );
+
+    doc.line(
+        132,
+        resumenMontosY + 14,
+        190,
+        resumenMontosY + 14
+    );
+
+    // TITULOS
+    doc.setFontSize(8);
+
+    doc.setFont(
+        "helvetica",
+        "bold"
+    );
+
+    doc.text(
+        "Monto a Abonar",
+        136,
+        resumenMontosY
+    );
+
+    doc.text(
+        "TOTAL ABONADO",
+        136,
+        resumenMontosY + 7
+    );
+
+    doc.text(
+        "Saldo Deudor",
+        136,
+        resumenMontosY + 14
+    );
+
+    // VALORES
+    doc.setFont(
+        "helvetica",
+        "normal"
+    );
+
+    doc.text(
         formatCurrency(
-            p.montoBase || 0
+            pago.montoFinal || 0
         ),
+        186,
+        resumenMontosY,
+        {
+            align: "right"
+        }
+    );
 
-        formatCurrency(
-            p.servicios || 0
-        ),
-
-        formatCurrency(
-            p.interesGenerado || 0
-        ),
-
-formatCurrency(
-    p.administracion ?? p.montoComision ?? 0
-),
-
+    doc.text(
         formatCurrency(
             p.montoFinal || 0
-        )
+        ),
+        186,
+        resumenMontosY + 7,
+        {
+            align: "right"
+        }
+    );
 
-    ]],
+    doc.text(
+        formatCurrency(0),
+        186,
+        resumenMontosY + 14,
+        {
+            align: "right"
+        }
+    );
 
-    foot: [[
+    // =====================================================
+    // OBSERVACIONES
+    // =====================================================
 
-        "",
+    const observacionesY = finalDuplicadoY + 10;
 
-        "TOTAL",
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
 
-        "",
+    doc.text("OBSERVACIONES:", 14, observacionesY);
 
-        "",
+    doc.setDrawColor(180);
 
-        "",
+    doc.rect(
+        14,
+        observacionesY + 2,
+        182,
+        10
+    );
 
-        "",
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
 
-        formatCurrency(
+
+    doc.text(
+        observaciones.trim() !== ""
+            ? observaciones
+            : "Sin observaciones.",
+        16,
+        observacionesY + 5,
+        {
+            maxWidth: 176,
+        }
+    );
+
+    // =====================================================
+    // TEXTO FINAL
+    // =====================================================
+
+    const textoFinalY = observacionesY + 18;
+
+    doc.setFontSize(8);
+    doc.setFont("helvetica", "normal");
+
+    doc.text(
+        `POR MANDATO DEL LOCADOR RECIBÍ DEL LOCATARIO LA SUMA DE ${formatCurrency(
             p.montoFinal || 0
-        )
-
-    ]],
-});
-// =====================================================
-// RESUMEN DERECHA
-// =====================================================
-
-const finalDuplicadoY =
-    doc.lastAutoTable.finalY;
-
-// ALTURA PERSONALIZADA
-const resumenMontosY =
-    finalDuplicadoY + 8;
-
-// LINEAS
-doc.line(
-    132,
-    resumenMontosY + 7,
-    190,
-    resumenMontosY + 7
-);
-
-doc.line(
-    132,
-    resumenMontosY + 14,
-    190,
-    resumenMontosY + 14
-);
-
-// TITULOS
-doc.setFontSize(8);
-
-doc.setFont(
-    "helvetica",
-    "bold"
-);
-
-doc.text(
-    "Monto a Abonar",
-    136,
-    resumenMontosY
-);
-
-doc.text(
-    "TOTAL ABONADO",
-    136,
-    resumenMontosY + 7
-);
-
-doc.text(
-    "Saldo Deudor",
-    136,
-    resumenMontosY + 14
-);
-
-// VALORES
-doc.setFont(
-    "helvetica",
-    "normal"
-);
-
-doc.text(
-    formatCurrency(
-        pago.montoFinal || 0
-    ),
-    186,
-    resumenMontosY,
-    {
-        align: "right"
-    }
-);
-
-doc.text(
-    formatCurrency(
-        p.montoFinal || 0
-    ),
-    186,
-    resumenMontosY + 7,
-    {
-        align: "right"
-    }
-);
-
-doc.text(
-    formatCurrency(0),
-    186,
-    resumenMontosY + 14,
-    {
-        align: "right"
-    }
-);
-
-// =====================================================
-// TEXTO FINAL
-// =====================================================
-
-doc.setFontSize(8);
-doc.setFont("helvetica", "normal");
-
-doc.text(
-    `POR MANDATO DEL LOCADOR RECIBÍ DEL LOCATARIO LA SUMA DE ${formatCurrency(
-        p.montoFinal || 0
-    )} POR EL ALQUILER DE UNA PROPIEDAD UBICADA EN ${
-        p.propiedadDireccion?.calle || "-"
-    }.`,
-    14,
-    finalDuplicadoY + 30,
-    {
-        maxWidth: 172,
-        align: "justify",
-    }
-);
+        )} POR EL ALQUILER DE UNA PROPIEDAD UBICADA EN ${p.propiedadDireccion?.calle || "-"
+        }.`,
+        14,
+        textoFinalY,
+        {
+            maxWidth: 176,
+            align: "justify",
+        }
+    );
 
 
     // =====================================================
     // GUARDAR
     // =====================================================
-// =====================================================
-// GENERAR PDF BLOB
-// =====================================================
+    // =====================================================
+    // GENERAR PDF BLOB
+    // =====================================================
 
-const pdfBlob = doc.output("blob");
+    const pdfBlob = doc.output("blob");
 
-// =====================================================
-// NOMBRE ARCHIVO
-// =====================================================
+    // =====================================================
+    // NOMBRE ARCHIVO
+    // =====================================================
 
-const nombreArchivo =
-    `Recibo-${p.numeroRecibo || p.periodoNumero}.pdf`;
+    const nombreArchivo =
+        `Recibo-${p.numeroRecibo || p.periodoNumero}.pdf`;
 
-// =====================================================
-// REFERENCIA STORAGE
-// =====================================================
+    // =====================================================
+    // REFERENCIA STORAGE
+    // =====================================================
 
-const storageRef = ref(
-    storage,
-    `recibos/${nombreArchivo}`
-);
+    const storageRef = ref(
+        storage,
+        `recibos/${nombreArchivo}`
+    );
 
-// =====================================================
-// SUBIR PDF
-// =====================================================
+    // =====================================================
+    // SUBIR PDF
+    // =====================================================
 
-uploadBytes(storageRef, pdfBlob)
+    uploadBytes(storageRef, pdfBlob)
 
-    .then(async () => {
+        .then(async () => {
 
-        // =====================================================
-        // URL PDF
-        // =====================================================
+            // =====================================================
+            // URL PDF
+            // =====================================================
 
-        const pdfUrl =
-            await getDownloadURL(storageRef);
+            const pdfUrl =
+                await getDownloadURL(storageRef);
 
-        // =====================================================
-        // GUARDAR EN FIRESTORE
-        // =====================================================
+            // =====================================================
+            // GUARDAR EN FIRESTORE
+            // =====================================================
 
-        await setDoc(
-            firestoreDoc(
-                db,
-                "Recibos",
-                p.id || Date.now().toString()
-            ),
-            {
-                ...p,
+            await setDoc(
+                firestoreDoc(
+                    db,
+                    "Recibos",
+                    p.id || Date.now().toString()
+                ),
+                {
+                    ...p,
 
-                pdfUrl: pdfUrl,
+                    pdfUrl: pdfUrl,
 
-                nombreArchivo,
+                    nombreArchivo,
 
-                createdAt: serverTimestamp(),
-            },
-            {
-                merge: true,
-            }
-        );
+                    createdAt: serverTimestamp(),
+                },
+                {
+                    merge: true,
+                }
+            );
 
-        // =====================================================
-        // DESCARGAR LOCAL
-        // =====================================================
+            // =====================================================
+            // DESCARGAR LOCAL
+            // =====================================================
 
-        doc.save(nombreArchivo);
+            doc.save(nombreArchivo);
 
-        console.log(
-            "✅ PDF SUBIDO Y GUARDADO"
-        );
+            console.log(
+                "✅ PDF SUBIDO Y GUARDADO"
+            );
 
-    })
+        })
 
-    .catch((error) => {
+        .catch((error) => {
 
-        console.error(
-            "❌ ERROR SUBIENDO PDF:",
-            error
-        );
+            console.error(
+                "❌ ERROR SUBIENDO PDF:",
+                error
+            );
 
-    });
+        });
 };
 
 export default GenerarRecibo;

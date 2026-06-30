@@ -20,40 +20,38 @@ export default function RecibosLiquidacionModal({
   // OBTENER RECIBOS
   // =====================================================
 
-useEffect(() => {
-  if (!mostrarRecibos || !contratoRecibosLiquidacion?.id) return;
+  useEffect(() => {
+    if (!mostrarRecibos || !contratoRecibosLiquidacion?.id) return;
 
-  const ref = collection(db, "Recibos");
+    const ref = collection(db, "Recibos");
 
-  const unsub = onSnapshot(ref, (snap) => {
-    const data = snap.docs.map((d) => ({
-      id: d.id,
-      ...d.data(),
-    }));
+    const unsub = onSnapshot(ref, (snap) => {
+      const data = snap.docs.map((d) => ({
+        id: d.id,
+        ...d.data(),
+      }));
 
-    console.log("📦 TODOS RECIBOS LIQUIDACIÓN:", data);
 
-const filtrados = data.filter((r) => {
-  const tipo = (r.tipo || "").toString().toLowerCase().trim();
+      const filtrados = data.filter((r) => {
+        const tipo = (r.tipo || "").toString().toLowerCase().trim();
 
-  const propiedadMatch =
-    r.propiedadTitulo === contratoRecibosLiquidacion?.propiedadTitulo;
+        const propiedadMatch =
+          r.propiedadTitulo === contratoRecibosLiquidacion?.propiedadTitulo;
 
-  return (
-    tipo === "liquidacion" &&
-    r.esLiquidacion === true &&
-    propiedadMatch &&
-    r.pdfUrl
-  );
-});
+        return (
+          tipo === "liquidacion" &&
+          r.esLiquidacion === true &&
+          propiedadMatch &&
+          r.pdfUrl
+        );
+      });
 
-    console.log("🎯 FILTRADOS LIQUIDACIÓN:", filtrados);
 
-    setRecibos(filtrados);
-  });
+      setRecibos(filtrados);
+    });
 
-  return () => unsub();
-}, [mostrarRecibos, contratoRecibosLiquidacion?.id]);
+    return () => unsub();
+  }, [mostrarRecibos, contratoRecibosLiquidacion?.id]);
 
   // =====================================================
   // ELIMINAR
@@ -148,14 +146,14 @@ const filtrados = data.filter((r) => {
                             {
                               r.fechaCobro
                                 ? (
-                                    r.fechaCobro?.toDate
-                                      ? r.fechaCobro
-                                          .toDate()
-                                          .toLocaleDateString("es-AR")
-                                      : new Date(
-                                          r.fechaCobro
-                                        ).toLocaleDateString("es-AR")
-                                  )
+                                  r.fechaCobro?.toDate
+                                    ? r.fechaCobro
+                                      .toDate()
+                                      .toLocaleDateString("es-AR")
+                                    : new Date(
+                                      r.fechaCobro
+                                    ).toLocaleDateString("es-AR")
+                                )
                                 : "-"
                             }
                           </td>

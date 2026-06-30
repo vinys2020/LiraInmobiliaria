@@ -1,17 +1,29 @@
 import { useState, useEffect } from "react";
 import {
     doc,
+    getDoc,
     updateDoc,
     deleteDoc,
-    serverTimestamp
+    serverTimestamp,
+    collection,
+    query,
+    where,
+    getDocs
 } from "firebase/firestore";
+
+
 import { guardarRecibo } from "../utils/recibos";
 
 import GenerarRecibo from "../components/GenerarRecibo";
 
 import { db } from "../config/firebase";
 
+import { parseExpression } from "../utils/parseExpression";
+
 import toast from "react-hot-toast";
+
+
+
 
 export default function ClienteModal({
 
@@ -44,7 +56,11 @@ export default function ClienteModal({
 }) {
 
 
-    if (!showClienteModal || !clienteSeleccionado) return null;
+
+
+
+
+
 
     const cleanValue = (value) => {
 
@@ -60,39 +76,46 @@ export default function ClienteModal({
         return String(value).trim();
     };
 
-    const calcularInteresAutomatico = (pago) => {
 
-        const hoy = new Date(); // 1 junio 2026
+
+    const calcularInteresAutomatico = (pago) => {
+        const hoy = new Date();
         hoy.setHours(0, 0, 0, 0);
 
-        const anio = Number(pago.anio);
-        const mes = Number(pago.mes) - 1;
-        // 🔥 inicio del mes de deuda (1 del mes vencido)
-        const inicioMes = new Date(anio, mes, 1);
+        const anio = Number(pago?.anio);
+        const mes = Number(pago?.mes);
+
+        if (!anio || !mes) return 0;
+
+        const inicioMes = new Date(anio, mes - 1, 1);
         inicioMes.setHours(0, 0, 0, 0);
 
-        // si todavía no llegó ese mes → sin interés
         if (hoy < inicioMes) return 0;
 
-        // 🔥 FIN REAL: hoy
-        const fin = new Date(hoy);
-        fin.setHours(0, 0, 0, 0);
+        let diasMora = Math.floor((hoy - inicioMes) / (1000 * 60 * 60 * 24)) + 1;
+        diasMora = Math.min(diasMora, 30);
 
-        // 🔥 diferencia en días EXACTA
-        const diasMora = Math.floor(
-            (fin - inicioMes) / (1000 * 60 * 60 * 24)
-        ) + 1;
+        const montoBase = Number(pago?.montoBase || 0);
 
-        const montoBase = Number(pago.montoBase || 0);
-
-        const interes = montoBase * (diasMora / 100);
-
-
-
-        return interes;
+        const porcentajeDiario = Number(contratoActivo?.interesMoraDiario) || 1;
+        if (!porcentajeDiario) {
+            console.log("⚠ contrato sin interesMoraDiario");
+        }
+        return Math.round(
+            montoBase * (porcentajeDiario / 100) * diasMora
+        );
     };
 
+
+
+
+
+
+
     const normalizeLiquidacion = (p) => {
+
+
+
 
 
 
@@ -212,7 +235,9 @@ export default function ClienteModal({
             },
         };
     };
-
+    const [contratoActivo, setContratoActivo] = useState(null);
+    const [contratoSeleccionado, setContratoSeleccionado] = useState(null);
+    const [contratoCache, setContratoCache] = useState({});
     const [modalCobro, setModalCobro] = useState(false);
     const [tipoModal, setTipoModal] = useState("pago"); // "pago" o "liquidacion"
     const [pagoSeleccionado, setPagoSeleccionado] = useState(null);
@@ -223,11 +248,15 @@ export default function ClienteModal({
         // MONTOS
         // =========================
 
-        montoBase: 0,
+        montoBase: "",
 
-        interesGenerado: 0,
+        interesGenerado: "",
 
-        servicios: 0,
+
+        servicios: "",
+
+        administracion: "",
+
 
 
         descuento: 0,
@@ -266,6 +295,65 @@ export default function ClienteModal({
 
         updatedAt: new Date(),
     });
+
+
+
+    const getContrato = async (locatarioId) => {
+        if (!locatarioId) return null;
+
+        try {
+            const q = query(
+                collection(db, "Contratos"),
+                where("locatarioId", "==", locatarioId)
+            );
+
+            const snap = await getDocs(q);
+
+            if (snap.empty) {
+                console.log("No hay contrato para este locatario");
+                return null;
+            }
+
+            return snap.docs[0].data();
+
+        } catch (error) {
+            console.log("ERROR FIREBASE:", error.code, error.message);
+            return null;
+        }
+    };
+
+    useEffect(() => {
+        const cargarContrato = async () => {
+            if (!clienteSeleccionado?.id) return;
+
+            const contrato = await getContrato(clienteSeleccionado.id);
+
+
+            setContratoActivo(contrato);
+        };
+
+        cargarContrato();
+    }, [clienteSeleccionado?.id]);
+
+    if (!showClienteModal || !clienteSeleccionado) return null;
+
+
+    const calcularMontoFinal = (form, tipoModal) => {
+        const base = Number(form?.montoBase || 0);
+        const interes = Number(form?.interesGenerado || 0);
+        const servicios = Number(form?.servicios || 0);
+        const administracion = Number(form?.administracion || 0);
+
+        if (tipoModal === "liquidacion") {
+            // 💼 Liquidación: alquiler + interés + administración + ajustes de servicios
+            return base - administracion + servicios;
+        }
+
+        // 💰 Cobro: alquiler + interés + servicios
+        return base + interes + servicios;
+    };
+
+
 
     return (
         <>
@@ -661,26 +749,17 @@ export default function ClienteModal({
                                                                                                                 type="number"
                                                                                                                 className="form-control form-control-sm"
                                                                                                                 value={
-                                                                                                                    liqForm?.montoLiquidado ??
-                                                                                                                    (
-                                                                                                                        Number(liqForm?.montoCobrado || 0) +
-                                                                                                                        Number(liqForm?.montoComision || 0)
-                                                                                                                    )
+                                                                                                                    Number(liqForm?.montoCobrado || 0) -
+                                                                                                                    Number(liqForm?.montoComision || 0)
                                                                                                                 }
-                                                                                                                onChange={(e) =>
-                                                                                                                    setLiqForm((prev) => ({
-                                                                                                                        ...(prev || {}),
-                                                                                                                        montoLiquidado: Number(e.target.value),
-                                                                                                                    }))
-                                                                                                                }
+                                                                                                                readOnly
                                                                                                             />
                                                                                                         ) : (
                                                                                                             formatCurrency(
-                                                                                                                liq.montoLiquidado ??
-                                                                                                                (
-                                                                                                                    Number(liq.montoCobrado || 0) +
+                                                                                                                liq.estado === "pagado"
+                                                                                                                    ? Number(liq.montoPagado ?? liq.montoLiquidado ?? 0)
+                                                                                                                    : Number(liq.montoCobrado || 0) -
                                                                                                                     Number(liq.montoComision || 0)
-                                                                                                                )
                                                                                                             )
                                                                                                         )}
                                                                                                     </td>
@@ -797,21 +876,29 @@ export default function ClienteModal({
                                                                                                                     className="btn btn-sm btn-success"
                                                                                                                     onClick={() => {
 
-                                                                                                                        const p = normalizeLiquidacion(liq);
+                                                                                                                        const baseObservaciones =
+                                                                                                                            cobroForm?.observaciones ?? liq?.observaciones ?? "";
 
-                                                                                                                        // ✅ NORMALIZACIÓN FINAL
-                                                                                                                        const liquidacionData = {
 
+
+                                                                                                                        const p = normalizeLiquidacion({
+                                                                                                                            ...liq,
+                                                                                                                            observaciones: cobroForm?.observaciones || liq.observaciones || ""
+                                                                                                                        });
+                                                                                                                        // =========================
+                                                                                                                        // 1. OBJETO BASE
+                                                                                                                        // =========================
+                                                                                                                        const liquidacionDataBase = {
                                                                                                                             ...p,
-
                                                                                                                             tipo: "liquidacion",
-
                                                                                                                             contratoId: p.contratoId || "",
 
+                                                                                                                            observaciones: cobroForm?.observaciones || liq.observaciones || "",
 
 
 
-                                                                                                                            // ✅ PROPIETARIO / CLIENTE
+
+
                                                                                                                             clienteNombre:
                                                                                                                                 p.clienteNombre ||
                                                                                                                                 p.locadorNombre ||
@@ -822,12 +909,10 @@ export default function ClienteModal({
                                                                                                                                 p.clienteNombre ||
                                                                                                                                 "Propietario sin nombre",
 
-                                                                                                                            // ✅ INQUILINO
                                                                                                                             locatarioNombre:
                                                                                                                                 p.locatarioNombre ||
                                                                                                                                 "Inquilino sin nombre",
 
-                                                                                                                            // ✅ DIRECCIÓN
                                                                                                                             propiedadDireccion: {
                                                                                                                                 calle:
                                                                                                                                     p.propiedadDireccion?.calle ||
@@ -835,71 +920,45 @@ export default function ClienteModal({
                                                                                                                                     "Sin calle",
 
                                                                                                                                 localidad:
-                                                                                                                                    p.propiedadDireccion?.localidad ||
-                                                                                                                                    "-",
+                                                                                                                                    p.propiedadDireccion?.localidad || "-",
 
                                                                                                                                 provincia:
-                                                                                                                                    p.propiedadDireccion?.provincia ||
-                                                                                                                                    "-",
+                                                                                                                                    p.propiedadDireccion?.provincia || "-",
                                                                                                                             },
 
-                                                                                                                            // ✅ MONTOS
-                                                                                                                            montoBase:
-                                                                                                                                p.montoBase ??
-                                                                                                                                p.montoLiquidado ??
-                                                                                                                                0,
-
-                                                                                                                            montoFinal:
-                                                                                                                                p.montoFinal ??
-                                                                                                                                p.montoLiquidado ??
-                                                                                                                                0,
-
-                                                                                                                            administracion:
-                                                                                                                                p.administracion ??
-                                                                                                                                p.montoComision ??
-                                                                                                                                0,
-
-                                                                                                                            servicios:
-                                                                                                                                p.servicios ?? 0,
-
-                                                                                                                            interesGenerado:
-                                                                                                                                p.interesGenerado ?? 0,
+                                                                                                                            montoBase: p.montoBase ?? p.montoLiquidado ?? 0,
+                                                                                                                            administracion: p.administracion ?? p.montoComision ?? 0,
+                                                                                                                            servicios: p.servicios ?? 0,
+                                                                                                                            interesGenerado: p.interesGenerado ?? 0,
                                                                                                                         };
 
+                                                                                                                        // =========================
+                                                                                                                        // 2. CALCULAR MONTO FINAL
+                                                                                                                        // =========================
+                                                                                                                        const liquidacionData = {
+                                                                                                                            ...liquidacionDataBase,
 
+                                                                                                                            montoFinal: calcularMontoFinal(
+                                                                                                                                liquidacionDataBase,
+                                                                                                                                "liquidacion"
+                                                                                                                            ),
+                                                                                                                        };
 
                                                                                                                         setPagoSeleccionado(liquidacionData);
-
                                                                                                                         setTipoModal("liquidacion");
 
                                                                                                                         setCobroForm({
-
-                                                                                                                            montoBase:
-                                                                                                                                liquidacionData.montoBase,
-
-                                                                                                                            interesGenerado:
-                                                                                                                                liquidacionData.interesGenerado,
-
-                                                                                                                            servicios:
-                                                                                                                                liquidacionData.servicios,
-
-                                                                                                                            administracion:
-                                                                                                                                liquidacionData.administracion,
-
-                                                                                                                            montoFinal:
-                                                                                                                                liquidacionData.montoFinal,
+                                                                                                                            montoBase: liquidacionData.montoBase,
+                                                                                                                            interesGenerado: liquidacionData.interesGenerado,
+                                                                                                                            servicios: liquidacionData.servicios,
+                                                                                                                            administracion: liquidacionData.administracion,
+                                                                                                                            montoFinal: liquidacionData.montoFinal,
 
                                                                                                                             metodoPago: "Transferencia",
-
-                                                                                                                            observaciones: "",
-
+                                                                                                                            observaciones: cobroForm?.observaciones || "",
                                                                                                                             fechaCobro: new Date(),
-
-                                                                                                                            numeroRecibo:
-                                                                                                                                liquidacionData.numeroRecibo || "",
-
-                                                                                                                            estado:
-                                                                                                                                liquidacionData.estado || "pendiente",
+                                                                                                                            numeroRecibo: liquidacionData.numeroRecibo || "",
+                                                                                                                            estado: liquidacionData.estado || "pendiente",
                                                                                                                         });
 
                                                                                                                         setModalCobro(true);
@@ -907,135 +966,43 @@ export default function ClienteModal({
                                                                                                                 >
                                                                                                                     Liquidar
                                                                                                                 </button>
-                                                                                                                <button
-                                                                                                                    className="btn btn-sm btn-outline-success"
-                                                                                                                    onClick={() => {
 
-                                                                                                                        // 🔥 PAGO RELACIONADO (opcional)
-                                                                                                                        const pagoRelacionado =
-                                                                                                                            clienteSeleccionado?.pagos?.find(
-                                                                                                                                (p) => p.periodoNumero === liq.periodoNumero
+
+                                                                                                                <button
+                                                                                                                    className="btn btn-sm btn-outline-danger"
+                                                                                                                    onClick={async () => {
+
+                                                                                                                        const confirmar = window.confirm(
+                                                                                                                            `¿Eliminar la liquidación ${String(liq.mes).padStart(2, "0")}/${liq.anio}?`
+                                                                                                                        );
+
+                                                                                                                        if (!confirmar) return;
+
+                                                                                                                        try {
+
+                                                                                                                            await deleteDoc(
+                                                                                                                                doc(db, "Liquidaciones", liq.id)
                                                                                                                             );
 
+                                                                                                                            setClienteSeleccionado({
+                                                                                                                                ...clienteSeleccionado,
+                                                                                                                                liquidaciones: clienteSeleccionado.liquidaciones.filter(
+                                                                                                                                    (l) => l.id !== liq.id
+                                                                                                                                ),
+                                                                                                                            });
 
-                                                                                                                        // =========================
-                                                                                                                        // RECIBO CONSOLIDADO
-                                                                                                                        // =========================
-                                                                                                                        const datosRecibo = {
-                                                                                                                            ...liq,
+                                                                                                                            toast.success("Liquidación eliminada");
 
-                                                                                                                            tipo: "liquidacion",
-                                                                                                                            esLiquidacion: true,
+                                                                                                                        } catch (error) {
 
+                                                                                                                            console.error(error);
+                                                                                                                            toast.error("Error al eliminar liquidación");
 
-
-                                                                                                                            // =========================
-                                                                                                                            // PROPIETARIO
-                                                                                                                            // =========================
-                                                                                                                            clienteNombre:
-                                                                                                                                clienteSeleccionado?.nombre ||
-                                                                                                                                liq.locadorNombre ||
-                                                                                                                                "Propietario sin nombre",
-
-                                                                                                                            locadorNombre:
-                                                                                                                                clienteSeleccionado?.nombre ||
-                                                                                                                                liq.locadorNombre ||
-                                                                                                                                "Propietario sin nombre",
-
-                                                                                                                            // =========================
-                                                                                                                            // INQUILINO (FIX REAL)
-                                                                                                                            // =========================
-                                                                                                                            locatarioNombre:
-                                                                                                                                liq.locatarioNombre ||
-                                                                                                                                liq.inquilino?.nombre ||
-                                                                                                                                pagoRelacionado?.locatarioNombre ||
-                                                                                                                                pagoRelacionado?.inquilinoNombre ||
-                                                                                                                                "Inquilino sin nombre",
-
-                                                                                                                            // =========================
-                                                                                                                            // IDS (CLAVE PARA FILTRADO)
-                                                                                                                            // =========================
-                                                                                                                            locatarioId:
-                                                                                                                                liq.locatarioId ||
-                                                                                                                                liq.inquilinoId ||
-                                                                                                                                pagoRelacionado?.locatarioId ||
-                                                                                                                                clienteSeleccionado?.id,
-
-                                                                                                                            locadorId:
-                                                                                                                                liq.locadorId ||
-                                                                                                                                clienteSeleccionado?.id,
-
-                                                                                                                            // =========================
-                                                                                                                            // MONTOS
-                                                                                                                            // =========================
-                                                                                                                            montoBase: Number(liq.montoCobrado || 0),
-
-                                                                                                                            administracion: Number(liq.montoComision || 0),
-
-                                                                                                                            montoFinal:
-                                                                                                                                Number(liq.montoLiquidado || 0) ||
-                                                                                                                                Number(liq.montoCobrado || 0),
-
-                                                                                                                            servicios: 0,
-                                                                                                                            interesGenerado: 0,
-
-                                                                                                                            // =========================
-                                                                                                                            // PROPIEDAD
-                                                                                                                            // =========================
-                                                                                                                            propiedadDireccion: {
-                                                                                                                                calle: liq.propiedadDireccion?.calle || "Sin Dirección",
-                                                                                                                                localidad: liq.propiedadDireccion?.localidad || "-",
-                                                                                                                                provincia: liq.propiedadDireccion?.provincia || "-",
-                                                                                                                            },
-
-                                                                                                                            // =========================
-                                                                                                                            // FECHA
-                                                                                                                            // =========================
-                                                                                                                            fechaCobro: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
-                                                                                                                        };
-
-
-                                                                                                                        GenerarRecibo(datosRecibo, formatCurrency);
+                                                                                                                        }
                                                                                                                     }}
                                                                                                                 >
-                                                                                                                    Crear Recibo
+                                                                                                                    Eliminar
                                                                                                                 </button>
-
-                                                                                                                <button
-    className="btn btn-sm btn-outline-danger"
-    onClick={async () => {
-
-        const confirmar = window.confirm(
-            `¿Eliminar la liquidación ${String(liq.mes).padStart(2, "0")}/${liq.anio}?`
-        );
-
-        if (!confirmar) return;
-
-        try {
-
-            await deleteDoc(
-                doc(db, "Liquidaciones", liq.id)
-            );
-
-            setClienteSeleccionado({
-                ...clienteSeleccionado,
-                liquidaciones: clienteSeleccionado.liquidaciones.filter(
-                    (l) => l.id !== liq.id
-                ),
-            });
-
-            toast.success("Liquidación eliminada");
-
-        } catch (error) {
-
-            console.error(error);
-            toast.error("Error al eliminar liquidación");
-
-        }
-    }}
->
-    Eliminar
-</button>
                                                                                                             </div>
 
                                                                                                         )}
@@ -1236,121 +1203,124 @@ export default function ClienteModal({
 
 
 
-                                                                                                    {/* INTERES */}
+                                                                                                    {/* ============================= */}
+                                                                                                    {/* INTERÉS */}
+                                                                                                    {/* ============================= */}
                                                                                                     <td>
-
                                                                                                         {editando ? (
-
                                                                                                             <div className="d-flex align-items-center gap-2">
 
-                                                                                                                {/* TOGGLE AUTOMÁTICO */}
-                                                                                                                <input
-                                                                                                                    className="form-check-input"
-                                                                                                                    type="checkbox"
-                                                                                                                    checked={pagoForm?.interesAutomatico ?? false}
-                                                                                                                    title="Interés Automático"
-                                                                                                                    onChange={(e) => {
+                                                                                                                {(() => {
+                                                                                                                    // 🔥 SIEMPRE objeto único consistente
+                                                                                                                    const pagoActual = {
+                                                                                                                        ...pago,
+                                                                                                                        ...pagoForm,
+                                                                                                                        interesMoraDiario:
+                                                                                                                            pagoForm?.interesMoraDiario ??
+                                                                                                                            pago?.interesMoraDiario ??
+                                                                                                                            pago?.contratoInteresMoraDiario ??  // 👈 Intenta desde pago primero
+                                                                                                                            clienteSeleccionado?.contrato?.interesMoraDiario ??  // 👈 Desde el contrato del cliente
+                                                                                                                            clienteSeleccionado?.interesMoraDiario ??
+                                                                                                                            0  // Cambiar a 0 como default más seguro
+                                                                                                                    };
 
-                                                                                                                        const activo = e.target.checked;
+                                                                                                                    const interesAuto = calcularInteresAutomatico(pagoActual);
 
-                                                                                                                        const interesAuto = activo
-                                                                                                                            ? calcularInteresAutomatico({
-                                                                                                                                ...pago,
-                                                                                                                                ...pagoForm,
-                                                                                                                            })
-                                                                                                                            : 0;
+                                                                                                                    const esAuto = pagoForm?.interesAutomatico ?? true;
 
-                                                                                                                        setPagoForm({
-                                                                                                                            ...pagoForm,
-                                                                                                                            interesAutomatico: activo,
-                                                                                                                            interesGenerado: interesAuto,
+                                                                                                                    return (
+                                                                                                                        <>
+                                                                                                                            {/* TOGGLE */}
+                                                                                                                            <input
+                                                                                                                                className="form-check-input"
+                                                                                                                                type="checkbox"
+                                                                                                                                checked={esAuto}
+                                                                                                                                onChange={(e) => {
+                                                                                                                                    const activo = e.target.checked;
 
-                                                                                                                            montoFinal:
-                                                                                                                                Number(pagoForm?.montoBase || 0) +
-                                                                                                                                interesAuto +
-                                                                                                                                Number(pagoForm?.servicios || 0),
-                                                                                                                        });
-                                                                                                                    }}
-                                                                                                                />
+                                                                                                                                    const nuevoInteres = activo
+                                                                                                                                        ? interesAuto
+                                                                                                                                        : Number(pagoForm?.interesGenerado || 0);
 
-                                                                                                                {/* INPUT MANUAL */}
-                                                                                                                <input
-                                                                                                                    type="number"
-                                                                                                                    className="form-control form-control-sm"
-                                                                                                                    style={{ width: "90px" }}
-                                                                                                                    disabled={pagoForm?.interesAutomatico}
-                                                                                                                    value={
-                                                                                                                        pagoForm?.interesAutomatico
-                                                                                                                            ? calcularInteresAutomatico({
-                                                                                                                                ...pago,
-                                                                                                                                ...pagoForm,
-                                                                                                                            })
-                                                                                                                            : (pagoForm?.interesGenerado ?? 0)
-                                                                                                                    }
-                                                                                                                    onChange={(e) => {
+                                                                                                                                    setPagoForm({
+                                                                                                                                        ...pagoForm,
+                                                                                                                                        interesAutomatico: activo,
+                                                                                                                                        interesGenerado: nuevoInteres,
+                                                                                                                                        montoFinal:
+                                                                                                                                            Number(pagoForm?.montoBase || 0) +
+                                                                                                                                            Number(pagoForm?.servicios || 0) +
+                                                                                                                                            nuevoInteres
+                                                                                                                                    });
+                                                                                                                                }}
+                                                                                                                            />
 
-                                                                                                                        const interesGenerado = Number(e.target.value);
+                                                                                                                            {/* INPUT MANUAL */}
+                                                                                                                            <input
+                                                                                                                                type="number"
+                                                                                                                                className="form-control form-control-sm"
+                                                                                                                                style={{ width: "90px" }}
+                                                                                                                                disabled={esAuto}
+                                                                                                                                value={esAuto ? interesAuto : (pagoForm?.interesGenerado || 0)}
+                                                                                                                                onChange={(e) => {
+                                                                                                                                    const val = Number(e.target.value);
 
-                                                                                                                        setPagoForm({
-                                                                                                                            ...pagoForm,
-                                                                                                                            interesAutomatico: false,
-                                                                                                                            interesGenerado,
+                                                                                                                                    setPagoForm({
+                                                                                                                                        ...pagoForm,
+                                                                                                                                        interesAutomatico: false,
+                                                                                                                                        interesGenerado: val,
+                                                                                                                                        montoFinal:
+                                                                                                                                            Number(pagoForm?.montoBase || 0) +
+                                                                                                                                            Number(pagoForm?.servicios || 0) +
+                                                                                                                                            val
+                                                                                                                                    });
+                                                                                                                                }}
+                                                                                                                            />
 
-                                                                                                                            montoFinal:
-                                                                                                                                Number(pagoForm?.montoBase || 0) +
-                                                                                                                                interesGenerado +
-                                                                                                                                Number(pagoForm?.servicios || 0),
-                                                                                                                        });
-                                                                                                                    }}
-                                                                                                                />
-
-                                                                                                                {/* BOTÓN RESET */}
-                                                                                                                <button
-                                                                                                                    type="button"
-                                                                                                                    className="btn btn-sm btn-outline-danger px-2"
-                                                                                                                    onClick={() =>
-                                                                                                                        setPagoForm({
-                                                                                                                            ...pagoForm,
-                                                                                                                            interesAutomatico: false,
-                                                                                                                            interesGenerado: 0,
-                                                                                                                            montoFinal:
-                                                                                                                                Number(pagoForm?.montoBase || 0) +
-                                                                                                                                Number(pagoForm?.servicios || 0),
-                                                                                                                        })
-                                                                                                                    }
-                                                                                                                >
-                                                                                                                    0
-                                                                                                                </button>
+                                                                                                                            {/* RESET */}
+                                                                                                                            <button
+                                                                                                                                type="button"
+                                                                                                                                className="btn btn-sm btn-outline-danger px-2"
+                                                                                                                                onClick={() =>
+                                                                                                                                    setPagoForm({
+                                                                                                                                        ...pagoForm,
+                                                                                                                                        interesAutomatico: false,
+                                                                                                                                        interesGenerado: 0,
+                                                                                                                                        montoFinal:
+                                                                                                                                            Number(pagoForm?.montoBase || 0) +
+                                                                                                                                            Number(pagoForm?.servicios || 0)
+                                                                                                                                    })
+                                                                                                                                }
+                                                                                                                            >
+                                                                                                                                0
+                                                                                                                            </button>
+                                                                                                                        </>
+                                                                                                                    );
+                                                                                                                })()}
 
                                                                                                             </div>
-
                                                                                                         ) : (
-
                                                                                                             <div className="d-flex align-items-center gap-2">
 
-                                                                                                                {(pago.interesAutomatico ?? false) && (
-                                                                                                                    <span
-                                                                                                                        className="badge bg-success"
-                                                                                                                        title="Interés Automático"
-                                                                                                                    >
-                                                                                                                        ✓
-                                                                                                                    </span>
+                                                                                                                {(pago.interesAutomatico ?? true) && (
+                                                                                                                    <span className="badge bg-success">✓</span>
                                                                                                                 )}
 
                                                                                                                 <span className="text-danger fw-bold">
                                                                                                                     {formatCurrency(
-                                                                                                                        pago.interesAutomatico
+                                                                                                                        (pago.interesAutomatico ?? true)
                                                                                                                             ? calcularInteresAutomatico(pago)
                                                                                                                             : (pago.interesGenerado || 0)
                                                                                                                     )}
                                                                                                                 </span>
 
                                                                                                             </div>
-
                                                                                                         )}
-
                                                                                                     </td>
+
+
+                                                                                                    {/* ============================= */}
                                                                                                     {/* TOTAL */}
+                                                                                                    {/* ============================= */}
                                                                                                     <td className="fw-bold text-success">
 
                                                                                                         {editando ? (
@@ -1359,13 +1329,16 @@ export default function ClienteModal({
                                                                                                                 type="number"
                                                                                                                 className="form-control form-control-sm"
                                                                                                                 value={
-                                                                                                                    pagoForm?.montoFinal ??
+                                                                                                                    Number(pagoForm?.montoFinal) ??
                                                                                                                     (
                                                                                                                         Number(pagoForm?.montoBase || 0) +
                                                                                                                         Number(pagoForm?.servicios || 0) +
                                                                                                                         (
                                                                                                                             pagoForm?.interesAutomatico
-                                                                                                                                ? calcularInteresAutomatico(pago)
+                                                                                                                                ? calcularInteresAutomatico({
+                                                                                                                                    ...pago,
+                                                                                                                                    ...pagoForm
+                                                                                                                                })
                                                                                                                                 : Number(pagoForm?.interesGenerado || 0)
                                                                                                                         )
                                                                                                                     )
@@ -1373,7 +1346,7 @@ export default function ClienteModal({
                                                                                                                 onChange={(e) =>
                                                                                                                     setPagoForm({
                                                                                                                         ...pagoForm,
-                                                                                                                        montoFinal: Number(e.target.value),
+                                                                                                                        montoFinal: Number(e.target.value)
                                                                                                                     })
                                                                                                                 }
                                                                                                             />
@@ -1381,15 +1354,13 @@ export default function ClienteModal({
                                                                                                         ) : (
 
                                                                                                             formatCurrency(
-
                                                                                                                 Number(pago.montoBase || 0) +
                                                                                                                 Number(pago.servicios || 0) +
                                                                                                                 (
-                                                                                                                    pago.interesAutomatico
+                                                                                                                    (pago.interesAutomatico ?? true)
                                                                                                                         ? calcularInteresAutomatico(pago)
                                                                                                                         : Number(pago.interesGenerado || 0)
                                                                                                                 )
-
                                                                                                             )
 
                                                                                                         )}
@@ -1513,6 +1484,11 @@ export default function ClienteModal({
                                                                                                                             contratoId: pagoSeleccionado?.contratoId || "",
 
 
+
+
+
+
+
                                                                                                                             // 🔵 LOCADOR (dueño)
                                                                                                                             clienteNombre:
                                                                                                                                 pago.locadorNombre ||
@@ -1552,12 +1528,12 @@ export default function ClienteModal({
 
                                                                                                                         setCobroForm({
                                                                                                                             montoBase: pagoNormalizado.montoBase || 0,
-                                                                                                                            interesGenerado: calcularInteresAutomatico(pago),
+                                                                                                                            interesGenerado: calcularInteresAutomatico(pagoNormalizado),
                                                                                                                             servicios: pagoNormalizado.servicios || 0,
 
                                                                                                                             montoFinal:
                                                                                                                                 Number(pagoNormalizado.montoBase || 0) +
-                                                                                                                                calcularInteresAutomatico(pago) +
+                                                                                                                                calcularInteresAutomatico(pagoNormalizado) +
                                                                                                                                 Number(pagoNormalizado.servicios || 0),
 
                                                                                                                             metodoPago: "Efectivo",
@@ -1572,141 +1548,42 @@ export default function ClienteModal({
                                                                                                                 >
                                                                                                                     Cobrar
                                                                                                                 </button>
+
+
+
                                                                                                                 <button
-                                                                                                                    className="btn btn-sm btn-outline-success"
-                                                                                                                    onClick={() => {
+                                                                                                                    className="btn btn-sm btn-outline-danger"
+                                                                                                                    onClick={async () => {
 
-                                                                                                                        // 🔥 EXACTAMENTE LA MISMA LÓGICA QUE "COBRAR"
-                                                                                                                        const pagoRelacionado =
-                                                                                                                            clienteSeleccionado?.pagos?.find(
-                                                                                                                                (p) => p.periodoNumero === pago.periodoNumero
-                                                                                                                            );
+                                                                                                                        const confirmar = window.confirm(
+                                                                                                                            `¿Eliminar el pago ${String(pago.mes).padStart(2, "0")}/${pago.anio}?`
+                                                                                                                        );
 
-                                                                                                                        const pagoNormalizado = {
-                                                                                                                            ...pago,
+                                                                                                                        if (!confirmar) return;
 
-                                                                                                                            tipo: "pago",
-                                                                                                                            esLiquidacion: false,
+                                                                                                                        try {
 
-                                                                                                                            contratoId:
-                                                                                                                                pago.contratoId ||
-                                                                                                                                contratoRecibosInquilino?.id ||
-                                                                                                                                "",
+                                                                                                                            await deleteDoc(doc(db, "Pagos", pago.id));
 
-                                                                                                                            // =========================
-                                                                                                                            // LOCADOR
-                                                                                                                            // =========================
-                                                                                                                            clienteNombre:
-                                                                                                                                pago.locadorNombre ||
-                                                                                                                                pago.propietarioNombre ||
-                                                                                                                                pago.clienteNombre ||
-                                                                                                                                clienteSeleccionado?.nombre ||
-                                                                                                                                "Propietario sin nombre",
-
-                                                                                                                            locadorNombre:
-                                                                                                                                pago.locadorNombre ||
-                                                                                                                                pago.propietarioNombre ||
-                                                                                                                                pago.clienteNombre ||
-                                                                                                                                clienteSeleccionado?.nombre ||
-                                                                                                                                "Propietario sin nombre",
-
-                                                                                                                            locadorId:
-                                                                                                                                pago.locadorId ||
-                                                                                                                                clienteSeleccionado?.id ||
-                                                                                                                                "",
-
-                                                                                                                            // =========================
-                                                                                                                            // INQUILINO (🔥 FIX REAL COMO COBRAR)
-                                                                                                                            // =========================
-                                                                                                                            locatarioNombre:
-                                                                                                                                pago.locatarioNombre ||
-                                                                                                                                pago.inquilino?.nombre ||
-                                                                                                                                pago.inquilinoNombre ||
-                                                                                                                                pago.nombreInquilino ||
-                                                                                                                                pago.clienteInquilino?.nombre ||
-                                                                                                                                pagoRelacionado?.locatarioNombre ||
-                                                                                                                                clienteSeleccionado?.nombre ||
-                                                                                                                                "Inquilino sin nombre",
-
-                                                                                                                            locatarioId:
-                                                                                                                                pago.locatarioId ||
-                                                                                                                                pago.inquilinoId ||
-                                                                                                                                pagoRelacionado?.locatarioId ||
-                                                                                                                                "",
-
-                                                                                                                            // =========================
-                                                                                                                            // DIRECCIÓN
-                                                                                                                            // =========================
-                                                                                                                            propiedadDireccion: {
-                                                                                                                                calle:
-                                                                                                                                    pago.propiedadDireccion?.calle ||
-                                                                                                                                    pago.propiedadTitulo ||
-                                                                                                                                    "Sin Dirección",
-                                                                                                                                localidad:
-                                                                                                                                    pago.propiedadDireccion?.localidad || "-",
-                                                                                                                                provincia:
-                                                                                                                                    pago.propiedadDireccion?.provincia || "-",
-                                                                                                                            },
-
-                                                                                                                            // =========================
-                                                                                                                            // MONTOS
-                                                                                                                            // =========================
-                                                                                                                            montoBase: Number(pago.montoBase || 0),
-                                                                                                                            servicios: Number(pago.servicios || 0),
-                                                                                                                            interesGenerado: Number(pago.interesGenerado || 0),
-
-                                                                                                                            montoFinal:
-                                                                                                                                Number(
-                                                                                                                                    pago.montoFinal ??
-                                                                                                                                    (
-                                                                                                                                        Number(pago.montoBase || 0) +
-                                                                                                                                        Number(pago.interesGenerado || 0) +
-                                                                                                                                        Number(pago.servicios || 0)
-                                                                                                                                    )
+                                                                                                                            setClienteSeleccionado({
+                                                                                                                                ...clienteSeleccionado,
+                                                                                                                                pagos: clienteSeleccionado.pagos.filter(
+                                                                                                                                    (p) => p.id !== pago.id
                                                                                                                                 ),
-                                                                                                                        };
+                                                                                                                            });
 
+                                                                                                                            toast.success("Pago eliminado");
 
-                                                                                                                        GenerarRecibo(pagoNormalizado, formatCurrency);
+                                                                                                                        } catch (error) {
+
+                                                                                                                            console.error(error);
+                                                                                                                            toast.error("Error al eliminar pago");
+
+                                                                                                                        }
                                                                                                                     }}
                                                                                                                 >
-                                                                                                                    +R
+                                                                                                                    Eliminar
                                                                                                                 </button>
-
-
-                                                                                                                <button
-    className="btn btn-sm btn-outline-danger"
-    onClick={async () => {
-
-        const confirmar = window.confirm(
-            `¿Eliminar el pago ${String(pago.mes).padStart(2, "0")}/${pago.anio}?`
-        );
-
-        if (!confirmar) return;
-
-        try {
-
-            await deleteDoc(doc(db, "Pagos", pago.id));
-
-            setClienteSeleccionado({
-                ...clienteSeleccionado,
-                pagos: clienteSeleccionado.pagos.filter(
-                    (p) => p.id !== pago.id
-                ),
-            });
-
-            toast.success("Pago eliminado");
-
-        } catch (error) {
-
-            console.error(error);
-            toast.error("Error al eliminar pago");
-
-        }
-    }}
->
-    Eliminar
-</button>
 
                                                                                                             </div>
 
@@ -1810,25 +1687,28 @@ export default function ClienteModal({
                                                                                                             className="form-control"
                                                                                                             value={cobroForm?.montoBase || 0}
                                                                                                             onChange={(e) => {
+                                                                                                                const montoBase = Number(e.target.value);
 
-                                                                                                                const montoBase =
-                                                                                                                    Number(e.target.value);
-
-                                                                                                                setCobroForm({
-                                                                                                                    ...cobroForm,
+                                                                                                                setCobroForm((prev) => ({
+                                                                                                                    ...prev,
 
                                                                                                                     montoBase,
 
                                                                                                                     montoFinal:
                                                                                                                         montoBase +
-                                                                                                                        Number(cobroForm?.servicios || 0) +
-                                                                                                                        Number(cobroForm?.interesGenerado || 0),
-                                                                                                                });
+                                                                                                                        Number(prev.servicios || 0) +
+                                                                                                                        Number(
+                                                                                                                            tipoModal === "liquidacion"
+                                                                                                                                ? -(prev.administracion || 0)
+                                                                                                                                : prev.interesGenerado || 0
+                                                                                                                        ),
+                                                                                                                }));
                                                                                                             }}
                                                                                                         />
 
                                                                                                     </div>
 
+                                                                                                    {/* SERVICIOS */}
                                                                                                     {/* SERVICIOS */}
                                                                                                     <div className="col-md-4">
 
@@ -1837,24 +1717,28 @@ export default function ClienteModal({
                                                                                                         </label>
 
                                                                                                         <input
-                                                                                                            type="number"
+                                                                                                            type="text"
                                                                                                             className="form-control"
-                                                                                                            value={cobroForm?.servicios || 0}
+                                                                                                            placeholder="+100 -50"
+                                                                                                            value={cobroForm?.servicios ?? ""}
                                                                                                             onChange={(e) => {
 
-                                                                                                                const servicios =
-                                                                                                                    Number(e.target.value);
+                                                                                                                const servicios = e.target.value;
 
-                                                                                                                setCobroForm({
-                                                                                                                    ...cobroForm,
+                                                                                                                setCobroForm((prev) => {
 
-                                                                                                                    servicios,
+                                                                                                                    const nuevoForm = {
+                                                                                                                        ...prev,
+                                                                                                                        servicios,
+                                                                                                                    };
 
-                                                                                                                    montoFinal:
-                                                                                                                        Number(cobroForm?.montoBase || 0) +
-                                                                                                                        servicios +
-                                                                                                                        Number(cobroForm?.interesGenerado || 0),
+                                                                                                                    return {
+                                                                                                                        ...nuevoForm,
+                                                                                                                        montoFinal: calcularMontoFinal(nuevoForm, tipoModal),
+                                                                                                                    };
+
                                                                                                                 });
+
                                                                                                             }}
                                                                                                         />
 
@@ -1878,35 +1762,26 @@ export default function ClienteModal({
                                                                                                                     : cobroForm?.interesGenerado || 0
                                                                                                             }
                                                                                                             onChange={(e) => {
-
                                                                                                                 const valor = Number(e.target.value);
 
-                                                                                                                if (tipoModal === "liquidacion") {
+                                                                                                                setCobroForm((prev) => {
 
-                                                                                                                    setCobroForm({
-                                                                                                                        ...cobroForm,
-                                                                                                                        administracion: valor,
+                                                                                                                    const base = Number(prev.montoBase || 0);
+                                                                                                                    const servicios = Number(prev.servicios || 0);
 
-                                                                                                                        montoFinal:
-                                                                                                                            Number(cobroForm?.montoBase || 0) +
-                                                                                                                            Number(cobroForm?.servicios || 0) -
-                                                                                                                            valor,
-                                                                                                                    });
+                                                                                                                    return {
+                                                                                                                        ...prev,
 
-                                                                                                                } else {
-
-                                                                                                                    setCobroForm({
-                                                                                                                        ...cobroForm,
-                                                                                                                        interesGenerado: valor,
+                                                                                                                        ...(tipoModal === "liquidacion"
+                                                                                                                            ? { administracion: valor }
+                                                                                                                            : { interesGenerado: valor }),
 
                                                                                                                         montoFinal:
-                                                                                                                            Number(cobroForm?.montoBase || 0) +
-                                                                                                                            Number(cobroForm?.servicios || 0) +
-                                                                                                                            valor,
-                                                                                                                    });
-
-                                                                                                                }
-
+                                                                                                                            tipoModal === "liquidacion"
+                                                                                                                                ? base + servicios - valor
+                                                                                                                                : base + servicios + valor,
+                                                                                                                    };
+                                                                                                                });
                                                                                                             }}
                                                                                                         />
 
@@ -1925,11 +1800,7 @@ export default function ClienteModal({
                                                                                                                     </div>
 
                                                                                                                     <h2 className="fw-bold text-success mb-0">
-                                                                                                                        {
-                                                                                                                            formatCurrency(
-                                                                                                                                cobroForm?.montoFinal || 0
-                                                                                                                            )
-                                                                                                                        }
+                                                                                                                        {formatCurrency(cobroForm?.montoFinal || 0)}
                                                                                                                     </h2>
                                                                                                                 </div>
 
@@ -2162,6 +2033,12 @@ export default function ClienteModal({
                                                                                                     ...pagoSeleccionado,
                                                                                                     ...pagoActualizado,
 
+                                                                                                    observaciones:
+                                                                                                        cobroForm?.observaciones ||
+                                                                                                        pagoSeleccionado?.observaciones ||
+                                                                                                        pagoActualizado?.observaciones ||
+                                                                                                        "",
+
                                                                                                     administracion:
                                                                                                         cobroForm?.administracion ??
                                                                                                         pagoSeleccionado?.administracion ??
@@ -2213,18 +2090,25 @@ export default function ClienteModal({
                                                                                                 setPagoSeleccionado(null);
                                                                                                 setCobroForm({
                                                                                                     montoBase: 0,
-                                                                                                    interesGenerado: 0,
-                                                                                                    servicios: 0,
+
+                                                                                                    interesGenerado: "",
+                                                                                                    servicios: "",
+                                                                                                    administracion: "",
+
                                                                                                     descuento: 0,
                                                                                                     montoFinal: 0,
+
                                                                                                     metodoPago: "Efectivo",
                                                                                                     estado: "pagado",
-                                                                                                    fechaCobro: cobroForm?.fechaCobro
-                                                                                                        ? new Date(cobroForm.fechaCobro + "T12:00:00")
-                                                                                                        : new Date(), numeroRecibo: "",
+
+                                                                                                    fechaCobro: new Date(),
+
+                                                                                                    numeroRecibo: "",
                                                                                                     numeroOperacion: "",
+
                                                                                                     observaciones: "",
                                                                                                     notasInternas: "",
+
                                                                                                     createdAt: new Date(),
                                                                                                     updatedAt: new Date(),
                                                                                                 });

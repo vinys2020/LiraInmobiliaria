@@ -23,6 +23,8 @@ import { getAuth } from "firebase/auth";
 const auth = getAuth();
 
 export default function PropietariosPage() {
+
+  const [busqueda, setBusqueda] = useState("");
   const [propietarios, setPropietarios] = useState([]);
   const [loading, setLoading] = useState(true);
   const [clienteArchivos, setClienteArchivos] = useState(null);
@@ -34,9 +36,9 @@ export default function PropietariosPage() {
     email: "",
     telefono1: "",
     telefono2: "",
-    
+
     observaciones: "",
-    
+
 
     estado: true,
 
@@ -47,151 +49,151 @@ export default function PropietariosPage() {
     archivos: [],
   });
 
-useEffect(() => {
-  const refClientes = collection(db, "Clientes");
+  useEffect(() => {
+    const refClientes = collection(db, "Clientes");
 
-  const unsub = onSnapshot(refClientes, (snapshot) => {
+    const unsub = onSnapshot(refClientes, (snapshot) => {
 
-    const data = snapshot.docs
-      .map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }))
-      .filter(
-        (c) =>
-          Array.isArray(c.roles) &&
-          c.roles.includes("locador")
-      );
+      const data = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .filter(
+          (c) =>
+            Array.isArray(c.roles) &&
+            c.roles.includes("locador")
+        );
 
-    // Eliminar duplicados
-    const propietariosUnicos = [];
-    const vistos = new Set();
+      // Eliminar duplicados
+      const propietariosUnicos = [];
+      const vistos = new Set();
 
-    data.forEach((cliente) => {
+      data.forEach((cliente) => {
 
-      const clave =
-        cliente.dni?.trim() ||
-        cliente.cuil?.trim() ||
-        cliente.nombre?.trim().toLowerCase();
+        const clave =
+          cliente.dni?.trim() ||
+          cliente.cuil?.trim() ||
+          cliente.nombre?.trim().toLowerCase();
 
-      if (!vistos.has(clave)) {
-        vistos.add(clave);
-        propietariosUnicos.push(cliente);
-      }
+        if (!vistos.has(clave)) {
+          vistos.add(clave);
+          propietariosUnicos.push(cliente);
+        }
 
-    });
-
-    propietariosUnicos.sort((a, b) =>
-      (a.nombre || "").localeCompare(
-        b.nombre || "",
-        "es",
-        { sensitivity: "base" }
-      )
-    );
-
-    setPropietarios(propietariosUnicos);
-    setLoading(false);
-
-  });
-
-  return () => unsub();
-
-}, []);
-
-const guardarCambiosCliente = async () => {
-  try {
-
-    let archivosFinales = [];
-
-    // Archivos que ya existían
-    const archivosExistentes =
-      formEdicion.archivos.filter(
-        (a) => a.url
-      );
-
-    archivosFinales = [...archivosExistentes];
-
-    // Archivos nuevos
-    const archivosNuevos =
-      formEdicion.archivos.filter(
-        (a) => a.file
-      );
-
-    for (const archivo of archivosNuevos) {
-
-      const storageRef = ref(
-        storage,
-        `clientes/${clienteArchivos.id}/${Date.now()}-${archivo.nombre}`
-      );
-
-      await uploadBytes(
-        storageRef,
-        archivo.file
-      );
-
-      const url =
-        await getDownloadURL(storageRef);
-
-      archivosFinales.push({
-        nombre: archivo.nombre,
-        url,
-        createdAt: new Date(),
       });
-    }
 
-    await updateDoc(
-      doc(db, "Clientes", clienteArchivos.id),
-      {
-        nombre: formEdicion.nombre,
-        dni: formEdicion.dni,
-        cuil: formEdicion.cuil,
-        email: formEdicion.email,
-        telefono1: formEdicion.telefono1,
-        telefono2: formEdicion.telefono2,
-        observaciones: formEdicion.observaciones,
-        imagenPerfil: formEdicion.imagenPerfil,
-        estado: formEdicion.estado,
+      propietariosUnicos.sort((a, b) =>
+        (a.nombre || "").localeCompare(
+          b.nombre || "",
+          "es",
+          { sensitivity: "base" }
+        )
+      );
 
-        // 👇 IMPORTANTE
-        archivos: archivosFinales,
+      setPropietarios(propietariosUnicos);
+      setLoading(false);
 
-        updatedAt: serverTimestamp(),
-      }
-    );
-
-    setClienteArchivos({
-      ...clienteArchivos,
-      ...formEdicion,
-      archivos: archivosFinales,
     });
 
-    setModoEdicion(false);
+    return () => unsub();
 
-  } catch (error) {
-    console.error(error);
-  }
-};
+  }, []);
 
-const eliminarCliente = async () => {
-  const confirmar = window.confirm(
-    `¿Eliminar a ${clienteArchivos.nombre}?`
-  );
+  const guardarCambiosCliente = async () => {
+    try {
 
-  if (!confirmar) return;
+      let archivosFinales = [];
 
-  try {
-    await deleteDoc(
-      doc(db, "Clientes", clienteArchivos.id)
+      // Archivos que ya existían
+      const archivosExistentes =
+        formEdicion.archivos.filter(
+          (a) => a.url
+        );
+
+      archivosFinales = [...archivosExistentes];
+
+      // Archivos nuevos
+      const archivosNuevos =
+        formEdicion.archivos.filter(
+          (a) => a.file
+        );
+
+      for (const archivo of archivosNuevos) {
+
+        const storageRef = ref(
+          storage,
+          `clientes/${clienteArchivos.id}/${Date.now()}-${archivo.nombre}`
+        );
+
+        await uploadBytes(
+          storageRef,
+          archivo.file
+        );
+
+        const url =
+          await getDownloadURL(storageRef);
+
+        archivosFinales.push({
+          nombre: archivo.nombre,
+          url,
+          createdAt: new Date(),
+        });
+      }
+
+      await updateDoc(
+        doc(db, "Clientes", clienteArchivos.id),
+        {
+          nombre: formEdicion.nombre,
+          dni: formEdicion.dni,
+          cuil: formEdicion.cuil,
+          email: formEdicion.email,
+          telefono1: formEdicion.telefono1,
+          telefono2: formEdicion.telefono2,
+          observaciones: formEdicion.observaciones,
+          imagenPerfil: formEdicion.imagenPerfil,
+          estado: formEdicion.estado,
+
+          // 👇 IMPORTANTE
+          archivos: archivosFinales,
+
+          updatedAt: serverTimestamp(),
+        }
+      );
+
+      setClienteArchivos({
+        ...clienteArchivos,
+        ...formEdicion,
+        archivos: archivosFinales,
+      });
+
+      setModoEdicion(false);
+
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const eliminarCliente = async () => {
+    const confirmar = window.confirm(
+      `¿Eliminar a ${clienteArchivos.nombre}?`
     );
 
-    setClienteArchivos(null);
-    setModoEdicion(false);
+    if (!confirmar) return;
 
-  } catch (error) {
-    console.error(error);
-    alert("Error al eliminar cliente");
-  }
-};
+    try {
+      await deleteDoc(
+        doc(db, "Clientes", clienteArchivos.id)
+      );
+
+      setClienteArchivos(null);
+      setModoEdicion(false);
+
+    } catch (error) {
+      console.error(error);
+      alert("Error al eliminar cliente");
+    }
+  };
 
   const formatFecha = (fecha) => {
     if (!fecha) return "-";
@@ -208,28 +210,40 @@ const eliminarCliente = async () => {
   };
 
   if (loading) {
-  return (
-    <div
-      className="d-flex justify-content-center align-items-center"
-      style={{
-        minHeight: "100vh",
-      }}
-    >
-      <div className="text-center">
-        <div
-          className="spinner-border text-primary"
-          style={{
-            width: "4rem",
-            height: "4rem",
-          }}
-        />
-        <p className="mt-3 fw-semibold">
-          Cargando información...
-        </p>
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{
+          minHeight: "100vh",
+        }}
+      >
+        <div className="text-center">
+          <div
+            className="spinner-border text-primary"
+            style={{
+              width: "4rem",
+              height: "4rem",
+            }}
+          />
+          <p className="mt-3 fw-semibold">
+            Cargando información...
+          </p>
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
+
+  const propietariosFiltrados = propietarios.filter((cliente) => {
+    const texto = busqueda.toLowerCase().trim();
+
+    return (
+      cliente.nombre?.toLowerCase().includes(texto) ||
+      cliente.dni?.toLowerCase().includes(texto) ||
+      cliente.cuil?.toLowerCase().includes(texto) ||
+      cliente.email?.toLowerCase().includes(texto) ||
+      cliente.telefono1?.toLowerCase().includes(texto)
+    );
+  });
 
   return (
     <div
@@ -258,6 +272,30 @@ const eliminarCliente = async () => {
       ) : (
         <div className="card shadow border-0">
           <div className="card-body">
+
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <div className="input-group">
+                  <span className="input-group-text">
+                    <i className="bi bi-search"></i>
+                  </span>
+
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Buscar por nombre, DNI, CUIL, email o teléfono..."
+                    value={busqueda}
+                    onChange={(e) => setBusqueda(e.target.value)}
+                  />
+                </div>
+              </div>
+
+              <div className="col-md-6 text-end">
+                <span className="badge bg-primary fs-6">
+                  Resultados: {propietariosFiltrados.length}
+                </span>
+              </div>
+            </div>
 
             <div className="table-responsive">
 
@@ -288,81 +326,80 @@ const eliminarCliente = async () => {
                       </td>
                     </tr>
                   ) : (
-                    propietarios.map((cliente) => (
-                      <tr key={cliente.id}>
+                    propietariosFiltrados.map((cliente) => (<tr key={cliente.id}>
 
-                        <td>
+                      <td>
 
-                          {cliente.imagenPerfil ? (
-                            <img
-                              src={cliente.imagenPerfil}
-                              alt=""
-                              width="50"
-                              height="50"
-                              className="rounded-circle object-fit-cover"
-                            />
-                          ) : (
-                            <div
-                              className="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center"
-                              style={{
-                                width: 50,
-                                height: 50,
-                              }}
-                            >
-                              <i className="bi bi-person-fill"></i>
-                            </div>
-                          )}
-
-                        </td>
-
-                        <td className="fw-semibold">
-                          {cliente.nombre || "-"}
-                        </td>
-
-                        <td>{cliente.dni || "-"}</td>
-
-                        <td>{cliente.email || "-"}</td>
-
-                        <td>{cliente.telefono1 || "-"}</td>
-
-                        <td>
-
-                          <span
-                            className={`badge ${cliente.estado
-                              ? "bg-success"
-                              : "bg-danger"
-                              }`}
+                        {cliente.imagenPerfil ? (
+                          <img
+                            src={cliente.imagenPerfil}
+                            alt=""
+                            width="50"
+                            height="50"
+                            className="rounded-circle object-fit-cover"
+                          />
+                        ) : (
+                          <div
+                            className="bg-secondary text-white rounded-circle d-flex align-items-center justify-content-center"
+                            style={{
+                              width: 50,
+                              height: 50,
+                            }}
                           >
-                            {cliente.estado
-                              ? "Activo"
-                              : "Inactivo"}
-                          </span>
+                            <i className="bi bi-person-fill"></i>
+                          </div>
+                        )}
 
-                        </td>
+                      </td>
 
-                        <td>
+                      <td className="fw-semibold">
+                        {cliente.nombre || "-"}
+                      </td>
 
-                          <span className="badge bg-primary">
-                            {cliente.archivos?.length || 0}
-                          </span>
+                      <td>{cliente.dni || "-"}</td>
 
-                        </td>
+                      <td>{cliente.email || "-"}</td>
 
-                        <td>
+                      <td>{cliente.telefono1 || "-"}</td>
 
-                          <button
-                            className="btn btn-sm btn-outline-primary"
-                            onClick={() =>
-                              setClienteArchivos(cliente)
-                            }
-                          >
-                            <i className="bi bi-eye-fill me-1"></i>
-                            Ver Detalle
-                          </button>
+                      <td>
 
-                        </td>
+                        <span
+                          className={`badge ${cliente.estado
+                            ? "bg-success"
+                            : "bg-danger"
+                            }`}
+                        >
+                          {cliente.estado
+                            ? "Activo"
+                            : "Inactivo"}
+                        </span>
 
-                      </tr>
+                      </td>
+
+                      <td>
+
+                        <span className="badge bg-primary">
+                          {cliente.archivos?.length || 0}
+                        </span>
+
+                      </td>
+
+                      <td>
+
+                        <button
+                          className="btn btn-sm btn-outline-primary"
+                          onClick={() =>
+                            setClienteArchivos(cliente)
+                          }
+                        >
+                          <i className="bi bi-eye-fill me-1"></i>
+                          Ver Detalle
+                        </button>
+
+                      </td>
+
+                    </tr>
                     ))
                   )}
 
@@ -823,13 +860,13 @@ const eliminarCliente = async () => {
 
                   )}
 
-                    <button
-    className="btn btn-danger me-auto"
-    onClick={eliminarCliente}
-  >
-    <i className="bi bi-trash-fill me-2"></i>
-    Eliminar Cliente
-  </button>
+                  <button
+                    className="btn btn-danger me-auto"
+                    onClick={eliminarCliente}
+                  >
+                    <i className="bi bi-trash-fill me-2"></i>
+                    Eliminar Cliente
+                  </button>
 
                   <button
                     className="btn btn-outline-dark"
