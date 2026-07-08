@@ -78,33 +78,34 @@ export default function ClienteModal({
 
 
 
-    const calcularInteresAutomatico = (pago) => {
-        const hoy = new Date();
-        hoy.setHours(0, 0, 0, 0);
+const calcularInteresAutomatico = (pago) => {
+    const hoy = new Date();
+    hoy.setHours(0, 0, 0, 0);
 
-        const anio = Number(pago?.anio);
-        const mes = Number(pago?.mes);
+    const anio = Number(pago?.anio);
+    const mes = Number(pago?.mes);
 
-        if (!anio || !mes) return 0;
+    if (!anio || !mes) return 0;
 
-        const inicioMes = new Date(anio, mes - 1, 1);
-        inicioMes.setHours(0, 0, 0, 0);
+    // Fecha desde la que empieza la mora
+    const inicioMes = new Date(anio, mes - 1, 1);
+    inicioMes.setHours(0, 0, 0, 0);
 
-        if (hoy < inicioMes) return 0;
+    if (hoy < inicioMes) return 0;
 
-        let diasMora = Math.floor((hoy - inicioMes) / (1000 * 60 * 60 * 24)) + 1;
-        diasMora = Math.min(diasMora, 30);
+    // Días transcurridos desde el inicio del período
+    const diasMora =
+        Math.floor((hoy - inicioMes) / (1000 * 60 * 60 * 24)) + 1;
 
-        const montoBase = Number(pago?.montoBase || 0);
+    const montoBase = Number(pago?.montoBase || 0);
 
-        const porcentajeDiario = Number(contratoActivo?.interesMoraDiario) || 1;
-        if (!porcentajeDiario) {
-            console.log("⚠ contrato sin interesMoraDiario");
-        }
-        return Math.round(
-            montoBase * (porcentajeDiario / 100) * diasMora
-        );
-    };
+    const porcentajeDiario =
+        Number(contratoActivo?.interesMoraDiario) || 1;
+
+    return Math.round(
+        montoBase * (porcentajeDiario / 100) * diasMora
+    );
+};
 
 
 

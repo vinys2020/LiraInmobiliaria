@@ -1876,78 +1876,114 @@ export default function CustomerDashboard() {
 
 
 
-    <article className="container-fluid">
+    <article className="container-fluid py-4 px-3 px-md-4 px-lg-5">
 
-      <div className="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-6">
+<div className="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-6 row-cols-xl-6 mb-4">
 
-        <div className="col">
-          <div className="card border-0 shadow-sm text-center h-100">
-            <div className="card-body py-3">
-              <h6 className="fw-bold mb-1">Casa Propia</h6>
-              <h4 className="fw-bold mb-1">47,64%</h4>
-              <small className="text-muted">Abril 2026</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="col">
-          <div className="card border-0 shadow-sm text-center h-100">
-            <div className="card-body py-3">
-              <h6 className="fw-bold mb-1">IPC</h6>
-              <h4 className="fw-bold mb-1">32,35%</h4>
-              <small className="text-muted">Abril 2026</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="col">
-          <div className="card border-0 shadow-sm text-center h-100">
-            <div className="card-body py-3">
-              <h6 className="fw-bold mb-1">CÁC</h6>
-              <h4 className="fw-bold mb-1">26,08%</h4>
-              <small className="text-muted">Abril 2026</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="col">
-          <div className="card border-0 shadow-sm text-center h-100">
-            <div className="card-body py-3">
-              <h6 className="fw-bold mb-1">UVA</h6>
-              <h4 className="fw-bold mb-1">32,71%</h4>
-              <small className="text-muted">Abril 2026</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="col">
-          <div className="card border-0 shadow-sm text-center h-100">
-            <div className="card-body py-3">
-              <h6 className="fw-bold mb-1">CER</h6>
-              <h4 className="fw-bold mb-1">32,73%</h4>
-              <small className="text-muted">Abril 2026</small>
-            </div>
-          </div>
-        </div>
-
-        <div className="col">
-          <div className="card border-0 shadow-sm text-center h-100">
-            <div className="card-body py-3">
-              <h6 className="fw-bold mb-1">ICL</h6>
-              <h4 className="fw-bold mb-1">33,3%</h4>
-              <small className="text-muted">Abril 2026</small>
-            </div>
-          </div>
-        </div>
-
+  <div className="col">
+    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+      <div className="bg-primary" style={{ height: "5px" }}></div>
+      <div className="card-body text-center py-4">
+        <i className="bi bi-house-door-fill text-primary fs-2 mb-2"></i>
+        <p className="text-uppercase text-secondary fw-semibold small mb-1">
+          Casa Propia
+        </p>
+        <h4 className="fw-bold text-dark mb-2">36,89%</h4>
+        <span className="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
+          Julio 2026
+        </span>
       </div>
+    </div>
+  </div>
+
+  <div className="col">
+    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+      <div className="bg-success" style={{ height: "5px" }}></div>
+      <div className="card-body text-center py-4">
+        <i className="bi bi-graph-up-arrow text-success fs-2 mb-2"></i>
+        <p className="text-uppercase text-secondary fw-semibold small mb-1">
+          IPC
+        </p>
+        <h4 className="fw-bold text-dark mb-2">33,20%</h4>
+        <span className="badge bg-success-subtle text-success rounded-pill px-3 py-2">
+          Mayo 2026
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div className="col">
+    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+      <div className="bg-warning" style={{ height: "5px" }}></div>
+      <div className="card-body text-center py-4">
+        <i className="bi bi-building text-warning fs-2 mb-2"></i>
+        <p className="text-uppercase text-secondary fw-semibold small mb-1">
+          CÁC
+        </p>
+        <h4 className="fw-bold text-dark mb-2">26,08%</h4>
+        <span className="badge bg-warning-subtle text-dark rounded-pill px-3 py-2">
+          Abril 2026
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div className="col">
+    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+      <div className="bg-info" style={{ height: "5px" }}></div>
+      <div className="card-body text-center py-4">
+        <i className="bi bi-bank text-info fs-2 mb-2"></i>
+        <p className="text-uppercase text-secondary fw-semibold small mb-1">
+          UVA
+        </p>
+        <h4 className="fw-bold text-dark mb-2">32,77%</h4>
+        <span className="badge bg-info-subtle text-info rounded-pill px-3 py-2">
+          Julio 2026
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div className="col">
+    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+      <div className="bg-danger" style={{ height: "5px" }}></div>
+      <div className="card-body text-center py-4">
+        <i className="bi bi-bar-chart-fill text-danger fs-2 mb-2"></i>
+        <p className="text-uppercase text-secondary fw-semibold small mb-1">
+          CER
+        </p>
+        <h4 className="fw-bold text-dark mb-2">32,80%</h4>
+        <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2">
+          Julio 2026
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div className="col">
+    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+      <div className="bg-dark" style={{ height: "5px" }}></div>
+      <div className="card-body text-center py-4">
+        <i className="bi bi-calculator-fill text-dark fs-2 mb-2"></i>
+        <p className="text-uppercase text-secondary fw-semibold small mb-1">
+          ICL
+        </p>
+        <h4 className="fw-bold text-dark mb-2">32,02%</h4>
+        <span className="badge bg-dark-subtle text-dark rounded-pill px-3 py-2">
+          Junio 2026
+        </span>
+      </div>
+    </div>
+  </div>
+
+</div>
 
 
 
       <CalculadoraAlquiler />
 
       <article className="container py-4">
-        <div className="row g-4 justify-content-center">
+        <div className="row g-4 justify-content-center ">
 
           <div className="col-12 col-sm-6 col-lg-4 col-xl-4">
             <a
