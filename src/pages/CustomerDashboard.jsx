@@ -107,70 +107,7 @@ export default function CustomerDashboard() {
   const [showClienteModal, setShowClienteModal] = useState(false);
   const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
 
-  const cargarCantidadProximosPeriodos = async () => {
-    try {
-      const pagosSnap = await getDocs(collection(db, "Pagos"));
-      const contratosSnap = await getDocs(collection(db, "Contratos"));
 
-      const contratosMap = {};
-
-      contratosSnap.docs.forEach((doc) => {
-        contratosMap[doc.id] = doc.data();
-      });
-
-      const pagosPorContrato = {};
-
-      pagosSnap.docs.forEach((doc) => {
-        const pago = doc.data();
-
-        if (
-          !pago.contratoId ||
-          String(pago.estado || "").toLowerCase() === "pagado"
-        ) {
-          return;
-        }
-
-        if (!pagosPorContrato[pago.contratoId]) {
-          pagosPorContrato[pago.contratoId] = [];
-        }
-
-        pagosPorContrato[pago.contratoId].push(pago);
-      });
-
-      let cantidad = 0;
-
-      Object.keys(pagosPorContrato).forEach((contratoId) => {
-        const contrato = contratosMap[contratoId];
-
-        if (!contrato) return;
-
-        const periodoActualizacion = Number(
-          contrato.periodoActualizacion || 0
-        );
-
-        if (!periodoActualizacion) return;
-
-        const primerPendiente = pagosPorContrato[contratoId]
-          .sort(
-            (a, b) =>
-              Number(a.numeroCuota || 0) -
-              Number(b.numeroCuota || 0)
-          )[0];
-
-        const proximaCuota =
-          Number(primerPendiente.numeroCuota || 0) + 1;
-
-        if (proximaCuota % periodoActualizacion === 0) {
-          cantidad++;
-        }
-      });
-
-      setCantidadProximosPeriodos(cantidad);
-
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const [formData, setFormData] = useState({
 
@@ -269,6 +206,224 @@ export default function CustomerDashboard() {
     cargarCantidadProximosPeriodos();
   }, []);
 
+  const cargarCantidadProximosPeriodos = async () => {
+
+    try {
+
+      const hoy = new Date();
+
+      const mesActual = hoy.getMonth() + 1;
+      const anioActual = hoy.getFullYear();
+
+      const pagosSnap = await getDocs(
+        collection(db, "Pagos")
+      );
+
+      const contratosSnap = await getDocs(
+        collection(db, "Contratos")
+      );
+
+      // ==========================================
+      // MAPA DE CONTRATOS
+      // ==========================================
+
+      const contratosMap = {};
+
+      contratosSnap.docs.forEach((doc) => {
+
+        contratosMap[doc.id] = {
+          id: doc.id,
+          ...doc.data()
+        };
+
+      });
+
+      // ==========================================
+      // RESULTADOS
+      // MISMA LÓGICA QUE PROXIMOSPERIODOS
+      // ==========================================
+
+      const resultados = [];
+
+      pagosSnap.docs.forEach((doc) => {
+
+        const pago = {
+          id: doc.id,
+          ...doc.data()
+        };
+
+        // ==========================================
+        // VALIDACIONES
+        // ==========================================
+
+        if (!pago.contratoId) {
+          return;
+        }
+
+        if (
+          String(
+            pago.estado || ""
+          ).toLowerCase() === "pagado"
+        ) {
+          return;
+        }
+
+        // ==========================================
+        // BUSCAR CONTRATO
+        // ==========================================
+
+        const contrato =
+          contratosMap[pago.contratoId];
+
+        if (!contrato) {
+          return;
+        }
+
+        // ==========================================
+        // PERÍODO DE ACTUALIZACIÓN
+        // ==========================================
+
+        const periodoActualizacion =
+          Number(
+            contrato.periodoActualizacion || 0
+          );
+
+        if (!periodoActualizacion) {
+          return;
+        }
+
+        // ==========================================
+        // CUOTA ACTUAL
+        // ==========================================
+
+        const cuotaActual =
+          Number(
+            pago.numeroCuota || 0
+          );
+
+        if (!cuotaActual) {
+          return;
+        }
+
+        // ==========================================
+        // PRÓXIMA CUOTA
+        // ==========================================
+
+        const proximaCuota =
+          cuotaActual + 1;
+
+        // ==========================================
+        // ¿LA PRÓXIMA CUOTA CAMBIA DE PERÍODO?
+        // ==========================================
+
+        if (
+          proximaCuota %
+          periodoActualizacion !==
+          0
+        ) {
+          return;
+        }
+
+        // ==========================================
+        // FECHA BASE
+        // ==========================================
+
+        const fechaBase =
+          pago.fechaVencimiento
+            ?.toDate?.() ||
+          pago.fecha
+            ?.toDate?.() ||
+          null;
+
+        let fechaCambio;
+
+        if (fechaBase) {
+
+          fechaCambio =
+            new Date(fechaBase);
+
+          fechaCambio.setMonth(
+            fechaCambio.getMonth() + 1
+          );
+
+        } else {
+
+          const anioPago =
+            Number(
+              pago.anio ||
+              anioActual
+            );
+
+          const mesPago =
+            Number(
+              pago.mes ||
+              mesActual
+            );
+
+          fechaCambio =
+            new Date(
+              anioPago,
+              mesPago - 1,
+              1
+            );
+
+          fechaCambio.setMonth(
+            fechaCambio.getMonth() + 1
+          );
+
+        }
+
+        // ==========================================
+        // ¿ES DEL MES ACTUAL?
+        // ==========================================
+
+        if (
+          fechaCambio.getMonth() + 1 ===
+          mesActual &&
+          fechaCambio.getFullYear() ===
+          anioActual
+        ) {
+
+          resultados.push({
+            ...pago,
+            contrato,
+            fechaCambio
+          });
+
+        }
+
+      });
+
+      // ==========================================
+      // CANTIDAD FINAL
+      // ==========================================
+
+      setCantidadProximosPeriodos(
+        resultados.length
+      );
+
+      console.log(
+        "CANTIDAD PRÓXIMOS PERÍODOS:",
+        resultados.length
+      );
+
+      console.log(
+        "CONTRATOS QUE ACTUALIZAN ESTE MES:",
+        resultados
+      );
+
+    } catch (error) {
+
+      console.error(
+        "Error obteniendo próximos períodos:",
+        error
+      );
+
+      setCantidadProximosPeriodos(0);
+
+    }
+
+  };
   useEffect(() => {
 
     const cargarClientes = async () => {
@@ -1878,105 +2033,105 @@ export default function CustomerDashboard() {
 
     <article className="container-fluid py-4 px-3 px-md-4 px-lg-5">
 
-<div className="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-6 row-cols-xl-6 mb-4">
+      <div className="row g-3 row-cols-2 row-cols-md-3 row-cols-lg-6 row-cols-xl-6 mb-4">
 
-  <div className="col">
-    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
-      <div className="bg-primary" style={{ height: "5px" }}></div>
-      <div className="card-body text-center py-4">
-        <i className="bi bi-house-door-fill text-primary fs-2 mb-2"></i>
-        <p className="text-uppercase text-secondary fw-semibold small mb-1">
-          Casa Propia
-        </p>
-        <h4 className="fw-bold text-dark mb-2">36,89%</h4>
-        <span className="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
-          Julio 2026
-        </span>
+        <div className="col">
+          <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+            <div className="bg-primary" style={{ height: "5px" }}></div>
+            <div className="card-body text-center py-4">
+              <i className="bi bi-house-door-fill text-primary fs-2 mb-2"></i>
+              <p className="text-uppercase text-secondary fw-semibold small mb-1">
+                Casa Propia
+              </p>
+              <h4 className="fw-bold text-dark mb-2">36,89%</h4>
+              <span className="badge bg-primary-subtle text-primary rounded-pill px-3 py-2">
+                Julio 2026
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="col">
+          <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+            <div className="bg-success" style={{ height: "5px" }}></div>
+            <div className="card-body text-center py-4">
+              <i className="bi bi-graph-up-arrow text-success fs-2 mb-2"></i>
+              <p className="text-uppercase text-secondary fw-semibold small mb-1">
+                IPC
+              </p>
+              <h4 className="fw-bold text-dark mb-2">33,20%</h4>
+              <span className="badge bg-success-subtle text-success rounded-pill px-3 py-2">
+                Mayo 2026
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="col">
+          <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+            <div className="bg-warning" style={{ height: "5px" }}></div>
+            <div className="card-body text-center py-4">
+              <i className="bi bi-building text-warning fs-2 mb-2"></i>
+              <p className="text-uppercase text-secondary fw-semibold small mb-1">
+                CÁC
+              </p>
+              <h4 className="fw-bold text-dark mb-2">26,08%</h4>
+              <span className="badge bg-warning-subtle text-dark rounded-pill px-3 py-2">
+                Abril 2026
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="col">
+          <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+            <div className="bg-info" style={{ height: "5px" }}></div>
+            <div className="card-body text-center py-4">
+              <i className="bi bi-bank text-info fs-2 mb-2"></i>
+              <p className="text-uppercase text-secondary fw-semibold small mb-1">
+                UVA
+              </p>
+              <h4 className="fw-bold text-dark mb-2">32,77%</h4>
+              <span className="badge bg-info-subtle text-info rounded-pill px-3 py-2">
+                Julio 2026
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="col">
+          <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+            <div className="bg-danger" style={{ height: "5px" }}></div>
+            <div className="card-body text-center py-4">
+              <i className="bi bi-bar-chart-fill text-danger fs-2 mb-2"></i>
+              <p className="text-uppercase text-secondary fw-semibold small mb-1">
+                CER
+              </p>
+              <h4 className="fw-bold text-dark mb-2">32,80%</h4>
+              <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2">
+                Julio 2026
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="col">
+          <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
+            <div className="bg-dark" style={{ height: "5px" }}></div>
+            <div className="card-body text-center py-4">
+              <i className="bi bi-calculator-fill text-dark fs-2 mb-2"></i>
+              <p className="text-uppercase text-secondary fw-semibold small mb-1">
+                ICL
+              </p>
+              <h4 className="fw-bold text-dark mb-2">32,02%</h4>
+              <span className="badge bg-dark-subtle text-dark rounded-pill px-3 py-2">
+                Junio 2026
+              </span>
+            </div>
+          </div>
+        </div>
+
       </div>
-    </div>
-  </div>
-
-  <div className="col">
-    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
-      <div className="bg-success" style={{ height: "5px" }}></div>
-      <div className="card-body text-center py-4">
-        <i className="bi bi-graph-up-arrow text-success fs-2 mb-2"></i>
-        <p className="text-uppercase text-secondary fw-semibold small mb-1">
-          IPC
-        </p>
-        <h4 className="fw-bold text-dark mb-2">33,20%</h4>
-        <span className="badge bg-success-subtle text-success rounded-pill px-3 py-2">
-          Mayo 2026
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div className="col">
-    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
-      <div className="bg-warning" style={{ height: "5px" }}></div>
-      <div className="card-body text-center py-4">
-        <i className="bi bi-building text-warning fs-2 mb-2"></i>
-        <p className="text-uppercase text-secondary fw-semibold small mb-1">
-          CÁC
-        </p>
-        <h4 className="fw-bold text-dark mb-2">26,08%</h4>
-        <span className="badge bg-warning-subtle text-dark rounded-pill px-3 py-2">
-          Abril 2026
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div className="col">
-    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
-      <div className="bg-info" style={{ height: "5px" }}></div>
-      <div className="card-body text-center py-4">
-        <i className="bi bi-bank text-info fs-2 mb-2"></i>
-        <p className="text-uppercase text-secondary fw-semibold small mb-1">
-          UVA
-        </p>
-        <h4 className="fw-bold text-dark mb-2">32,77%</h4>
-        <span className="badge bg-info-subtle text-info rounded-pill px-3 py-2">
-          Julio 2026
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div className="col">
-    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
-      <div className="bg-danger" style={{ height: "5px" }}></div>
-      <div className="card-body text-center py-4">
-        <i className="bi bi-bar-chart-fill text-danger fs-2 mb-2"></i>
-        <p className="text-uppercase text-secondary fw-semibold small mb-1">
-          CER
-        </p>
-        <h4 className="fw-bold text-dark mb-2">32,80%</h4>
-        <span className="badge bg-danger-subtle text-danger rounded-pill px-3 py-2">
-          Julio 2026
-        </span>
-      </div>
-    </div>
-  </div>
-
-  <div className="col">
-    <div className="card border-0 shadow-sm rounded-4 h-100 overflow-hidden">
-      <div className="bg-dark" style={{ height: "5px" }}></div>
-      <div className="card-body text-center py-4">
-        <i className="bi bi-calculator-fill text-dark fs-2 mb-2"></i>
-        <p className="text-uppercase text-secondary fw-semibold small mb-1">
-          ICL
-        </p>
-        <h4 className="fw-bold text-dark mb-2">32,02%</h4>
-        <span className="badge bg-dark-subtle text-dark rounded-pill px-3 py-2">
-          Junio 2026
-        </span>
-      </div>
-    </div>
-  </div>
-
-</div>
 
 
 
@@ -2125,10 +2280,12 @@ export default function CustomerDashboard() {
           </div>
 
           <div className="col-12 col-sm-6 col-lg-4 col-xl-4">
+
             <a
               href="/proximos-periodos"
               className="text-decoration-none hvr-grow d-block h-100"
             >
+
               <div className="card border-0 shadow-sm h-100 text-center">
 
                 <div className="card-body d-flex align-items-center justify-content-center gap-3">
@@ -2140,7 +2297,8 @@ export default function CustomerDashboard() {
                   />
 
                   <div className="fw-semibold">
-                    Próximos Período
+
+                    Próximos Períodos
 
                     <span className="badge bg-danger ms-2">
                       {cantidadProximosPeriodos}
@@ -2151,7 +2309,9 @@ export default function CustomerDashboard() {
                 </div>
 
               </div>
+
             </a>
+
           </div>
 
 
@@ -2266,6 +2426,9 @@ export default function CustomerDashboard() {
             <TablaContratos
               contratosFiltrados={contratosFiltrados}
               openRow={openRow}
+
+              clientes={clientes}
+
               toggleRow={toggleRow}
               abrirCliente={abrirCliente}
               verRecibosInquilino={verRecibosInquilino}

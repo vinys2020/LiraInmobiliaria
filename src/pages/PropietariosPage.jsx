@@ -505,6 +505,13 @@ export default function PropietariosPage() {
                         </div>
 
                         <div className="col-md-6">
+                          <strong>ID Propietario:</strong><br />
+                          <span className="text-muted">
+                            {clienteArchivos.id || "-"}
+                          </span>
+                        </div>
+
+                        <div className="col-md-6">
                           <strong>DNI:</strong><br />
 
                           {modoEdicion ? (

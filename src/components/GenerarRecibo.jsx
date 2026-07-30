@@ -631,8 +631,44 @@ const GenerarRecibo = (pago, formatCurrency) => {
     );
 
     // =====================================================
-    // TEXTO ABAJO DE LA LINEA
+    // OBSERVACIONES (ORIGINAL)
     // =====================================================
+
+    const observacionesOriginalY = finalY + 18;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(8);
+
+    doc.text("OBSERVACIONES:", 14, observacionesOriginalY);
+
+    doc.setDrawColor(180);
+
+    doc.rect(
+        14,
+        observacionesOriginalY + 2,
+        182,
+        10
+    );
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(7);
+
+    doc.text(
+        observaciones.trim() !== ""
+            ? observaciones
+            : "Sin observaciones.",
+        16,
+        observacionesOriginalY + 5,
+        {
+            maxWidth: 176,
+        }
+    );
+
+    // =====================================================
+    // TEXTO ABAJO DE LA LINEA (ORIGINAL)
+    // =====================================================
+
+    const textoFinalOriginalY = finalY + 35;
 
     doc.setFontSize(8);
 
@@ -641,7 +677,7 @@ const GenerarRecibo = (pago, formatCurrency) => {
             p.montoFinal || 0
         )} (${p.montoLetras || ""}) POR EL ALQUILER DE UNA PROPIEDAD QUE OCUPA EN LA CALLE ${p.propiedadDireccion?.calle || "-"}, Dpto: ${p.propiedadDireccion?.departamento || "-"}, U.F.: ${p.propiedadDireccion?.unidadFuncional || "-"}.`,
         14,
-        finalY + 35,
+        textoFinalOriginalY,
         {
             maxWidth: 176,
             align: "justify"
@@ -649,10 +685,10 @@ const GenerarRecibo = (pago, formatCurrency) => {
     );
 
     // =====================================================
-    // LINEA DE CORTE
+    // LINEA DE CORTE (ORIGINAL)
     // =====================================================
 
-    const corteY = finalY + 42;
+    const corteOriginalY = finalY + 42;
 
     doc.setDrawColor(140);
 
@@ -660,9 +696,9 @@ const GenerarRecibo = (pago, formatCurrency) => {
 
     doc.line(
         10,
-        corteY,
+        corteOriginalY,
         200,
-        corteY
+        corteOriginalY
     );
 
     doc.setLineDashPattern([], 0);
@@ -670,8 +706,7 @@ const GenerarRecibo = (pago, formatCurrency) => {
     // DUPLICADO
     // =====================================================
 
-    const resumenY = corteY + 6;
-
+    const resumenY = corteOriginalY + 6;
     // BORDE
     doc.setDrawColor(180);
     doc.rect(

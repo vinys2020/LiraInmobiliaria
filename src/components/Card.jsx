@@ -45,13 +45,13 @@ const Card = ({ propiedad }) => {
       >
         {/* Imagen + badge */}
         <div className="position-relative">
-        <img
-  alt={propiedad.titulo}
-  className="card-img-top"
-  src={imagenes[imgIndex]}
-  loading="lazy"
-    style={{ objectFit: "cover", height: "250px" }}
-/>
+          <img
+            alt={propiedad.titulo}
+            className="card-img-top"
+            src={imagenes[imgIndex]}
+            loading="lazy"
+            style={{ objectFit: "cover", height: "250px" }}
+          />
 
           {imagenes.length > 1 && (
             <>
@@ -93,7 +93,7 @@ const Card = ({ propiedad }) => {
               >
                 &#8250;
               </button>
-              
+
             </>
           )}
 
@@ -117,7 +117,9 @@ const Card = ({ propiedad }) => {
         <div className="card-body d-flex flex-column p-4">
           <h5 className="card-title text-truncate mb-2">{propiedad.titulo}</h5>
           <h6 className="fw-bold text-success mb-2">
-            {formatPrecio(propiedad.precio, propiedad.moneda)}
+            {Number(propiedad.precio) > 0
+              ? formatPrecio(propiedad.precio, propiedad.moneda)
+              : "Consultar el precio"}
           </h6>
 
           <p

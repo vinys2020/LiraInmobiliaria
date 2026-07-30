@@ -78,34 +78,76 @@ export default function ClienteModal({
 
 
 
-const calcularInteresAutomatico = (pago) => {
-    const hoy = new Date();
-    hoy.setHours(0, 0, 0, 0);
+    const calcularInteresAutomatico = (pago) => {
 
-    const anio = Number(pago?.anio);
-    const mes = Number(pago?.mes);
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
 
-    if (!anio || !mes) return 0;
+        const anio = Number(pago?.anio);
+        const mes = Number(pago?.mes);
 
-    // Fecha desde la que empieza la mora
-    const inicioMes = new Date(anio, mes - 1, 1);
-    inicioMes.setHours(0, 0, 0, 0);
+        if (!anio || !mes) return 0;
 
-    if (hoy < inicioMes) return 0;
 
-    // Días transcurridos desde el inicio del período
-    const diasMora =
-        Math.floor((hoy - inicioMes) / (1000 * 60 * 60 * 24)) + 1;
+        // ==========================================
+        // FECHA DESDE LA QUE EMPIEZA LA MORA
+        // ==========================================
 
-    const montoBase = Number(pago?.montoBase || 0);
+        const inicioMes = new Date(anio, mes - 1, 1);
+        inicioMes.setHours(0, 0, 0, 0);
 
-    const porcentajeDiario =
-        Number(contratoActivo?.interesMoraDiario) || 1;
+        if (hoy < inicioMes) return 0;
 
-    return Math.round(
-        montoBase * (porcentajeDiario / 100) * diasMora
-    );
-};
+
+        // ==========================================
+        // DÍAS DE MORA
+        // ==========================================
+
+        const diasMora =
+            Math.floor(
+                (hoy - inicioMes) /
+                (1000 * 60 * 60 * 24)
+            ) + 1;
+
+
+        // ==========================================
+        // MONTO
+        // ==========================================
+        // PAGOS:
+        // pago.montoBase
+        //
+        // LIQUIDACIONES:
+        // liquidacion.montoCobrado
+
+        const montoBase = Number(
+            pago?.montoBase ??
+            pago?.montoCobrado ??
+            0
+        );
+
+
+        // ==========================================
+        // INTERÉS DIARIO DEL CONTRATO
+        // ==========================================
+
+        const porcentajeDiario =
+            Number(
+                pago?.interesMoraDiario ??
+                contratoActivo?.interesMoraDiario
+            ) || 1;
+
+
+        // ==========================================
+        // INTERÉS TOTAL
+        // ==========================================
+
+        return Math.round(
+            montoBase *
+            (porcentajeDiario / 100) *
+            diasMora
+        );
+
+    };
 
 
 
@@ -191,6 +233,7 @@ const calcularInteresAutomatico = (pago) => {
                 p.fechaLiquidacion ??
                 p.fechaCobro ??
                 new Date().toISOString().split("T")[0],
+
 
             periodoNumero:
                 p.periodoNumero || "-",
@@ -554,6 +597,43 @@ const calcularInteresAutomatico = (pago) => {
                                                                         )}
                                                                     </div>
                                                                 </div>
+
+                                                                <div className="mb-3">
+                                                                    <strong>Comisión Inmobiliaria:</strong>
+
+                                                                    <div>
+                                                                        {modoEdicion ? (
+                                                                            <div className="input-group">
+
+                                                                                <input
+                                                                                    type="number"
+                                                                                    step="0.01"
+                                                                                    min="0"
+                                                                                    className="form-control"
+                                                                                    value={
+                                                                                        formEdicion?.comisionInmobiliaria ?? ""
+                                                                                    }
+                                                                                    onChange={(e) =>
+                                                                                        setFormEdicion({
+                                                                                            ...formEdicion,
+                                                                                            comisionInmobiliaria: e.target.value
+                                                                                        })
+                                                                                    }
+                                                                                />
+
+                                                                                <span className="input-group-text">
+                                                                                    %
+                                                                                </span>
+
+                                                                            </div>
+                                                                        ) : (
+                                                                            clienteSeleccionado?.comisionInmobiliaria !== undefined &&
+                                                                                clienteSeleccionado?.comisionInmobiliaria !== null
+                                                                                ? `${clienteSeleccionado.comisionInmobiliaria}%`
+                                                                                : "No registrado"
+                                                                        )}
+                                                                    </div>
+                                                                </div>
                                                                 <div className="mb-3">
                                                                     <strong>Depósito:</strong>
                                                                     <div>
@@ -659,6 +739,7 @@ const calcularInteresAutomatico = (pago) => {
                                                                                         <th>Periodo</th>
                                                                                         <th>Fecha</th>
                                                                                         <th>Monto</th>
+                                                                                        <th>interes</th>
                                                                                         <th>Administración</th>
                                                                                         <th>Total</th>
                                                                                         <th>Estado</th>
@@ -676,6 +757,31 @@ const calcularInteresAutomatico = (pago) => {
                                                                                         .map((liq) => {
 
                                                                                             const editando = liqEditando === liq.id;
+
+                                                                                            const obtenerPorcentajeComision = () => {
+
+                                                                                                const valores = [
+                                                                                                    liqForm?.porcentajeComision,
+                                                                                                    liq?.porcentajeComision,
+                                                                                                    liq?.comisionInmobiliaria,
+                                                                                                    liq?.comision,
+                                                                                                    contratoActivo?.comisionInmobiliaria,
+                                                                                                    contratoActivo?.comision,
+                                                                                                    clienteSeleccionado?.contrato?.comisionInmobiliaria,
+                                                                                                    clienteSeleccionado?.contrato?.comision,
+                                                                                                    clienteSeleccionado?.comisionInmobiliaria,
+                                                                                                    clienteSeleccionado?.comision
+                                                                                                ];
+
+                                                                                                const encontrado = valores.find(
+                                                                                                    (valor) =>
+                                                                                                        valor !== undefined &&
+                                                                                                        valor !== null &&
+                                                                                                        Number(valor) > 0
+                                                                                                );
+
+                                                                                                return Number(encontrado ?? 0);
+                                                                                            };
 
 
                                                                                             return (
@@ -695,6 +801,10 @@ const calcularInteresAutomatico = (pago) => {
                                                                                                         </span>
                                                                                                     </td>
 
+
+
+
+
                                                                                                     {/* MONTO */}
                                                                                                     <td>
                                                                                                         {editando ? (
@@ -703,67 +813,772 @@ const calcularInteresAutomatico = (pago) => {
                                                                                                                 className="form-control form-control-sm"
                                                                                                                 value={liqForm?.montoCobrado ?? 0}
                                                                                                                 onChange={(e) => {
-                                                                                                                    const montoCobrado = Number(e.target.value);
 
-                                                                                                                    setLiqForm((prev) => ({
-                                                                                                                        ...(prev || {}),
-                                                                                                                        montoCobrado,
-                                                                                                                        montoLiquidado:
-                                                                                                                            montoCobrado +
-                                                                                                                            Number(prev?.montoComision || 0),
-                                                                                                                    }));
-                                                                                                                }}
-                                                                                                            />
-                                                                                                        ) : (
-                                                                                                            formatCurrency(liq.montoCobrado || 0)
-                                                                                                        )}
-                                                                                                    </td>
+                                                                                                                    const montoCobrado =
+                                                                                                                        Number(e.target.value);
 
-                                                                                                    {/* COMISIÓN */}
-                                                                                                    <td>
-                                                                                                        {editando ? (
-                                                                                                            <input
-                                                                                                                type="number"
-                                                                                                                className="form-control form-control-sm"
-                                                                                                                value={liqForm?.montoComision ?? 0}
-                                                                                                                onChange={(e) => {
-                                                                                                                    const montoComision = Number(e.target.value);
+                                                                                                                    setLiqForm((prev) => {
 
-                                                                                                                    setLiqForm((prev) => ({
-                                                                                                                        ...(prev || {}),
-                                                                                                                        montoComision,
-                                                                                                                        montoLiquidado:
-                                                                                                                            Number(prev?.montoCobrado || 0) +
+                                                                                                                        // =====================================
+                                                                                                                        // INTERÉS
+                                                                                                                        // =====================================
+
+                                                                                                                        const interes =
+                                                                                                                            prev?.interesAutomatico ?? true
+                                                                                                                                ? calcularInteresAutomatico({
+                                                                                                                                    ...liq,
+                                                                                                                                    ...prev,
+                                                                                                                                    montoBase: montoCobrado,
+
+                                                                                                                                    interesMoraDiario:
+                                                                                                                                        prev?.interesMoraDiario ??
+                                                                                                                                        liq?.interesMoraDiario ??
+                                                                                                                                        contratoActivo?.interesMoraDiario ??
+                                                                                                                                        clienteSeleccionado?.contrato?.interesMoraDiario ??
+                                                                                                                                        clienteSeleccionado?.interesMoraDiario ??
+                                                                                                                                        1
+                                                                                                                                })
+                                                                                                                                : Number(
+                                                                                                                                    prev?.interesGenerado || 0
+                                                                                                                                );
+
+
+                                                                                                                        // =====================================
+                                                                                                                        // PORCENTAJE COMISIÓN
+                                                                                                                        // =====================================
+
+                                                                                                                        const porcentajeComision = Number(
+                                                                                                                            contratoActivo?.comisionInmobiliaria ??
+                                                                                                                            clienteSeleccionado?.contrato?.comisionInmobiliaria ??
+                                                                                                                            clienteSeleccionado?.comisionInmobiliaria ??
+                                                                                                                            liq?.comisionInmobiliaria ??
+                                                                                                                            liq?.comision ??
+                                                                                                                            0
+                                                                                                                        );
+
+
+                                                                                                                        // =====================================
+                                                                                                                        // BASE ADMINISTRACIÓN
+                                                                                                                        // MONTO + INTERÉS
+                                                                                                                        // =====================================
+
+                                                                                                                        const baseAdministracion =
+                                                                                                                            montoCobrado + interes;
+
+
+                                                                                                                        // =====================================
+                                                                                                                        // ADMINISTRACIÓN
+                                                                                                                        // =====================================
+
+                                                                                                                        const montoComision =
+                                                                                                                            baseAdministracion *
+                                                                                                                            (porcentajeComision / 100);
+
+
+                                                                                                                        // =====================================
+                                                                                                                        // TOTAL
+                                                                                                                        // =====================================
+
+                                                                                                                        const montoLiquidado =
+                                                                                                                            baseAdministracion -
+                                                                                                                            montoComision;
+
+
+                                                                                                                        return {
+                                                                                                                            ...(prev || {}),
+
+                                                                                                                            montoCobrado,
+
+                                                                                                                            interesGenerado:
+                                                                                                                                interes,
+
+                                                                                                                            porcentajeComision,
+
                                                                                                                             montoComision,
-                                                                                                                    }));
-                                                                                                                }}
-                                                                                                            />
-                                                                                                        ) : (
-                                                                                                            formatCurrency(liq.montoComision || 0)
-                                                                                                        )}
-                                                                                                    </td>
 
-                                                                                                    {/* TOTAL */}
-                                                                                                    <td className="fw-bold text-success">
-                                                                                                        {editando ? (
-                                                                                                            <input
-                                                                                                                type="number"
-                                                                                                                className="form-control form-control-sm"
-                                                                                                                value={
-                                                                                                                    Number(liqForm?.montoCobrado || 0) -
-                                                                                                                    Number(liqForm?.montoComision || 0)
-                                                                                                                }
-                                                                                                                readOnly
+                                                                                                                            montoLiquidado
+                                                                                                                        };
+
+                                                                                                                    });
+
+                                                                                                                }}
                                                                                                             />
                                                                                                         ) : (
                                                                                                             formatCurrency(
-                                                                                                                liq.estado === "pagado"
-                                                                                                                    ? Number(liq.montoPagado ?? liq.montoLiquidado ?? 0)
-                                                                                                                    : Number(liq.montoCobrado || 0) -
-                                                                                                                    Number(liq.montoComision || 0)
+                                                                                                                liq.montoCobrado || 0
                                                                                                             )
                                                                                                         )}
                                                                                                     </td>
+
+                                                                                                    {/* ============================= */}
+                                                                                                    {/* INTERÉS */}
+                                                                                                    {/* ============================= */}
+
+                                                                                                    <td>
+
+                                                                                                        {editando ? (
+
+                                                                                                            <div className="d-flex align-items-center gap-2">
+
+                                                                                                                {(() => {
+
+                                                                                                                    const liquidacionActual = {
+
+                                                                                                                        ...liq,
+
+                                                                                                                        ...liqForm,
+
+                                                                                                                        // Liquidación usa montoCobrado
+                                                                                                                        // como base para calcular el interés.
+
+                                                                                                                        montoBase:
+                                                                                                                            liqForm?.montoCobrado ??
+                                                                                                                            liq?.montoCobrado ??
+                                                                                                                            0,
+
+                                                                                                                        // MISMO interés diario del contrato
+                                                                                                                        // que utilizan los pagos.
+
+                                                                                                                        interesMoraDiario:
+                                                                                                                            liqForm?.interesMoraDiario ??
+                                                                                                                            liq?.interesMoraDiario ??
+                                                                                                                            contratoActivo?.interesMoraDiario ??
+                                                                                                                            clienteSeleccionado?.interesMoraDiario ??
+                                                                                                                            1
+
+                                                                                                                    };
+
+
+                                                                                                                    const interesAuto =
+                                                                                                                        calcularInteresAutomatico(
+                                                                                                                            liquidacionActual
+                                                                                                                        );
+
+
+                                                                                                                    const esAuto =
+                                                                                                                        liqForm?.interesAutomatico ?? true;
+
+
+                                                                                                                    return (
+
+                                                                                                                        <>
+
+                                                                                                                            {/* TOGGLE */}
+
+                                                                                                                            <input
+                                                                                                                                className="form-check-input"
+                                                                                                                                type="checkbox"
+                                                                                                                                checked={esAuto}
+
+                                                                                                                                onChange={(e) => {
+
+                                                                                                                                    const activo =
+                                                                                                                                        e.target.checked;
+
+
+                                                                                                                                    const nuevoInteres =
+                                                                                                                                        activo
+                                                                                                                                            ? interesAuto
+                                                                                                                                            : Number(
+                                                                                                                                                liqForm?.interesGenerado || 0
+                                                                                                                                            );
+
+
+                                                                                                                                    setLiqForm((prev) => ({
+
+                                                                                                                                        ...(prev || {}),
+
+                                                                                                                                        interesAutomatico:
+                                                                                                                                            activo,
+
+                                                                                                                                        interesGenerado:
+                                                                                                                                            nuevoInteres,
+
+                                                                                                                                        montoLiquidado:
+
+                                                                                                                                            Number(
+                                                                                                                                                prev?.montoCobrado || 0
+                                                                                                                                            )
+
+                                                                                                                                            -
+
+                                                                                                                                            Number(
+                                                                                                                                                prev?.montoComision || 0
+                                                                                                                                            )
+
+                                                                                                                                            +
+
+                                                                                                                                            nuevoInteres
+
+                                                                                                                                    }));
+
+                                                                                                                                }}
+
+                                                                                                                            />
+
+
+                                                                                                                            {/* INPUT INTERÉS MANUAL */}
+
+                                                                                                                            <input
+                                                                                                                                type="number"
+                                                                                                                                className="form-control form-control-sm"
+                                                                                                                                style={{ width: "90px" }}
+
+
+                                                                                                                                value={
+                                                                                                                                    esAuto
+                                                                                                                                        ? interesAuto
+                                                                                                                                        : (
+                                                                                                                                            liqForm?.interesGenerado || 0
+                                                                                                                                        )
+                                                                                                                                }
+
+                                                                                                                                onChange={(e) => {
+
+                                                                                                                                    const val =
+                                                                                                                                        Number(e.target.value);
+
+
+                                                                                                                                    setLiqForm((prev) => ({
+
+                                                                                                                                        ...(prev || {}),
+
+                                                                                                                                        interesAutomatico:
+                                                                                                                                            false,
+
+                                                                                                                                        interesGenerado:
+                                                                                                                                            val,
+
+                                                                                                                                        montoLiquidado:
+
+                                                                                                                                            Number(
+                                                                                                                                                prev?.montoCobrado || 0
+                                                                                                                                            )
+
+                                                                                                                                            -
+
+                                                                                                                                            Number(
+                                                                                                                                                prev?.montoComision || 0
+                                                                                                                                            )
+
+                                                                                                                                            +
+
+                                                                                                                                            val
+
+                                                                                                                                    }));
+
+                                                                                                                                }}
+
+                                                                                                                            />
+
+
+                                                                                                                            {/* RESET */}
+
+                                                                                                                            <button
+                                                                                                                                type="button"
+                                                                                                                                className="btn btn-sm btn-outline-danger px-2"
+
+                                                                                                                                onClick={() =>
+
+                                                                                                                                    setLiqForm((prev) => ({
+
+                                                                                                                                        ...(prev || {}),
+
+                                                                                                                                        interesAutomatico:
+                                                                                                                                            false,
+
+                                                                                                                                        interesGenerado:
+                                                                                                                                            0,
+
+                                                                                                                                        montoLiquidado:
+
+                                                                                                                                            Number(
+                                                                                                                                                prev?.montoCobrado || 0
+                                                                                                                                            )
+
+                                                                                                                                            -
+
+                                                                                                                                            Number(
+                                                                                                                                                prev?.montoComision || 0
+                                                                                                                                            )
+
+                                                                                                                                    }))
+
+                                                                                                                                }
+
+                                                                                                                            >
+                                                                                                                                0
+                                                                                                                            </button>
+
+                                                                                                                        </>
+
+                                                                                                                    );
+
+                                                                                                                })()}
+
+                                                                                                            </div>
+
+                                                                                                        ) : (
+
+                                                                                                            <div className="d-flex align-items-center gap-2">
+
+                                                                                                                {(liq.interesAutomatico ?? true) && (
+
+                                                                                                                    <span className="badge bg-success">
+                                                                                                                        ✓
+                                                                                                                    </span>
+
+                                                                                                                )}
+
+                                                                                                                <span className="text-danger fw-bold">
+
+                                                                                                                    {formatCurrency(
+
+                                                                                                                        (liq.interesAutomatico ?? true)
+
+                                                                                                                            ? calcularInteresAutomatico({
+
+                                                                                                                                ...liq,
+
+                                                                                                                                // MUY IMPORTANTE:
+                                                                                                                                // Liquidación tiene montoCobrado,
+                                                                                                                                // pero la función espera montoBase.
+
+                                                                                                                                montoBase:
+                                                                                                                                    liq.montoCobrado || 0,
+
+                                                                                                                                // Mismo interés del contrato
+                                                                                                                                // utilizado en Pagos.
+
+                                                                                                                                interesMoraDiario:
+                                                                                                                                    liq.interesMoraDiario ??
+                                                                                                                                    contratoActivo?.interesMoraDiario ??
+                                                                                                                                    clienteSeleccionado?.interesMoraDiario ??
+                                                                                                                                    1
+
+                                                                                                                            })
+
+                                                                                                                            : Number(
+                                                                                                                                liq.interesGenerado || 0
+                                                                                                                            )
+
+                                                                                                                    )}
+
+                                                                                                                </span>
+
+                                                                                                            </div>
+
+                                                                                                        )}
+
+                                                                                                    </td>
+                                                                                                    {/* ============================= */}
+                                                                                                    {/* COMISIÓN / ADMINISTRACIÓN */}
+                                                                                                    {/* ============================= */}
+
+                                                                                                    <td>
+
+                                                                                                        {(() => {
+
+                                                                                                            // ==========================================
+                                                                                                            // SOLO ESTA LIQUIDACIÓN ESTÁ EN EDICIÓN
+                                                                                                            // ==========================================
+
+                                                                                                            const editandoEstaLiquidacion =
+                                                                                                                editando &&
+                                                                                                                liqForm?.id === liq?.id;
+
+
+                                                                                                            // ==========================================
+                                                                                                            // MONTO BASE
+                                                                                                            // ==========================================
+
+                                                                                                            const montoBase =
+                                                                                                                Number(
+                                                                                                                    editandoEstaLiquidacion
+                                                                                                                        ? liqForm?.montoCobrado ??
+                                                                                                                        liq?.montoCobrado ??
+                                                                                                                        0
+                                                                                                                        : liq?.montoCobrado ??
+                                                                                                                        0
+                                                                                                                );
+
+
+                                                                                                            // ==========================================
+                                                                                                            // INTERÉS
+                                                                                                            // ==========================================
+
+                                                                                                            const esInteresAutomatico =
+                                                                                                                editandoEstaLiquidacion
+                                                                                                                    ? liqForm?.interesAutomatico ??
+                                                                                                                    liq?.interesAutomatico ??
+                                                                                                                    true
+                                                                                                                    : liq?.interesAutomatico ??
+                                                                                                                    true;
+
+
+                                                                                                            const interes =
+                                                                                                                esInteresAutomatico
+
+                                                                                                                    ? Number(
+                                                                                                                        calcularInteresAutomatico({
+
+                                                                                                                            ...liq,
+
+                                                                                                                            ...(editandoEstaLiquidacion
+                                                                                                                                ? liqForm
+                                                                                                                                : {}),
+
+                                                                                                                            montoBase,
+
+                                                                                                                            interesMoraDiario:
+                                                                                                                                editandoEstaLiquidacion
+                                                                                                                                    ? liqForm?.interesMoraDiario ??
+                                                                                                                                    liq?.interesMoraDiario ??
+                                                                                                                                    contratoActivo?.interesMoraDiario ??
+                                                                                                                                    clienteSeleccionado?.contrato?.interesMoraDiario ??
+                                                                                                                                    clienteSeleccionado?.interesMoraDiario ??
+                                                                                                                                    0
+                                                                                                                                    : liq?.interesMoraDiario ??
+                                                                                                                                    contratoActivo?.interesMoraDiario ??
+                                                                                                                                    clienteSeleccionado?.contrato?.interesMoraDiario ??
+                                                                                                                                    clienteSeleccionado?.interesMoraDiario ??
+                                                                                                                                    0
+
+                                                                                                                        })
+                                                                                                                    )
+
+                                                                                                                    : Number(
+                                                                                                                        editandoEstaLiquidacion
+                                                                                                                            ? liqForm?.interesGenerado ??
+                                                                                                                            liq?.interesGenerado ??
+                                                                                                                            0
+                                                                                                                            : liq?.interesGenerado ??
+                                                                                                                            0
+                                                                                                                    );
+
+
+                                                                                                            // ==========================================
+                                                                                                            // BASE PARA ADMINISTRACIÓN
+                                                                                                            // MONTO + INTERÉS
+                                                                                                            // ==========================================
+
+                                                                                                            const baseAdministracion =
+                                                                                                                montoBase + interes;
+
+
+                                                                                                            // ==========================================
+                                                                                                            // PORCENTAJE DEL CONTRATO
+                                                                                                            // ==========================================
+
+                                                                                                            const porcentajeComision =
+                                                                                                                obtenerPorcentajeComision();
+
+
+                                                                                                            // ==========================================
+                                                                                                            // ADMINISTRACIÓN CALCULADA
+                                                                                                            // ==========================================
+
+                                                                                                            const comisionCalculada =
+                                                                                                                baseAdministracion *
+                                                                                                                (porcentajeComision / 100);
+
+
+                                                                                                            // ==========================================
+                                                                                                            // MOSTRAR
+                                                                                                            // ==========================================
+
+                                                                                                            if (editandoEstaLiquidacion) {
+
+                                                                                                                const montoComision =
+                                                                                                                    liqForm?.montoComision ??
+                                                                                                                    comisionCalculada;
+
+
+                                                                                                                return (
+
+                                                                                                                    <div>
+
+                                                                                                                        <input
+                                                                                                                            type="number"
+                                                                                                                            step="0.01"
+                                                                                                                            className="form-control form-control-sm"
+                                                                                                                            value={montoComision}
+
+                                                                                                                            onChange={(e) => {
+
+                                                                                                                                const nuevoMontoComision =
+                                                                                                                                    Number(e.target.value) || 0;
+
+                                                                                                                                setLiqForm((prev) => ({
+
+                                                                                                                                    ...(prev || {}),
+
+                                                                                                                                    // 🔥 MUY IMPORTANTE
+                                                                                                                                    // Guardamos a qué liquidación
+                                                                                                                                    // pertenece este formulario.
+                                                                                                                                    id: liq.id,
+
+                                                                                                                                    montoComision:
+                                                                                                                                        nuevoMontoComision,
+
+                                                                                                                                    interesGenerado:
+                                                                                                                                        interes,
+
+                                                                                                                                    porcentajeComision,
+
+                                                                                                                                    montoLiquidado:
+                                                                                                                                        baseAdministracion -
+                                                                                                                                        nuevoMontoComision
+
+                                                                                                                                }));
+
+                                                                                                                            }}
+                                                                                                                        />
+
+                                                                                                                        <small className="text-muted">
+
+                                                                                                                            {porcentajeComision}% de{" "}
+
+                                                                                                                            {formatCurrency(
+                                                                                                                                baseAdministracion
+                                                                                                                            )}
+
+                                                                                                                            {" = "}
+
+                                                                                                                            {formatCurrency(
+                                                                                                                                comisionCalculada
+                                                                                                                            )}
+
+                                                                                                                        </small>
+
+                                                                                                                    </div>
+
+                                                                                                                );
+
+                                                                                                            }
+
+
+                                                                                                            // ==========================================
+                                                                                                            // SIN EDITAR
+                                                                                                            // ==========================================
+
+                                                                                                            return (
+
+                                                                                                                <div>
+
+                                                                                                                    <span className="fw-bold">
+
+                                                                                                                        {formatCurrency(
+                                                                                                                            comisionCalculada
+                                                                                                                        )}
+
+                                                                                                                    </span>
+
+                                                                                                                    <small className="d-block text-muted">
+
+                                                                                                                        {porcentajeComision}% de{" "}
+
+                                                                                                                        {formatCurrency(
+                                                                                                                            baseAdministracion
+                                                                                                                        )}
+
+                                                                                                                        {" = "}
+
+                                                                                                                        {formatCurrency(
+                                                                                                                            comisionCalculada
+                                                                                                                        )}
+
+                                                                                                                    </small>
+
+                                                                                                                </div>
+
+                                                                                                            );
+
+                                                                                                        })()}
+
+                                                                                                    </td>
+
+                                                                                                    {/* ============================= */}
+                                                                                                    {/* TOTAL */}
+                                                                                                    {/* ============================= */}
+
+                                                                                                    <td className="fw-bold text-success">
+
+                                                                                                        {(() => {
+
+                                                                                                            // ==========================================
+                                                                                                            // MONTO BASE
+                                                                                                            // ==========================================
+
+                                                                                                            const montoBase =
+                                                                                                                Number(
+                                                                                                                    editando
+                                                                                                                        ? (
+                                                                                                                            liqForm?.montoCobrado ??
+                                                                                                                            liq?.montoCobrado ??
+                                                                                                                            0
+                                                                                                                        )
+                                                                                                                        : (
+                                                                                                                            liq?.montoCobrado ??
+                                                                                                                            liq?.montoBase ??
+                                                                                                                            0
+                                                                                                                        )
+                                                                                                                );
+
+
+                                                                                                            // ==========================================
+                                                                                                            // INTERÉS
+                                                                                                            // ==========================================
+
+                                                                                                            const esInteresAutomatico =
+                                                                                                                editando
+                                                                                                                    ? (
+                                                                                                                        liqForm?.interesAutomatico ??
+                                                                                                                        liq?.interesAutomatico ??
+                                                                                                                        true
+                                                                                                                    )
+                                                                                                                    : (
+                                                                                                                        liq?.interesAutomatico ??
+                                                                                                                        true
+                                                                                                                    );
+
+
+                                                                                                            const interes =
+
+                                                                                                                esInteresAutomatico
+
+                                                                                                                    ? Number(
+                                                                                                                        calcularInteresAutomatico({
+
+                                                                                                                            ...liq,
+
+                                                                                                                            ...(editando
+                                                                                                                                ? liqForm
+                                                                                                                                : {}
+                                                                                                                            ),
+
+                                                                                                                            montoBase,
+
+                                                                                                                            interesMoraDiario:
+
+                                                                                                                                (
+                                                                                                                                    editando
+                                                                                                                                        ? liqForm?.interesMoraDiario
+                                                                                                                                        : liq?.interesMoraDiario
+                                                                                                                                )
+
+                                                                                                                                ??
+
+                                                                                                                                liq?.contratoInteresMoraDiario
+
+                                                                                                                                ??
+
+                                                                                                                                contratoActivo?.interesMoraDiario
+
+                                                                                                                                ??
+
+                                                                                                                                clienteSeleccionado
+                                                                                                                                    ?.contrato
+                                                                                                                                    ?.interesMoraDiario
+
+                                                                                                                                ??
+
+                                                                                                                                clienteSeleccionado
+                                                                                                                                    ?.interesMoraDiario
+
+                                                                                                                                ??
+
+                                                                                                                                0
+
+                                                                                                                        })
+                                                                                                                    )
+
+                                                                                                                    : Number(
+
+                                                                                                                        editando
+
+                                                                                                                            ? (
+                                                                                                                                liqForm?.interesGenerado ??
+                                                                                                                                liq?.interesGenerado ??
+                                                                                                                                0
+                                                                                                                            )
+
+                                                                                                                            : (
+                                                                                                                                liq?.interesGenerado ??
+                                                                                                                                0
+                                                                                                                            )
+
+                                                                                                                    );
+
+
+                                                                                                            // ==========================================
+                                                                                                            // BASE PARA ADMINISTRACIÓN
+                                                                                                            // MONTO + INTERÉS
+                                                                                                            // ==========================================
+
+                                                                                                            const baseAdministracion =
+                                                                                                                montoBase + interes;
+
+
+                                                                                                            // ==========================================
+                                                                                                            // PORCENTAJE DEL CONTRATO
+                                                                                                            // ==========================================
+
+                                                                                                            const porcentajeComision =
+                                                                                                                obtenerPorcentajeComision();
+
+
+                                                                                                            // ==========================================
+                                                                                                            // ADMINISTRACIÓN
+                                                                                                            // ==========================================
+
+                                                                                                            const montoComision =
+                                                                                                                baseAdministracion *
+                                                                                                                (porcentajeComision / 100);
+
+
+                                                                                                            // ==========================================
+                                                                                                            // TOTAL NETO
+                                                                                                            // ==========================================
+
+                                                                                                            const total =
+                                                                                                                baseAdministracion -
+                                                                                                                montoComision;
+
+
+                                                                                                            // ==========================================
+                                                                                                            // EDITANDO
+                                                                                                            // ==========================================
+
+                                                                                                            if (editando) {
+
+                                                                                                                return (
+
+                                                                                                                    <input
+                                                                                                                        type="number"
+                                                                                                                        step="0.01"
+                                                                                                                        className="form-control form-control-sm"
+                                                                                                                        value={total}
+                                                                                                                        readOnly
+                                                                                                                    />
+
+                                                                                                                );
+
+                                                                                                            }
+
+
+                                                                                                            // ==========================================
+                                                                                                            // SIN EDITAR
+                                                                                                            // ==========================================
+
+                                                                                                            return formatCurrency(
+                                                                                                                total
+                                                                                                            );
+
+                                                                                                        })()}
+
+                                                                                                    </td>
+
 
                                                                                                     {/* ESTADO */}
                                                                                                     <td>
@@ -803,43 +1618,304 @@ const calcularInteresAutomatico = (pago) => {
 
                                                                                                             <div className="d-flex gap-1">
 
+
                                                                                                                 <button
                                                                                                                     className="btn btn-sm btn-success"
                                                                                                                     onClick={async () => {
 
-                                                                                                                        const dataUpdate = {
-                                                                                                                            montoCobrado: Number(liqForm?.montoCobrado || 0),
-                                                                                                                            montoComision: Number(liqForm?.montoComision || 0),
-                                                                                                                            montoLiquidado:
-                                                                                                                                Number(liqForm?.montoLiquidado) ||
-                                                                                                                                Number(liqForm?.montoCobrado || 0) +
-                                                                                                                                Number(liqForm?.montoComision || 0),
-                                                                                                                            estado: liqForm?.estado || "pendiente",
-                                                                                                                            updatedAt: serverTimestamp(),
-                                                                                                                        };
+                                                                                                                        try {
 
-                                                                                                                        await updateDoc(
-                                                                                                                            doc(db, "Liquidaciones", liq.id),
-                                                                                                                            dataUpdate
-                                                                                                                        );
+                                                                                                                            const estadoNuevo =
+                                                                                                                                liqForm?.estado || "pendiente";
 
-                                                                                                                        setClienteSeleccionado((prev) => ({
-                                                                                                                            ...prev,
-                                                                                                                            liquidaciones: prev.liquidaciones.map((l) =>
-                                                                                                                                l.id === liq.id
-                                                                                                                                    ? { ...l, ...dataUpdate }
-                                                                                                                                    : l
-                                                                                                                            ),
-                                                                                                                        }));
 
-                                                                                                                        setLiqEditando(null);
-                                                                                                                        setLiqForm(null);
+                                                                                                                            // ==========================================
+                                                                                                                            // MONTO BASE
+                                                                                                                            // ==========================================
 
-                                                                                                                        toast.success("Liquidación actualizada");
+                                                                                                                            const montoCobrado =
+                                                                                                                                Number(
+                                                                                                                                    liqForm?.montoCobrado ??
+                                                                                                                                    liq?.montoCobrado ??
+                                                                                                                                    0
+                                                                                                                                );
+
+
+                                                                                                                            // ==========================================
+                                                                                                                            // INTERÉS
+                                                                                                                            // ==========================================
+
+                                                                                                                            const liquidacionActual = {
+
+                                                                                                                                ...liq,
+                                                                                                                                ...liqForm,
+
+                                                                                                                                montoBase:
+                                                                                                                                    montoCobrado,
+
+                                                                                                                                interesMoraDiario:
+                                                                                                                                    liqForm?.interesMoraDiario ??
+                                                                                                                                    liq?.interesMoraDiario ??
+                                                                                                                                    liq?.contratoInteresMoraDiario ??
+                                                                                                                                    contratoActivo?.interesMoraDiario ??
+                                                                                                                                    clienteSeleccionado?.contrato?.interesMoraDiario ??
+                                                                                                                                    clienteSeleccionado?.interesMoraDiario ??
+                                                                                                                                    1
+
+                                                                                                                            };
+
+
+                                                                                                                            let interesGenerado;
+
+
+                                                                                                                            if (estadoNuevo === "pagado") {
+
+                                                                                                                                if (
+                                                                                                                                    liqForm?.interesGenerado !== undefined &&
+                                                                                                                                    liqForm?.interesGenerado !== null
+                                                                                                                                ) {
+
+                                                                                                                                    interesGenerado =
+                                                                                                                                        Number(liqForm.interesGenerado);
+
+                                                                                                                                } else if (
+                                                                                                                                    liq?.interesGenerado !== undefined &&
+                                                                                                                                    liq?.interesGenerado !== null
+                                                                                                                                ) {
+
+                                                                                                                                    interesGenerado =
+                                                                                                                                        Number(liq.interesGenerado);
+
+                                                                                                                                } else {
+
+                                                                                                                                    interesGenerado =
+                                                                                                                                        Number(
+                                                                                                                                            calcularInteresAutomatico(
+                                                                                                                                                liquidacionActual
+                                                                                                                                            )
+                                                                                                                                        );
+                                                                                                                                }
+
+                                                                                                                            } else {
+
+                                                                                                                                const esAutomatico =
+                                                                                                                                    liqForm?.interesAutomatico ??
+                                                                                                                                    liq?.interesAutomatico ??
+                                                                                                                                    true;
+
+
+                                                                                                                                interesGenerado =
+                                                                                                                                    esAutomatico
+
+                                                                                                                                        ? Number(
+                                                                                                                                            calcularInteresAutomatico(
+                                                                                                                                                liquidacionActual
+                                                                                                                                            )
+                                                                                                                                        )
+
+                                                                                                                                        : Number(
+                                                                                                                                            liqForm?.interesGenerado ??
+                                                                                                                                            liq?.interesGenerado ??
+                                                                                                                                            0
+                                                                                                                                        );
+
+                                                                                                                            }
+
+
+                                                                                                                            // ==========================================
+                                                                                                                            // BASE ADMINISTRACIÓN
+                                                                                                                            // MONTO + INTERÉS
+                                                                                                                            // ==========================================
+
+                                                                                                                            const baseAdministracion =
+                                                                                                                                montoCobrado +
+                                                                                                                                interesGenerado;
+
+
+                                                                                                                            // ==========================================
+                                                                                                                            // % COMISIÓN DEL CONTRATO
+                                                                                                                            // ==========================================
+
+                                                                                                                            const porcentajeComision =
+                                                                                                                                Number(
+
+                                                                                                                                    liqForm?.porcentajeComision ??
+                                                                                                                                    liq?.porcentajeComision ??
+
+                                                                                                                                    liq?.comisionInmobiliaria ??
+                                                                                                                                    liq?.comision ??
+
+                                                                                                                                    contratoActivo?.comisionInmobiliaria ??
+                                                                                                                                    contratoActivo?.comision ??
+
+                                                                                                                                    clienteSeleccionado?.contrato?.comisionInmobiliaria ??
+                                                                                                                                    clienteSeleccionado?.contrato?.comision ??
+
+                                                                                                                                    0
+
+                                                                                                                                );
+
+
+                                                                                                                            // ==========================================
+                                                                                                                            // ADMINISTRACIÓN
+                                                                                                                            // ==========================================
+
+                                                                                                                            const montoComision =
+                                                                                                                                baseAdministracion *
+                                                                                                                                (porcentajeComision / 100);
+
+
+                                                                                                                            // ==========================================
+                                                                                                                            // TOTAL NETO
+                                                                                                                            // ==========================================
+
+                                                                                                                            const montoLiquidado =
+                                                                                                                                baseAdministracion -
+                                                                                                                                montoComision;
+
+
+                                                                                                                            // ==========================================
+                                                                                                                            // DEBUG
+                                                                                                                            // ==========================================
+
+                                                                                                                            console.log(
+                                                                                                                                "========== GUARDAR LIQUIDACIÓN =========="
+                                                                                                                            );
+
+                                                                                                                            console.log(
+                                                                                                                                "Monto cobrado:",
+                                                                                                                                montoCobrado
+                                                                                                                            );
+
+                                                                                                                            console.log(
+                                                                                                                                "Interés:",
+                                                                                                                                interesGenerado
+                                                                                                                            );
+
+                                                                                                                            console.log(
+                                                                                                                                "Base administración:",
+                                                                                                                                baseAdministracion
+                                                                                                                            );
+
+                                                                                                                            console.log(
+                                                                                                                                "% comisión:",
+                                                                                                                                porcentajeComision
+                                                                                                                            );
+
+                                                                                                                            console.log(
+                                                                                                                                "Monto comisión:",
+                                                                                                                                montoComision
+                                                                                                                            );
+
+                                                                                                                            console.log(
+                                                                                                                                "Total:",
+                                                                                                                                montoLiquidado
+                                                                                                                            );
+
+
+                                                                                                                            // ==========================================
+                                                                                                                            // DATOS A GUARDAR
+                                                                                                                            // ==========================================
+
+                                                                                                                            const dataUpdate = {
+
+                                                                                                                                montoCobrado,
+
+                                                                                                                                interesGenerado,
+
+                                                                                                                                // 🔥 GUARDAMOS TAMBIÉN EL %
+                                                                                                                                porcentajeComision,
+
+                                                                                                                                montoComision,
+
+                                                                                                                                montoLiquidado,
+
+                                                                                                                                interesAutomatico:
+                                                                                                                                    estadoNuevo === "pagado"
+                                                                                                                                        ? false
+                                                                                                                                        : (
+                                                                                                                                            liqForm?.interesAutomatico ??
+                                                                                                                                            liq?.interesAutomatico ??
+                                                                                                                                            true
+                                                                                                                                        ),
+
+                                                                                                                                estado:
+                                                                                                                                    estadoNuevo,
+
+                                                                                                                                updatedAt:
+                                                                                                                                    serverTimestamp()
+
+                                                                                                                            };
+
+
+                                                                                                                            // ==========================================
+                                                                                                                            // FIRESTORE
+                                                                                                                            // ==========================================
+
+                                                                                                                            await updateDoc(
+                                                                                                                                doc(
+                                                                                                                                    db,
+                                                                                                                                    "Liquidaciones",
+                                                                                                                                    liq.id
+                                                                                                                                ),
+                                                                                                                                dataUpdate
+                                                                                                                            );
+
+
+                                                                                                                            // ==========================================
+                                                                                                                            // ACTUALIZAR TABLA
+                                                                                                                            // ==========================================
+
+                                                                                                                            setClienteSeleccionado((prev) => ({
+
+                                                                                                                                ...prev,
+
+                                                                                                                                liquidaciones:
+                                                                                                                                    prev.liquidaciones.map((l) =>
+                                                                                                                                        l.id === liq.id
+                                                                                                                                            ? {
+                                                                                                                                                ...l,
+                                                                                                                                                ...dataUpdate
+                                                                                                                                            }
+                                                                                                                                            : l
+                                                                                                                                    )
+
+                                                                                                                            }));
+
+
+                                                                                                                            // ==========================================
+                                                                                                                            // CERRAR EDICIÓN
+                                                                                                                            // ==========================================
+
+                                                                                                                            setLiqEditando(null);
+                                                                                                                            setLiqForm(null);
+
+
+                                                                                                                            toast.success(
+                                                                                                                                estadoNuevo === "pagado"
+                                                                                                                                    ? "Liquidación pagada. Interés congelado."
+                                                                                                                                    : "Liquidación actualizada"
+                                                                                                                            );
+
+
+                                                                                                                        } catch (error) {
+
+                                                                                                                            console.error(
+                                                                                                                                "Error al actualizar liquidación:",
+                                                                                                                                error
+                                                                                                                            );
+
+                                                                                                                            toast.error(
+                                                                                                                                "Error al actualizar liquidación"
+                                                                                                                            );
+
+                                                                                                                        }
+
                                                                                                                     }}
                                                                                                                 >
                                                                                                                     Guardar
                                                                                                                 </button>
+
 
                                                                                                                 <button
                                                                                                                     className="btn btn-sm btn-secondary"
@@ -860,45 +1936,409 @@ const calcularInteresAutomatico = (pago) => {
                                                                                                                 <button
                                                                                                                     className="btn btn-sm btn-outline-primary"
                                                                                                                     onClick={() => {
+
                                                                                                                         setLiqEditando(liq.id);
 
+                                                                                                                        // ==========================================
+                                                                                                                        // MONTO BASE
+                                                                                                                        // ==========================================
+
+                                                                                                                        const montoCobrado =
+                                                                                                                            Number(liq.montoCobrado || 0);
+
+
+                                                                                                                        // ==========================================
+                                                                                                                        // INTERÉS DIARIO
+                                                                                                                        // ==========================================
+
+                                                                                                                        const interesMoraDiario =
+                                                                                                                            Number(
+                                                                                                                                liq.interesMoraDiario ??
+                                                                                                                                liq.contratoInteresMoraDiario ??
+                                                                                                                                contratoActivo?.interesMoraDiario ??
+                                                                                                                                clienteSeleccionado?.contrato?.interesMoraDiario ??
+                                                                                                                                clienteSeleccionado?.interesMoraDiario ??
+                                                                                                                                0
+                                                                                                                            );
+
+
+                                                                                                                        // ==========================================
+                                                                                                                        // INTERÉS ACTUAL
+                                                                                                                        // ==========================================
+
+                                                                                                                        const interesAutomatico =
+                                                                                                                            liq.interesAutomatico ?? true;
+
+
+                                                                                                                        const interesGenerado =
+                                                                                                                            interesAutomatico
+
+                                                                                                                                ? Number(
+                                                                                                                                    calcularInteresAutomatico({
+
+                                                                                                                                        ...liq,
+
+                                                                                                                                        montoBase:
+                                                                                                                                            montoCobrado,
+
+                                                                                                                                        interesMoraDiario
+
+                                                                                                                                    })
+                                                                                                                                )
+
+                                                                                                                                : Number(
+                                                                                                                                    liq.interesGenerado || 0
+                                                                                                                                );
+
+
+                                                                                                                        // ==========================================
+                                                                                                                        // BASE ADMINISTRACIÓN
+                                                                                                                        // MONTO + INTERÉS
+                                                                                                                        // ==========================================
+
+                                                                                                                        const baseAdministracion =
+                                                                                                                            montoCobrado +
+                                                                                                                            interesGenerado;
+
+
+                                                                                                                        // ==========================================
+                                                                                                                        // OBTENER % DEL CONTRATO
+                                                                                                                        // ==========================================
+
+                                                                                                                        const valoresComision = [
+
+                                                                                                                            liq.porcentajeComision,
+
+                                                                                                                            liq.comisionInmobiliaria,
+
+                                                                                                                            liq.comision,
+
+                                                                                                                            contratoActivo?.comisionInmobiliaria,
+
+                                                                                                                            contratoActivo?.comision,
+
+                                                                                                                            clienteSeleccionado
+                                                                                                                                ?.contrato
+                                                                                                                                ?.comisionInmobiliaria,
+
+                                                                                                                            clienteSeleccionado
+                                                                                                                                ?.contrato
+                                                                                                                                ?.comision,
+
+                                                                                                                            clienteSeleccionado
+                                                                                                                                ?.comisionInmobiliaria,
+
+                                                                                                                            clienteSeleccionado
+                                                                                                                                ?.comision
+
+                                                                                                                        ];
+
+
+                                                                                                                        const porcentajeEncontrado =
+                                                                                                                            valoresComision.find(
+                                                                                                                                (valor) =>
+                                                                                                                                    valor !== undefined &&
+                                                                                                                                    valor !== null &&
+                                                                                                                                    Number(valor) > 0
+                                                                                                                            );
+
+
+                                                                                                                        const porcentajeComision =
+                                                                                                                            Number(
+                                                                                                                                porcentajeEncontrado ?? 0
+                                                                                                                            );
+
+
+                                                                                                                        // ==========================================
+                                                                                                                        // ADMINISTRACIÓN CORRECTA
+                                                                                                                        // ==========================================
+
+                                                                                                                        const montoComision =
+                                                                                                                            baseAdministracion *
+                                                                                                                            (porcentajeComision / 100);
+
+
+                                                                                                                        // ==========================================
+                                                                                                                        // TOTAL NETO
+                                                                                                                        // ==========================================
+
+                                                                                                                        const montoLiquidado =
+                                                                                                                            baseAdministracion -
+                                                                                                                            montoComision;
+
+
+                                                                                                                        // ==========================================
+                                                                                                                        // DEBUG
+                                                                                                                        // ==========================================
+
+                                                                                                                        console.log(
+                                                                                                                            "========== EDITAR LIQUIDACIÓN =========="
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "Monto cobrado:",
+                                                                                                                            montoCobrado
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "Interés:",
+                                                                                                                            interesGenerado
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "Base administración:",
+                                                                                                                            baseAdministracion
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "% comisión:",
+                                                                                                                            porcentajeComision
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "Administración:",
+                                                                                                                            montoComision
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "Total:",
+                                                                                                                            montoLiquidado
+                                                                                                                        );
+
+
+                                                                                                                        // ==========================================
+                                                                                                                        // CARGAR FORMULARIO
+                                                                                                                        // ==========================================
+
                                                                                                                         setLiqForm({
-                                                                                                                            montoCobrado: liq.montoCobrado || 0,
-                                                                                                                            montoComision: liq.montoComision || 0,
-                                                                                                                            montoLiquidado: liq.montoLiquidado || 0,
-                                                                                                                            estado: liq.estado || "pendiente",
+
+                                                                                                                            montoCobrado,
+
+                                                                                                                            // 🔥 YA NO CARGAMOS EL MONTO VIEJO
+                                                                                                                            // DE FIRESTORE.
+                                                                                                                            // CARGAMOS EL 8% CALCULADO.
+
+                                                                                                                            montoComision,
+
+                                                                                                                            montoLiquidado,
+
+                                                                                                                            interesGenerado,
+
+                                                                                                                            interesAutomatico,
+
+                                                                                                                            interesMoraDiario,
+
+                                                                                                                            porcentajeComision,
+
+                                                                                                                            estado:
+                                                                                                                                liq.estado || "pendiente"
+
                                                                                                                         });
+
                                                                                                                     }}
                                                                                                                 >
                                                                                                                     Editar
                                                                                                                 </button>
-
                                                                                                                 <button
                                                                                                                     className="btn btn-sm btn-success"
                                                                                                                     onClick={() => {
 
-                                                                                                                        const baseObservaciones =
-                                                                                                                            cobroForm?.observaciones ?? liq?.observaciones ?? "";
+                                                                                                                        // =====================================================
+                                                                                                                        // 1. INTERÉS DIARIO
+                                                                                                                        // =====================================================
+
+                                                                                                                        const interesMoraDiario =
+                                                                                                                            Number(
+                                                                                                                                liq?.interesMoraDiario ??
+                                                                                                                                liq?.contratoInteresMoraDiario ??
+                                                                                                                                contratoActivo?.interesMoraDiario ??
+                                                                                                                                clienteSeleccionado?.contrato?.interesMoraDiario ??
+                                                                                                                                clienteSeleccionado?.interesMoraDiario ??
+                                                                                                                                0
+                                                                                                                            );
 
 
+                                                                                                                        // =====================================================
+                                                                                                                        // 2. MONTO COBRADO
+                                                                                                                        // =====================================================
+
+                                                                                                                        const montoCobrado =
+                                                                                                                            Number(
+                                                                                                                                liq?.montoCobrado ??
+                                                                                                                                liq?.montoBase ??
+                                                                                                                                0
+                                                                                                                            );
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 3. INTERÉS AUTOMÁTICO
+                                                                                                                        // =====================================================
+
+                                                                                                                        const interesAutomatico =
+                                                                                                                            liq?.interesAutomatico ?? true;
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 4. INTERÉS GENERADO
+                                                                                                                        //
+                                                                                                                        // Si todavía es automático:
+                                                                                                                        // calculamos nuevamente el interés actual.
+                                                                                                                        //
+                                                                                                                        // Si fue fijado manualmente:
+                                                                                                                        // usamos el interés guardado.
+                                                                                                                        // =====================================================
+
+                                                                                                                        const interesGenerado =
+                                                                                                                            interesAutomatico
+
+                                                                                                                                ? Number(
+                                                                                                                                    calcularInteresAutomatico({
+                                                                                                                                        ...liq,
+
+                                                                                                                                        montoBase:
+                                                                                                                                            montoCobrado,
+
+                                                                                                                                        montoCobrado,
+
+                                                                                                                                        interesMoraDiario
+                                                                                                                                    })
+                                                                                                                                )
+
+                                                                                                                                : Number(
+                                                                                                                                    liq?.interesGenerado ?? 0
+                                                                                                                                );
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 5. BASE ADMINISTRACIÓN
+                                                                                                                        //
+                                                                                                                        // MONTO COBRADO + INTERÉS
+                                                                                                                        // =====================================================
+
+                                                                                                                        const baseAdministracion =
+                                                                                                                            montoCobrado +
+                                                                                                                            interesGenerado;
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 6. OBTENER % COMISIÓN
+                                                                                                                        // =====================================================
+
+                                                                                                                        const valoresComision = [
+
+                                                                                                                            liq?.porcentajeComision,
+
+                                                                                                                            liq?.comisionInmobiliaria,
+
+                                                                                                                            liq?.comision,
+
+                                                                                                                            contratoActivo?.comisionInmobiliaria,
+
+                                                                                                                            contratoActivo?.comision,
+
+                                                                                                                            clienteSeleccionado?.contrato?.comisionInmobiliaria,
+
+                                                                                                                            clienteSeleccionado?.contrato?.comision,
+
+                                                                                                                            clienteSeleccionado?.comisionInmobiliaria,
+
+                                                                                                                            clienteSeleccionado?.comision
+
+                                                                                                                        ];
+
+
+                                                                                                                        const porcentajeEncontrado =
+                                                                                                                            valoresComision.find(
+                                                                                                                                (valor) =>
+                                                                                                                                    valor !== undefined &&
+                                                                                                                                    valor !== null &&
+                                                                                                                                    Number(valor) > 0
+                                                                                                                            );
+
+
+                                                                                                                        const porcentajeComision =
+                                                                                                                            Number(
+                                                                                                                                porcentajeEncontrado ?? 0
+                                                                                                                            );
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 7. ADMINISTRACIÓN
+                                                                                                                        // =====================================================
+
+                                                                                                                        const montoComision =
+                                                                                                                            baseAdministracion *
+                                                                                                                            (porcentajeComision / 100);
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 8. TOTAL NETO
+                                                                                                                        // =====================================================
+
+                                                                                                                        const montoLiquidado =
+                                                                                                                            baseAdministracion -
+                                                                                                                            montoComision;
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 9. OBSERVACIONES
+                                                                                                                        // =====================================================
+
+                                                                                                                        const observaciones =
+                                                                                                                            cobroForm?.observaciones ??
+                                                                                                                            liq?.observaciones ??
+                                                                                                                            "";
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 10. OBJETO NORMALIZADO
+                                                                                                                        // =====================================================
 
                                                                                                                         const p = normalizeLiquidacion({
                                                                                                                             ...liq,
-                                                                                                                            observaciones: cobroForm?.observaciones || liq.observaciones || ""
+
+                                                                                                                            montoCobrado,
+
+                                                                                                                            interesGenerado,
+
+                                                                                                                            interesMoraDiario,
+
+                                                                                                                            porcentajeComision,
+
+                                                                                                                            montoComision,
+
+                                                                                                                            montoLiquidado,
+
+                                                                                                                            observaciones
                                                                                                                         });
-                                                                                                                        // =========================
-                                                                                                                        // 1. OBJETO BASE
-                                                                                                                        // =========================
-                                                                                                                        const liquidacionDataBase = {
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 11. DATOS PARA EL MODAL
+                                                                                                                        //
+                                                                                                                        // IMPORTANTE:
+                                                                                                                        // usamos los nombres que ahora maneja tu sistema.
+                                                                                                                        // =====================================================
+
+                                                                                                                        const liquidacionData = {
+
                                                                                                                             ...p,
+
+                                                                                                                            id: liq.id,
+
                                                                                                                             tipo: "liquidacion",
-                                                                                                                            contratoId: p.contratoId || "",
 
-                                                                                                                            observaciones: cobroForm?.observaciones || liq.observaciones || "",
+                                                                                                                            esLiquidacion: true,
+
+                                                                                                                            contratoId:
+                                                                                                                                p.contratoId ||
+                                                                                                                                liq.contratoId ||
+                                                                                                                                "",
 
 
-
-
+                                                                                                                            // =================================================
+                                                                                                                            // NOMBRES
+                                                                                                                            // =================================================
 
                                                                                                                             clienteNombre:
                                                                                                                                 p.clienteNombre ||
@@ -914,53 +2354,210 @@ const calcularInteresAutomatico = (pago) => {
                                                                                                                                 p.locatarioNombre ||
                                                                                                                                 "Inquilino sin nombre",
 
+                                                                                                                            propietarioNombre:
+                                                                                                                                p.propietarioNombre ||
+                                                                                                                                p.locadorNombre ||
+                                                                                                                                p.clienteNombre ||
+                                                                                                                                "Propietario sin nombre",
+
+
+                                                                                                                            // =================================================
+                                                                                                                            // DIRECCIÓN
+                                                                                                                            // =================================================
+
                                                                                                                             propiedadDireccion: {
+
                                                                                                                                 calle:
                                                                                                                                     p.propiedadDireccion?.calle ||
                                                                                                                                     p.propiedadTitulo ||
                                                                                                                                     "Sin calle",
 
                                                                                                                                 localidad:
-                                                                                                                                    p.propiedadDireccion?.localidad || "-",
+                                                                                                                                    p.propiedadDireccion?.localidad ||
+                                                                                                                                    "-",
 
                                                                                                                                 provincia:
-                                                                                                                                    p.propiedadDireccion?.provincia || "-",
+                                                                                                                                    p.propiedadDireccion?.provincia ||
+                                                                                                                                    "-"
                                                                                                                             },
 
-                                                                                                                            montoBase: p.montoBase ?? p.montoLiquidado ?? 0,
-                                                                                                                            administracion: p.administracion ?? p.montoComision ?? 0,
-                                                                                                                            servicios: p.servicios ?? 0,
-                                                                                                                            interesGenerado: p.interesGenerado ?? 0,
+
+                                                                                                                            // =================================================
+                                                                                                                            // VALORES ACTUALES
+                                                                                                                            // =================================================
+
+                                                                                                                            montoCobrado,
+
+                                                                                                                            // El modal usa montoBase como campo visual
+                                                                                                                            montoBase:
+                                                                                                                                montoCobrado,
+
+                                                                                                                            interesGenerado,
+
+                                                                                                                            interesMoraDiario,
+
+                                                                                                                            interesAutomatico,
+
+                                                                                                                            porcentajeComision,
+
+                                                                                                                            // Administración
+                                                                                                                            administracion:
+                                                                                                                                montoComision,
+
+                                                                                                                            montoComision,
+
+                                                                                                                            servicios:
+                                                                                                                                p.servicios ??
+                                                                                                                                liq?.servicios ??
+                                                                                                                                0,
+
+                                                                                                                            // Total real de la liquidación
+                                                                                                                            montoLiquidado,
+
+                                                                                                                            montoFinal:
+                                                                                                                                montoLiquidado,
+
+
+                                                                                                                            // =================================================
+                                                                                                                            // ESTADO
+                                                                                                                            // =================================================
+
+                                                                                                                            estado:
+                                                                                                                                liq?.estado ||
+                                                                                                                                "pendiente",
+
+
+                                                                                                                            // =================================================
+                                                                                                                            // OBSERVACIONES
+                                                                                                                            // =================================================
+
+                                                                                                                            observaciones
                                                                                                                         };
 
-                                                                                                                        // =========================
-                                                                                                                        // 2. CALCULAR MONTO FINAL
-                                                                                                                        // =========================
-                                                                                                                        const liquidacionData = {
-                                                                                                                            ...liquidacionDataBase,
 
-                                                                                                                            montoFinal: calcularMontoFinal(
-                                                                                                                                liquidacionDataBase,
-                                                                                                                                "liquidacion"
-                                                                                                                            ),
-                                                                                                                        };
+                                                                                                                        // =====================================================
+                                                                                                                        // DEBUG
+                                                                                                                        // =====================================================
 
-                                                                                                                        setPagoSeleccionado(liquidacionData);
-                                                                                                                        setTipoModal("liquidacion");
+                                                                                                                        console.log(
+                                                                                                                            "========== ABRIR LIQUIDACIÓN =========="
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "Monto cobrado:",
+                                                                                                                            montoCobrado
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "Interés diario:",
+                                                                                                                            interesMoraDiario
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "Interés generado:",
+                                                                                                                            interesGenerado
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "Base administración:",
+                                                                                                                            baseAdministracion
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "% comisión:",
+                                                                                                                            porcentajeComision
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "Administración:",
+                                                                                                                            montoComision
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "Total neto:",
+                                                                                                                            montoLiquidado
+                                                                                                                        );
+
+                                                                                                                        console.log(
+                                                                                                                            "DATOS MODAL:",
+                                                                                                                            liquidacionData
+                                                                                                                        );
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 12. CARGAR LIQUIDACIÓN EN EL MODAL
+                                                                                                                        // =====================================================
+
+                                                                                                                        setPagoSeleccionado(
+                                                                                                                            liquidacionData
+                                                                                                                        );
+
+                                                                                                                        setTipoModal(
+                                                                                                                            "liquidacion"
+                                                                                                                        );
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 13. FORMULARIO DEL MODAL
+                                                                                                                        // =====================================================
 
                                                                                                                         setCobroForm({
-                                                                                                                            montoBase: liquidacionData.montoBase,
-                                                                                                                            interesGenerado: liquidacionData.interesGenerado,
-                                                                                                                            servicios: liquidacionData.servicios,
-                                                                                                                            administracion: liquidacionData.administracion,
-                                                                                                                            montoFinal: liquidacionData.montoFinal,
 
-                                                                                                                            metodoPago: "Transferencia",
-                                                                                                                            observaciones: cobroForm?.observaciones || "",
-                                                                                                                            fechaCobro: new Date(),
-                                                                                                                            numeroRecibo: liquidacionData.numeroRecibo || "",
-                                                                                                                            estado: liquidacionData.estado || "pendiente",
+                                                                                                                            // Base real
+                                                                                                                            montoBase:
+                                                                                                                                montoCobrado,
+
+                                                                                                                            // Datos del cálculo
+                                                                                                                            interesGenerado,
+
+                                                                                                                            interesMoraDiario,
+
+                                                                                                                            interesAutomatico,
+
+                                                                                                                            porcentajeComision,
+
+                                                                                                                            // Administración
+                                                                                                                            administracion:
+                                                                                                                                montoComision,
+
+                                                                                                                            montoComision,
+
+                                                                                                                            // Servicios
+                                                                                                                            servicios:
+                                                                                                                                p.servicios ??
+                                                                                                                                liq?.servicios ??
+                                                                                                                                0,
+
+                                                                                                                            // Total
+                                                                                                                            montoFinal:
+                                                                                                                                montoLiquidado,
+
+                                                                                                                            montoLiquidado,
+
+                                                                                                                            // Cobro
+                                                                                                                            metodoPago:
+                                                                                                                                liq?.metodoPago ||
+                                                                                                                                "Transferencia",
+
+                                                                                                                            fechaCobro:
+                                                                                                                                new Date(),
+
+                                                                                                                            numeroRecibo:
+                                                                                                                                liq?.numeroRecibo ||
+                                                                                                                                "",
+
+                                                                                                                            estado:
+                                                                                                                                liq?.estado ||
+                                                                                                                                "pendiente",
+
+                                                                                                                            // Observaciones
+                                                                                                                            observaciones
                                                                                                                         });
+
+
+                                                                                                                        // =====================================================
+                                                                                                                        // 14. ABRIR MODAL
+                                                                                                                        // =====================================================
 
                                                                                                                         setModalCobro(true);
                                                                                                                     }}
@@ -1133,46 +2730,46 @@ const calcularInteresAutomatico = (pago) => {
                                                                                                         })()}
                                                                                                     </td>
 
-<td>
-    {editando ? (
+                                                                                                    <td>
+                                                                                                        {editando ? (
 
-        <input
-            type="text"
-            className="form-control form-control-sm"
-            value={
-                pagoForm?.montoBase
-                    ? Number(pagoForm.montoBase).toLocaleString("es-AR", {
-                          minimumFractionDigits: 2,
-                          maximumFractionDigits: 2,
-                      })
-                    : ""
-            }
-            onChange={(e) => {
+                                                                                                            <input
+                                                                                                                type="text"
+                                                                                                                className="form-control form-control-sm"
+                                                                                                                value={
+                                                                                                                    pagoForm?.montoBase
+                                                                                                                        ? Number(pagoForm.montoBase).toLocaleString("es-AR", {
+                                                                                                                            minimumFractionDigits: 2,
+                                                                                                                            maximumFractionDigits: 2,
+                                                                                                                        })
+                                                                                                                        : ""
+                                                                                                                }
+                                                                                                                onChange={(e) => {
 
-                const valor = e.target.value
-                    .replace(/\./g, "")      // elimina separador de miles
-                    .replace(",", ".");      // convierte coma decimal
+                                                                                                                    const valor = e.target.value
+                                                                                                                        .replace(/\./g, "")      // elimina separador de miles
+                                                                                                                        .replace(",", ".");      // convierte coma decimal
 
-                const montoBase = Number(valor) || 0;
+                                                                                                                    const montoBase = Number(valor) || 0;
 
-                setPagoForm({
-                    ...pagoForm,
-                    montoBase,
-                    montoFinal:
-                        montoBase +
-                        Number(pagoForm?.interesGenerado || 0),
-                });
-            }}
-        />
+                                                                                                                    setPagoForm({
+                                                                                                                        ...pagoForm,
+                                                                                                                        montoBase,
+                                                                                                                        montoFinal:
+                                                                                                                            montoBase +
+                                                                                                                            Number(pagoForm?.interesGenerado || 0),
+                                                                                                                    });
+                                                                                                                }}
+                                                                                                            />
 
-    ) : (
+                                                                                                        ) : (
 
-        <span>
-            {formatCurrency(pago.montoBase || 0)}
-        </span>
+                                                                                                            <span>
+                                                                                                                {formatCurrency(pago.montoBase || 0)}
+                                                                                                            </span>
 
-    )}
-</td>
+                                                                                                        )}
+                                                                                                    </td>
 
                                                                                                     {/* SERVICIOS */}
                                                                                                     <td>
@@ -1694,24 +3291,50 @@ const calcularInteresAutomatico = (pago) => {
                                                                                                         <input
                                                                                                             type="number"
                                                                                                             className="form-control"
-                                                                                                            value={cobroForm?.montoBase || 0}
+                                                                                                            value={cobroForm?.montoBase ?? 0}
                                                                                                             onChange={(e) => {
-                                                                                                                const montoBase = Number(e.target.value);
 
-                                                                                                                setCobroForm((prev) => ({
-                                                                                                                    ...prev,
+                                                                                                                const montoBase =
+                                                                                                                    Number(e.target.value) || 0;
 
-                                                                                                                    montoBase,
+                                                                                                                setCobroForm((prev) => {
 
-                                                                                                                    montoFinal:
-                                                                                                                        montoBase +
-                                                                                                                        Number(prev.servicios || 0) +
-                                                                                                                        Number(
+                                                                                                                    const servicios =
+                                                                                                                        parseExpression(prev?.servicios);
+
+                                                                                                                    const administracion =
+                                                                                                                        Number(prev?.administracion || 0);
+
+                                                                                                                    const interes =
+                                                                                                                        Number(prev?.interesGenerado || 0);
+
+                                                                                                                    const nuevoForm = {
+                                                                                                                        ...prev,
+
+                                                                                                                        montoBase,
+
+                                                                                                                        montoCobrado:
+                                                                                                                            montoBase
+                                                                                                                    };
+
+                                                                                                                    return {
+                                                                                                                        ...nuevoForm,
+
+                                                                                                                        montoFinal:
                                                                                                                             tipoModal === "liquidacion"
-                                                                                                                                ? -(prev.administracion || 0)
-                                                                                                                                : prev.interesGenerado || 0
-                                                                                                                        ),
-                                                                                                                }));
+
+                                                                                                                                ? montoBase +
+                                                                                                                                interes +
+                                                                                                                                servicios -
+                                                                                                                                administracion
+
+                                                                                                                                : montoBase +
+                                                                                                                                interes +
+                                                                                                                                servicios
+                                                                                                                    };
+
+                                                                                                                });
+
                                                                                                             }}
                                                                                                         />
 
@@ -1732,18 +3355,40 @@ const calcularInteresAutomatico = (pago) => {
                                                                                                             value={cobroForm?.servicios ?? ""}
                                                                                                             onChange={(e) => {
 
-                                                                                                                const servicios = e.target.value;
+                                                                                                                const servicios =
+                                                                                                                    e.target.value;
 
                                                                                                                 setCobroForm((prev) => {
 
-                                                                                                                    const nuevoForm = {
-                                                                                                                        ...prev,
-                                                                                                                        servicios,
-                                                                                                                    };
+                                                                                                                    const montoBase =
+                                                                                                                        Number(prev?.montoBase || 0);
+
+                                                                                                                    const interes =
+                                                                                                                        Number(prev?.interesGenerado || 0);
+
+                                                                                                                    const administracion =
+                                                                                                                        Number(prev?.administracion || 0);
+
+                                                                                                                    const serviciosCalculados =
+                                                                                                                        parseExpression(servicios);
 
                                                                                                                     return {
-                                                                                                                        ...nuevoForm,
-                                                                                                                        montoFinal: calcularMontoFinal(nuevoForm, tipoModal),
+
+                                                                                                                        ...prev,
+
+                                                                                                                        servicios,
+
+                                                                                                                        montoFinal:
+                                                                                                                            tipoModal === "liquidacion"
+
+                                                                                                                                ? montoBase +
+                                                                                                                                interes +
+                                                                                                                                serviciosCalculados -
+                                                                                                                                administracion
+
+                                                                                                                                : montoBase +
+                                                                                                                                interes +
+                                                                                                                                serviciosCalculados
                                                                                                                     };
 
                                                                                                                 });
@@ -1753,7 +3398,7 @@ const calcularInteresAutomatico = (pago) => {
 
                                                                                                     </div>
 
-                                                                                                    {/* INTERES */}
+                                                                                                    {/* ADMINISTRACIÓN / INTERÉS */}
                                                                                                     <div className="col-md-4">
 
                                                                                                         <label className="form-label fw-semibold">
@@ -1767,34 +3412,82 @@ const calcularInteresAutomatico = (pago) => {
                                                                                                             className="form-control"
                                                                                                             value={
                                                                                                                 tipoModal === "liquidacion"
-                                                                                                                    ? cobroForm?.administracion || 0
-                                                                                                                    : cobroForm?.interesGenerado || 0
+                                                                                                                    ? cobroForm?.administracion ?? 0
+                                                                                                                    : cobroForm?.interesGenerado ?? 0
                                                                                                             }
                                                                                                             onChange={(e) => {
-                                                                                                                const valor = Number(e.target.value);
+
+                                                                                                                const valor =
+                                                                                                                    Number(e.target.value) || 0;
 
                                                                                                                 setCobroForm((prev) => {
 
-                                                                                                                    const base = Number(prev.montoBase || 0);
-                                                                                                                    const servicios = Number(prev.servicios || 0);
+                                                                                                                    const montoBase =
+                                                                                                                        Number(prev?.montoBase || 0);
+
+                                                                                                                    const servicios =
+                                                                                                                        parseExpression(prev?.servicios);
+
+                                                                                                                    const interes =
+                                                                                                                        tipoModal === "liquidacion"
+                                                                                                                            ? Number(prev?.interesGenerado || 0)
+                                                                                                                            : valor;
+
+                                                                                                                    const administracion =
+                                                                                                                        tipoModal === "liquidacion"
+                                                                                                                            ? valor
+                                                                                                                            : Number(prev?.administracion || 0);
 
                                                                                                                     return {
+
                                                                                                                         ...prev,
 
                                                                                                                         ...(tipoModal === "liquidacion"
-                                                                                                                            ? { administracion: valor }
-                                                                                                                            : { interesGenerado: valor }),
+                                                                                                                            ? {
+                                                                                                                                administracion: valor,
+                                                                                                                                montoComision: valor
+                                                                                                                            }
+                                                                                                                            : {
+                                                                                                                                interesGenerado: valor
+                                                                                                                            }),
 
                                                                                                                         montoFinal:
                                                                                                                             tipoModal === "liquidacion"
-                                                                                                                                ? base + servicios - valor
-                                                                                                                                : base + servicios + valor,
+
+                                                                                                                                ? montoBase +
+                                                                                                                                interes +
+                                                                                                                                servicios -
+                                                                                                                                administracion
+
+                                                                                                                                : montoBase +
+                                                                                                                                interes +
+                                                                                                                                servicios
                                                                                                                     };
+
                                                                                                                 });
+
                                                                                                             }}
                                                                                                         />
 
                                                                                                     </div>
+
+                                                                                                    {/* INTERÉS / PUNITORIOS - SOLO LIQUIDACIÓN */}
+                                                                                                    {tipoModal === "liquidacion" && (
+                                                                                                        <div className="col-md-4">
+
+                                                                                                            <label className="form-label fw-semibold">
+                                                                                                                Interés / Punitorios
+                                                                                                            </label>
+
+                                                                                                            <input
+                                                                                                                type="number"
+                                                                                                                className="form-control"
+                                                                                                                value={cobroForm?.interesGenerado ?? 0}
+                                                                                                                readOnly
+                                                                                                            />
+
+                                                                                                        </div>
+                                                                                                    )}
 
                                                                                                     {/* TOTAL */}
                                                                                                     <div className="col-12">
@@ -1998,10 +3691,13 @@ const calcularInteresAutomatico = (pago) => {
                                                                                                         montoComision: cobroForm?.administracion ?? 0,
                                                                                                         servicios: cobroForm?.servicios ?? 0,
                                                                                                         interesGenerado: cobroForm?.interesGenerado ?? 0,
+                                                                                                        interesAutomatico: false,
                                                                                                         montoLiquidado: cobroForm?.montoFinal ?? 0,
                                                                                                         metodoPago: cobroForm?.metodoPago || "Transferencia",
                                                                                                     } : {
                                                                                                         ...cobroForm,
+                                                                                                        interesAutomatico: false,
+
                                                                                                     }),
 
                                                                                                     numeroRecibo,
@@ -2249,6 +3945,7 @@ const calcularInteresAutomatico = (pago) => {
                                                                     telefono1: formEdicion.telefono1,
                                                                     telefono2: formEdicion.telefono2,
                                                                     observaciones: formEdicion.observaciones,
+                                                                    comisionInmobiliaria: Number(formEdicion.comisionInmobiliaria) || 0,
                                                                     updatedAt: serverTimestamp(),
                                                                 }
                                                             );
@@ -2265,6 +3962,7 @@ const calcularInteresAutomatico = (pago) => {
                                                                 telefono1: formEdicion.telefono1,
                                                                 telefono2: formEdicion.telefono2,
                                                                 observaciones: formEdicion.observaciones,
+                                                                comisionInmobiliaria: Number(formEdicion.comisionInmobiliaria) || 0,
                                                             });
 
                                                             setModoEdicion(false);
