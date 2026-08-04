@@ -20,7 +20,7 @@ export default function ContratoModal({
     setModoLocador,
     modoLocatario,
     setModoLocatario,
-    clientes, 
+    clientes,
 
 
     handleBackToSearch,
@@ -36,7 +36,7 @@ export default function ContratoModal({
 }) {
 
     if (!showModal) return null;
-    
+
 
     return (
         <>
@@ -245,291 +245,290 @@ export default function ContratoModal({
 
                                                                         {/* TIPO DE LOCADOR */}
 
-<div className="col-12">
+                                                                        <div className="col-12">
 
-    <label className="form-label fw-bold">
-        Locador
-    </label>
+                                                                            <label className="form-label fw-bold">
+                                                                                Locador
+                                                                            </label>
 
-    <div className="btn-group w-100">
+                                                                            <div className="btn-group w-100">
 
-        <button
-            type="button"
-            className={`btn ${
-                modoLocador === "existente"
-                    ? "btn-success"
-                    : "btn-outline-success"
-            }`}
-            onClick={() => setModoLocador("existente")}
-        >
-            Usar Existente
-        </button>
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className={`btn ${modoLocador === "existente"
+                                                                                            ? "btn-success"
+                                                                                            : "btn-outline-success"
+                                                                                        }`}
+                                                                                    onClick={() => setModoLocador("existente")}
+                                                                                >
+                                                                                    Usar Existente
+                                                                                </button>
 
-        <button
-            type="button"
-            className={`btn ${
-                modoLocador === "nuevo"
-                    ? "btn-success"
-                    : "btn-outline-success"
-            }`}
-            onClick={() => {
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className={`btn ${modoLocador === "nuevo"
+                                                                                            ? "btn-success"
+                                                                                            : "btn-outline-success"
+                                                                                        }`}
+                                                                                    onClick={() => {
 
-                setModoLocador("nuevo");
+                                                                                        setModoLocador("nuevo");
 
-                setFormData({
-                    ...formData,
+                                                                                        setFormData({
+                                                                                            ...formData,
 
-                    locadorId: "",
+                                                                                            locadorId: "",
 
-                    locador: "",
-                    locadorDni: "",
-                    locadorCuil: "",
-                    locadorEmail: "",
-                    locadorTelefono1: "",
-                    locadorTelefono2: "",
-                    comisionInmobiliaria: "",
-                });
-            }}
-        >
-            Crear Nuevo
-        </button>
+                                                                                            locador: "",
+                                                                                            locadorDni: "",
+                                                                                            locadorCuil: "",
+                                                                                            locadorEmail: "",
+                                                                                            locadorTelefono1: "",
+                                                                                            locadorTelefono2: "",
+                                                                                            comisionInmobiliaria: "",
+                                                                                        });
+                                                                                    }}
+                                                                                >
+                                                                                    Crear Nuevo
+                                                                                </button>
 
-    </div>
+                                                                            </div>
 
-</div>
+                                                                        </div>
 
-{modoLocador === "existente" && (
+                                                                        {modoLocador === "existente" && (
 
-    <div className="col-12">
+                                                                            <div className="col-12">
 
-        <label className="form-label">
-            Seleccionar Locador
-        </label>
+                                                                                <label className="form-label">
+                                                                                    Seleccionar Locador
+                                                                                </label>
 
-        <select
-    className="form-select"
-    value={formData.locadorId || ""}
-    onChange={(e) => {
+                                                                                <select
+                                                                                    className="form-select"
+                                                                                    value={formData.locadorId || ""}
+                                                                                    onChange={(e) => {
 
-        const locador = clientes.find(
-            (c) => c.id === e.target.value
-        );
+                                                                                        const locador = clientes.find(
+                                                                                            (c) => c.id === e.target.value
+                                                                                        );
 
-        if (!locador) return;
+                                                                                        if (!locador) return;
 
-        setFormData({
-            ...formData,
+                                                                                        setFormData({
+                                                                                            ...formData,
 
-            locadorId: locador.id,
+                                                                                            locadorId: locador.id,
 
-            locador: locador.nombre || "",
-            locadorDni: locador.dni || "",
-            locadorCuil: locador.cuil || "",
-            locadorEmail: locador.email || "",
-            locadorTelefono1: locador.telefono1 || "",
-            locadorTelefono2: locador.telefono2 || "",
-            comisionInmobiliaria: locador.comisionInmobiliaria || ""
+                                                                                            locador: locador.nombre || "",
+                                                                                            locadorDni: locador.dni || "",
+                                                                                            locadorCuil: locador.cuil || "",
+                                                                                            locadorEmail: locador.email || "",
+                                                                                            locadorTelefono1: locador.telefono1 || "",
+                                                                                            locadorTelefono2: locador.telefono2 || "",
+                                                                                            comisionInmobiliaria: locador.comisionInmobiliaria || ""
 
-        });
-    }}
->
-    <option value="">
-        Seleccionar locador...
-    </option>
+                                                                                        });
+                                                                                    }}
+                                                                                >
+                                                                                    <option value="">
+                                                                                        Seleccionar locador...
+                                                                                    </option>
 
-    {clientes
-        .filter(
-            (c) =>
-                Array.isArray(c.roles) &&
-                c.roles.includes("locador")
-        )
-        .sort((a, b) =>
-            (a.nombre || "").localeCompare(
-                b.nombre || "",
-                "es",
-                { sensitivity: "base" }
-            )
-        )
-        .map((locador) => (
-            <option
-                key={locador.id}
-                value={locador.id}
-            >
-                {locador.nombre}
-                {locador.dni
-                    ? ` - DNI ${locador.dni}`
-                    : ""}
-            </option>
-        ))}
-</select>
+                                                                                    {clientes
+                                                                                        .filter(
+                                                                                            (c) =>
+                                                                                                Array.isArray(c.roles) &&
+                                                                                                c.roles.includes("locador")
+                                                                                        )
+                                                                                        .sort((a, b) =>
+                                                                                            (a.nombre || "").localeCompare(
+                                                                                                b.nombre || "",
+                                                                                                "es",
+                                                                                                { sensitivity: "base" }
+                                                                                            )
+                                                                                        )
+                                                                                        .map((locador) => (
+                                                                                            <option
+                                                                                                key={locador.id}
+                                                                                                value={locador.id}
+                                                                                            >
+                                                                                                {locador.nombre}
+                                                                                                {locador.dni
+                                                                                                    ? ` - DNI ${locador.dni}`
+                                                                                                    : ""}
+                                                                                            </option>
+                                                                                        ))}
+                                                                                </select>
 
-    </div>
+                                                                            </div>
 
-)}
-<div className="col-md-4">
-    <label className="form-label">Nombre y Apellido</label>
-    <input
-        type="text"
-        className="form-control"
-        disabled={modoLocador === "existente"}
-        value={formData.locador}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locador: e.target.value
-            })
-        }
-    />
-</div>
+                                                                        )}
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">Nombre y Apellido</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                className="form-control"
+                                                                                disabled={modoLocador === "existente"}
+                                                                                value={formData.locador}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        locador: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
 
-<div className="col-md-4">
-    <label className="form-label">DNI</label>
-    <input
-        type="text"
-        className="form-control"
-        disabled={modoLocador === "existente"}
-        value={formData.locadorDni}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locadorDni: e.target.value
-            })
-        }
-    />
-</div>
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">DNI</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                className="form-control"
+                                                                                disabled={modoLocador === "existente"}
+                                                                                value={formData.locadorDni}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        locadorDni: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
 
-<div className="col-md-4">
-    <label className="form-label">CUIL</label>
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">CUIL</label>
 
-    <input
-        type="text"
-        className="form-control"
-        placeholder="20-12345678-3"
-        disabled={modoLocador === "existente"}
-        value={formData.locadorCuil || ""}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locadorCuil: e.target.value
-            })
-        }
-    />
-</div>
+                                                                            <input
+                                                                                type="text"
+                                                                                className="form-control"
+                                                                                placeholder="20-12345678-3"
+                                                                                disabled={modoLocador === "existente"}
+                                                                                value={formData.locadorCuil || ""}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        locadorCuil: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
 
-<div className="col-md-4">
-    <label className="form-label">Email</label>
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">Email</label>
 
-    <input
-        type="email"
-        className="form-control"
-        disabled={modoLocador === "existente"}
-        value={formData.locadorEmail || ""}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locadorEmail: e.target.value
-            })
-        }
-    />
-</div>
+                                                                            <input
+                                                                                type="email"
+                                                                                className="form-control"
+                                                                                disabled={modoLocador === "existente"}
+                                                                                value={formData.locadorEmail || ""}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        locadorEmail: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
 
-<div className="col-md-4">
-    <label className="form-label">Teléfono 1</label>
-    <input
-        type="text"
-        className="form-control"
-        disabled={modoLocador === "existente"}
-        value={formData.locadorTelefono1 || ""}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locadorTelefono1: e.target.value
-            })
-        }
-    />
-</div>
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">Teléfono 1</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                className="form-control"
+                                                                                disabled={modoLocador === "existente"}
+                                                                                value={formData.locadorTelefono1 || ""}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        locadorTelefono1: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
 
-<div className="col-md-4">
-    <label className="form-label">Teléfono 2</label>
-    <input
-        type="text"
-        className="form-control"
-        disabled={modoLocador === "existente"}
-        value={formData.locadorTelefono2 || ""}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locadorTelefono2: e.target.value
-            })
-        }
-    />
-</div>
-{/* COMISIÓN INMOBILIARIA */}
-<div className="col-md-4">
-    <label className="form-label">
-        Comisión Inmobiliaria
-    </label>
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">Teléfono 2</label>
+                                                                            <input
+                                                                                type="text"
+                                                                                className="form-control"
+                                                                                disabled={modoLocador === "existente"}
+                                                                                value={formData.locadorTelefono2 || ""}
+                                                                                onChange={(e) =>
+                                                                                    setFormData({
+                                                                                        ...formData,
+                                                                                        locadorTelefono2: e.target.value
+                                                                                    })
+                                                                                }
+                                                                            />
+                                                                        </div>
+                                                                        {/* COMISIÓN INMOBILIARIA */}
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label">
+                                                                                Comisión Inmobiliaria
+                                                                            </label>
 
-    <div className="input-group">
-        <input
-            type="number"
-            min="0"
-            step="0.01"
-            className="form-control"
-            value={formData.comisionInmobiliaria || ""}
-            onChange={(e) =>
-                setFormData({
-                    ...formData,
-                    comisionInmobiliaria: e.target.value
-                })
-            }
-        />
+                                                                            <div className="input-group">
+                                                                                <input
+                                                                                    type="number"
+                                                                                    min="0"
+                                                                                    step="0.01"
+                                                                                    className="form-control"
+                                                                                    value={formData.comisionInmobiliaria || ""}
+                                                                                    onChange={(e) =>
+                                                                                        setFormData({
+                                                                                            ...formData,
+                                                                                            comisionInmobiliaria: e.target.value
+                                                                                        })
+                                                                                    }
+                                                                                    onWheel={(e) => e.currentTarget.blur()}
+                                                                                />
 
-        <span className="input-group-text">
-            %
-        </span>
-    </div>
-</div>
+                                                                                <span className="input-group-text">
+                                                                                    %
+                                                                                </span>
+                                                                            </div>
+                                                                        </div>
 
-<div className="col-12">
+                                                                        <div className="col-12">
 
-    <div className="border rounded-4 p-3 bg-white">
+                                                                            <div className="border rounded-4 p-3 bg-white">
 
-        <div className="fw-semibold mb-3">
-            Documentación Locador
-        </div>
+                                                                                <div className="fw-semibold mb-3">
+                                                                                    Documentación Locador
+                                                                                </div>
 
-        <input
-            type="file"
-            multiple
-            disabled={modoLocador === "existente"}
-            className="form-control"
-            onChange={(e) =>
-                setFormData({
-                    ...formData,
-                    locadorArchivos: Array.from(e.target.files)
-                })
-            }
-        />
+                                                                                <input
+                                                                                    type="file"
+                                                                                    multiple
+                                                                                    disabled={modoLocador === "existente"}
+                                                                                    className="form-control"
+                                                                                    onChange={(e) =>
+                                                                                        setFormData({
+                                                                                            ...formData,
+                                                                                            locadorArchivos: Array.from(e.target.files)
+                                                                                        })
+                                                                                    }
+                                                                                />
 
-        {formData.locadorArchivos?.length > 0 && (
-            <div className="mt-3">
+                                                                                {formData.locadorArchivos?.length > 0 && (
+                                                                                    <div className="mt-3">
 
-                {formData.locadorArchivos.map((file, index) => (
-                    <div
-                        key={index}
-                        className="small text-secondary mb-1"
-                    >
-                        📄 {file.name}
-                    </div>
-                ))}
+                                                                                        {formData.locadorArchivos.map((file, index) => (
+                                                                                            <div
+                                                                                                key={index}
+                                                                                                className="small text-secondary mb-1"
+                                                                                            >
+                                                                                                📄 {file.name}
+                                                                                            </div>
+                                                                                        ))}
 
-            </div>
-        )}
+                                                                                    </div>
+                                                                                )}
 
-    </div>
+                                                                            </div>
 
-</div>
+                                                                        </div>
 
                                                                     </div>
 
@@ -537,294 +536,293 @@ export default function ContratoModal({
                                                             </div>
 
 
-{/* TIPO DE LOCATARIO */}
+                                                            {/* TIPO DE LOCATARIO */}
 
-<div className="col-12">
+                                                            <div className="col-12">
 
-    <label className="form-label fw-bold">
-        Locatario
-    </label>
+                                                                <label className="form-label fw-bold">
+                                                                    Locatario
+                                                                </label>
 
-    <div className="btn-group w-100">
+                                                                <div className="btn-group w-100">
 
-        <button
-            type="button"
-            className={`btn ${
-                modoLocatario === "existente"
-                    ? "btn-success"
-                    : "btn-outline-success"
-            }`}
-            onClick={() => setModoLocatario("existente")}
-        >
-            Usar Existente
-        </button>
+                                                                    <button
+                                                                        type="button"
+                                                                        className={`btn ${modoLocatario === "existente"
+                                                                                ? "btn-success"
+                                                                                : "btn-outline-success"
+                                                                            }`}
+                                                                        onClick={() => setModoLocatario("existente")}
+                                                                    >
+                                                                        Usar Existente
+                                                                    </button>
 
-        <button
-            type="button"
-            className={`btn ${
-                modoLocatario === "nuevo"
-                    ? "btn-success"
-                    : "btn-outline-success"
-            }`}
-            onClick={() => {
+                                                                    <button
+                                                                        type="button"
+                                                                        className={`btn ${modoLocatario === "nuevo"
+                                                                                ? "btn-success"
+                                                                                : "btn-outline-success"
+                                                                            }`}
+                                                                        onClick={() => {
 
-                setModoLocatario("nuevo");
+                                                                            setModoLocatario("nuevo");
 
-                setFormData({
-                    ...formData,
+                                                                            setFormData({
+                                                                                ...formData,
 
-                    locatarioId: "",
+                                                                                locatarioId: "",
 
-                    locatario: "",
-                    locatarioDni: "",
-                    locatarioCuil: "",
-                    locatarioEmail: "",
-                    locatarioTelefono1: "",
-                    locatarioTelefono2: "",
-                    deposito: "",
+                                                                                locatario: "",
+                                                                                locatarioDni: "",
+                                                                                locatarioCuil: "",
+                                                                                locatarioEmail: "",
+                                                                                locatarioTelefono1: "",
+                                                                                locatarioTelefono2: "",
+                                                                                deposito: "",
 
-                    locatarioArchivos: [],
-                });
-            }}
-        >
-            Crear Nuevo
-        </button>
+                                                                                locatarioArchivos: [],
+                                                                            });
+                                                                        }}
+                                                                    >
+                                                                        Crear Nuevo
+                                                                    </button>
 
-    </div>
+                                                                </div>
 
-</div>
+                                                            </div>
 
-{modoLocatario === "existente" && (
+                                                            {modoLocatario === "existente" && (
 
-    <div className="col-12">
+                                                                <div className="col-12">
 
-        <label className="form-label">
-            Seleccionar Locatario
-        </label>
+                                                                    <label className="form-label">
+                                                                        Seleccionar Locatario
+                                                                    </label>
 
-        <select
-            className="form-select"
-            value={formData.locatarioId || ""}
-            onChange={(e) => {
+                                                                    <select
+                                                                        className="form-select"
+                                                                        value={formData.locatarioId || ""}
+                                                                        onChange={(e) => {
 
-                const locatario = clientes.find(
-                    (c) => c.id === e.target.value
-                );
+                                                                            const locatario = clientes.find(
+                                                                                (c) => c.id === e.target.value
+                                                                            );
 
-                if (!locatario) return;
+                                                                            if (!locatario) return;
 
-                setFormData({
-                    ...formData,
+                                                                            setFormData({
+                                                                                ...formData,
 
-                    locatarioId: locatario.id,
+                                                                                locatarioId: locatario.id,
 
-                    locatario: locatario.nombre || "",
-                    locatarioDni: locatario.dni || "",
-                    locatarioCuil: locatario.cuil || "",
-                    locatarioEmail: locatario.email || "",
-                    locatarioTelefono1: locatario.telefono1 || "",
-                    locatarioTelefono2: locatario.telefono2 || "",
-                    deposito: locatario.deposito || "",
-                    locatarioArchivos: locatario.archivos || [],
-                });
-            }}
-        >
-            <option value="">
-                Seleccionar locatario...
-            </option>
+                                                                                locatario: locatario.nombre || "",
+                                                                                locatarioDni: locatario.dni || "",
+                                                                                locatarioCuil: locatario.cuil || "",
+                                                                                locatarioEmail: locatario.email || "",
+                                                                                locatarioTelefono1: locatario.telefono1 || "",
+                                                                                locatarioTelefono2: locatario.telefono2 || "",
+                                                                                deposito: locatario.deposito || "",
+                                                                                locatarioArchivos: locatario.archivos || [],
+                                                                            });
+                                                                        }}
+                                                                    >
+                                                                        <option value="">
+                                                                            Seleccionar locatario...
+                                                                        </option>
 
-            {clientes
-                .filter(
-                    (c) =>
-                        Array.isArray(c.roles) &&
-                        c.roles.includes("locatario")
-                )
-                .sort((a, b) =>
-                    (a.nombre || "").localeCompare(
-                        b.nombre || "",
-                        "es",
-                        { sensitivity: "base" }
-                    )
-                )
-                .map((locatario) => (
-                    <option
-                        key={locatario.id}
-                        value={locatario.id}
-                    >
-                        {locatario.nombre}
-                        {locatario.dni
-                            ? ` - DNI ${locatario.dni}`
-                            : ""}
-                    </option>
-                ))}
-        </select>
+                                                                        {clientes
+                                                                            .filter(
+                                                                                (c) =>
+                                                                                    Array.isArray(c.roles) &&
+                                                                                    c.roles.includes("locatario")
+                                                                            )
+                                                                            .sort((a, b) =>
+                                                                                (a.nombre || "").localeCompare(
+                                                                                    b.nombre || "",
+                                                                                    "es",
+                                                                                    { sensitivity: "base" }
+                                                                                )
+                                                                            )
+                                                                            .map((locatario) => (
+                                                                                <option
+                                                                                    key={locatario.id}
+                                                                                    value={locatario.id}
+                                                                                >
+                                                                                    {locatario.nombre}
+                                                                                    {locatario.dni
+                                                                                        ? ` - DNI ${locatario.dni}`
+                                                                                        : ""}
+                                                                                </option>
+                                                                            ))}
+                                                                    </select>
 
-    </div>
+                                                                </div>
 
-)}
+                                                            )}
 
-<div className="col-md-4">
-    <label className="form-label">Nombre y Apellido</label>
-    <input
-        type="text"
-        className="form-control"
-        disabled={modoLocatario === "existente"}
-        value={formData.locatario}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locatario: e.target.value
-            })
-        }
-    />
-</div>
+                                                            <div className="col-md-4">
+                                                                <label className="form-label">Nombre y Apellido</label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    disabled={modoLocatario === "existente"}
+                                                                    value={formData.locatario}
+                                                                    onChange={(e) =>
+                                                                        setFormData({
+                                                                            ...formData,
+                                                                            locatario: e.target.value
+                                                                        })
+                                                                    }
+                                                                />
+                                                            </div>
 
-<div className="col-md-4">
-    <label className="form-label">DNI</label>
-    <input
-        type="text"
-        className="form-control"
-        disabled={modoLocatario === "existente"}
-        value={formData.locatarioDni}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locatarioDni: e.target.value
-            })
-        }
-    />
-</div>
+                                                            <div className="col-md-4">
+                                                                <label className="form-label">DNI</label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    disabled={modoLocatario === "existente"}
+                                                                    value={formData.locatarioDni}
+                                                                    onChange={(e) =>
+                                                                        setFormData({
+                                                                            ...formData,
+                                                                            locatarioDni: e.target.value
+                                                                        })
+                                                                    }
+                                                                />
+                                                            </div>
 
-<div className="col-md-4">
-    <label className="form-label">CUIL</label>
+                                                            <div className="col-md-4">
+                                                                <label className="form-label">CUIL</label>
 
-    <input
-        type="text"
-        className="form-control"
-        placeholder="20-12345678-3"
-        disabled={modoLocatario === "existente"}
-        value={formData.locatarioCuil || ""}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locatarioCuil: e.target.value
-            })
-        }
-    />
-</div>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    placeholder="20-12345678-3"
+                                                                    disabled={modoLocatario === "existente"}
+                                                                    value={formData.locatarioCuil || ""}
+                                                                    onChange={(e) =>
+                                                                        setFormData({
+                                                                            ...formData,
+                                                                            locatarioCuil: e.target.value
+                                                                        })
+                                                                    }
+                                                                />
+                                                            </div>
 
-<div className="col-md-4">
-    <label className="form-label">Email</label>
+                                                            <div className="col-md-4">
+                                                                <label className="form-label">Email</label>
 
-    <input
-        type="email"
-        className="form-control"
-        disabled={modoLocatario === "existente"}
-        value={formData.locatarioEmail || ""}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locatarioEmail: e.target.value
-            })
-        }
-    />
-</div>
+                                                                <input
+                                                                    type="email"
+                                                                    className="form-control"
+                                                                    disabled={modoLocatario === "existente"}
+                                                                    value={formData.locatarioEmail || ""}
+                                                                    onChange={(e) =>
+                                                                        setFormData({
+                                                                            ...formData,
+                                                                            locatarioEmail: e.target.value
+                                                                        })
+                                                                    }
+                                                                />
+                                                            </div>
 
-<div className="col-md-4">
-    <label className="form-label">Teléfono 1</label>
-    <input
-        type="text"
-        className="form-control"
-        disabled={modoLocatario === "existente"}
-        value={formData.locatarioTelefono1 || ""}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locatarioTelefono1: e.target.value
-            })
-        }
-    />
-</div>
+                                                            <div className="col-md-4">
+                                                                <label className="form-label">Teléfono 1</label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    disabled={modoLocatario === "existente"}
+                                                                    value={formData.locatarioTelefono1 || ""}
+                                                                    onChange={(e) =>
+                                                                        setFormData({
+                                                                            ...formData,
+                                                                            locatarioTelefono1: e.target.value
+                                                                        })
+                                                                    }
+                                                                />
+                                                            </div>
 
-<div className="col-md-4">
-    <label className="form-label">Teléfono 2</label>
-    <input
-        type="text"
-        className="form-control"
-        disabled={modoLocatario === "existente"}
-        value={formData.locatarioTelefono2 || ""}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                locatarioTelefono2: e.target.value
-            })
-        }
-    />
-</div>
+                                                            <div className="col-md-4">
+                                                                <label className="form-label">Teléfono 2</label>
+                                                                <input
+                                                                    type="text"
+                                                                    className="form-control"
+                                                                    disabled={modoLocatario === "existente"}
+                                                                    value={formData.locatarioTelefono2 || ""}
+                                                                    onChange={(e) =>
+                                                                        setFormData({
+                                                                            ...formData,
+                                                                            locatarioTelefono2: e.target.value
+                                                                        })
+                                                                    }
+                                                                />
+                                                            </div>
 
-<div className="col-md-4">
-    <label className="form-label">
-        Depósito de Garantía
-    </label>
+                                                            <div className="col-md-4">
+                                                                <label className="form-label">
+                                                                    Depósito de Garantía
+                                                                </label>
 
-    <input
-        type="number"
-        min="0"
-        className="form-control"
-        disabled={modoLocatario === "existente"}
-        value={formData.deposito || ""}
-        onChange={(e) =>
-            setFormData({
-                ...formData,
-                deposito: Number(e.target.value) || ""
-            })
-        }
-    />
-</div>
+                                                                <input
+                                                                    type="number"
+                                                                    min="0"
+                                                                    className="form-control"
+                                                                    disabled={modoLocatario === "existente"}
+                                                                    value={formData.deposito || ""}
+                                                                    onChange={(e) =>
+                                                                        setFormData({
+                                                                            ...formData,
+                                                                            deposito: Number(e.target.value) || ""
+                                                                        })
+                                                                    }
+                                                                    onWheel={(e) => e.currentTarget.blur()}
+                                                                />
+                                                            </div>
 
-<div className="col-12">
+                                                            <div className="col-12">
 
-    <div className="border rounded-4 p-3 bg-white">
+                                                                <div className="border rounded-4 p-3 bg-white">
 
-        <div className="fw-semibold mb-3">
-            Documentación Locatario
-        </div>
+                                                                    <div className="fw-semibold mb-3">
+                                                                        Documentación Locatario
+                                                                    </div>
 
-        <input
-            type="file"
-            multiple
-            disabled={modoLocatario === "existente"}
-            className="form-control"
-            onChange={(e) =>
-                setFormData({
-                    ...formData,
-                    locatarioArchivos: Array.from(
-                        e.target.files
-                    )
-                })
-            }
-        />
+                                                                    <input
+                                                                        type="file"
+                                                                        multiple
+                                                                        disabled={modoLocatario === "existente"}
+                                                                        className="form-control"
+                                                                        onChange={(e) =>
+                                                                            setFormData({
+                                                                                ...formData,
+                                                                                locatarioArchivos: Array.from(
+                                                                                    e.target.files
+                                                                                )
+                                                                            })
+                                                                        }
+                                                                    />
 
-        {formData.locatarioArchivos?.length > 0 && (
-            <div className="mt-3">
+                                                                    {formData.locatarioArchivos?.length > 0 && (
+                                                                        <div className="mt-3">
 
-                {formData.locatarioArchivos.map(
-                    (file, index) => (
-                        <div
-                            key={index}
-                            className="small text-secondary mb-1"
-                        >
-                            📄 {file.nombre || file.name}
-                        </div>
-                    )
-                )}
+                                                                            {formData.locatarioArchivos.map(
+                                                                                (file, index) => (
+                                                                                    <div
+                                                                                        key={index}
+                                                                                        className="small text-secondary mb-1"
+                                                                                    >
+                                                                                        📄 {file.nombre || file.name}
+                                                                                    </div>
+                                                                                )
+                                                                            )}
 
-            </div>
-        )}
+                                                                        </div>
+                                                                    )}
 
-    </div>
+                                                                </div>
 
-</div>
+                                                            </div>
 
 
                                                             <div className="col-12 mt-4">
@@ -1019,7 +1017,7 @@ export default function ContratoModal({
                                                                 </div>
                                                             </div>
 
-                                                                                                                        <div className="col-12 mt-4">
+                                                            <div className="col-12 mt-4">
                                                                 <div
                                                                     className="border rounded-4 p-4"
                                                                     style={{
@@ -1259,6 +1257,11 @@ export default function ContratoModal({
                                                                                     min="1"
                                                                                     className="form-control"
                                                                                     value={formData.periodoActualizacion || ""}
+                                                                                    style={{
+                                                                                        MozAppearance: "textfield",
+                                                                                        appearance: "textfield"
+                                                                                    }}
+                                                                                    onWheel={(e) => e.currentTarget.blur()}
                                                                                     onChange={(e) => {
 
                                                                                         const nuevoPeriodo = Number(e.target.value);
@@ -1297,33 +1300,32 @@ export default function ContratoModal({
                                                                             </div>
                                                                         </div>
 
-<div className="col-md-4">
-    <label className="form-label d-block">
-        Tipo de Actualización
-    </label>
+                                                                        <div className="col-md-4">
+                                                                            <label className="form-label d-block">
+                                                                                Tipo de Actualización
+                                                                            </label>
 
-    <div className="btn-group w-100">
-        {["IPC", "ICL", "OTRO"].map((tipo) => (
-            <button
-                key={tipo}
-                type="button"
-                className={`btn ${
-                    formData.indiceActualizacion === tipo
-                        ? "btn-primary"
-                        : "btn-outline-primary"
-                }`}
-                onClick={() =>
-                    setFormData({
-                        ...formData,
-                        indiceActualizacion: tipo,
-                    })
-                }
-            >
-                {tipo}
-            </button>
-        ))}
-    </div>
-</div>
+                                                                            <div className="btn-group w-100">
+                                                                                {["IPC", "ICL", "OTRO"].map((tipo) => (
+                                                                                    <button
+                                                                                        key={tipo}
+                                                                                        type="button"
+                                                                                        className={`btn ${formData.indiceActualizacion === tipo
+                                                                                                ? "btn-primary"
+                                                                                                : "btn-outline-primary"
+                                                                                            }`}
+                                                                                        onClick={() =>
+                                                                                            setFormData({
+                                                                                                ...formData,
+                                                                                                indiceActualizacion: tipo,
+                                                                                            })
+                                                                                        }
+                                                                                    >
+                                                                                        {tipo}
+                                                                                    </button>
+                                                                                ))}
+                                                                            </div>
+                                                                        </div>
 
                                                                         {/* CANTIDAD DE PERIODOS */}
 
@@ -1362,6 +1364,7 @@ export default function ContratoModal({
                                                                                             plazoPagoDesde: e.target.value
                                                                                         })
                                                                                     }
+                                                                                    onWheel={(e) => e.currentTarget.blur()}
                                                                                 />
 
                                                                                 <span>
@@ -1381,6 +1384,7 @@ export default function ContratoModal({
                                                                                             plazoPagoHasta: e.target.value
                                                                                         })
                                                                                     }
+                                                                                    onWheel={(e) => e.currentTarget.blur()}
                                                                                 />
 
                                                                             </div>
@@ -1407,6 +1411,7 @@ export default function ContratoModal({
                                                                                             interesMoraDiario: e.target.value
                                                                                         })
                                                                                     }
+                                                                                    onWheel={(e) => e.currentTarget.blur()}
                                                                                 />
 
                                                                                 <span className="input-group-text">
@@ -1419,13 +1424,20 @@ export default function ContratoModal({
 
                                                                         <div className="col-md-12">
                                                                             <label className="form-label">Precio Mensual</label>
+
                                                                             <div className="input-group">
                                                                                 <span className="input-group-text">$</span>
+
                                                                                 <input
                                                                                     type="number"
                                                                                     className="form-control"
                                                                                     placeholder="Ej: 180000"
                                                                                     value={formData.precioMensual}
+                                                                                    style={{
+                                                                                        MozAppearance: "textfield",
+                                                                                        appearance: "textfield"
+                                                                                    }}
+                                                                                    onWheel={(e) => e.currentTarget.blur()}
                                                                                     onChange={(e) =>
                                                                                         setFormData({
                                                                                             ...formData,
@@ -1695,19 +1707,19 @@ export default function ContratoModal({
                                                                                     />
                                                                                 </label>
 
-                                                                                    <button
-        type="button"
-        className="btn btn-outline-danger btn-sm"
-        onClick={() =>
-            setFormData({
-                ...formData,
-                archivoUrl: "",
-                archivo: null
-            })
-        }
-    >
-        <i className="bi bi-trash"></i>
-    </button>
+                                                                                <button
+                                                                                    type="button"
+                                                                                    className="btn btn-outline-danger btn-sm"
+                                                                                    onClick={() =>
+                                                                                        setFormData({
+                                                                                            ...formData,
+                                                                                            archivoUrl: "",
+                                                                                            archivo: null
+                                                                                        })
+                                                                                    }
+                                                                                >
+                                                                                    <i className="bi bi-trash"></i>
+                                                                                </button>
 
                                                                             </div>
 
@@ -1791,22 +1803,22 @@ export default function ContratoModal({
                                                     Cancelar
                                                 </button>
 
-{selectedProperty && (
-  <button
-    className="btn btn-primary"
-    onClick={handleSaveContract}
-    disabled={creandoContrato}
-  >
-    {creandoContrato ? (
-      <>
-        <span className="spinner-border spinner-border-sm me-2" />
-        Creando...
-      </>
-    ) : (
-      "Guardar Contrato"
-    )}
-  </button>
-)}
+                                                {selectedProperty && (
+                                                    <button
+                                                        className="btn btn-primary"
+                                                        onClick={handleSaveContract}
+                                                        disabled={creandoContrato}
+                                                    >
+                                                        {creandoContrato ? (
+                                                            <>
+                                                                <span className="spinner-border spinner-border-sm me-2" />
+                                                                Creando...
+                                                            </>
+                                                        ) : (
+                                                            "Guardar Contrato"
+                                                        )}
+                                                    </button>
+                                                )}
                                             </div>
 
                                         </div>

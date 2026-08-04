@@ -619,6 +619,8 @@ export default function ClienteModal({
                                                                                             comisionInmobiliaria: e.target.value
                                                                                         })
                                                                                     }
+                                                                                    onWheel={(e) => e.currentTarget.blur()}
+
                                                                                 />
 
                                                                                 <span className="input-group-text">
@@ -787,12 +789,36 @@ export default function ClienteModal({
                                                                                             return (
                                                                                                 <tr key={liq.id}>
 
-                                                                                                    {/* PERIODO */}
-                                                                                                    <td>
-                                                                                                        <span className="fw-bold">
-                                                                                                            #{liq.periodoNumero || "-"}
-                                                                                                        </span>
-                                                                                                    </td>
+                                                                                               {/* PERIODO */}
+{/* PERIODO */}
+<td>
+    {editando ? (
+        <input
+            type="number"
+            min="1"
+            className="form-control form-control-sm"
+            value={
+                liqForm?.periodoNumero ??
+                liq?.periodoNumero ??
+                ""
+            }
+            onChange={(e) =>
+                setLiqForm((prev) => ({
+                    ...(prev || {}),
+                    periodoNumero:
+                        e.target.value === ""
+                            ? ""
+                            : Number(e.target.value)
+                }))
+            }
+            onWheel={(e) => e.currentTarget.blur()}
+        />
+    ) : (
+        <span className="fw-bold">
+            #{liq?.periodoNumero || "-"}
+        </span>
+    )}
+</td>
 
                                                                                                     {/* FECHA */}
                                                                                                     <td>
@@ -902,6 +928,8 @@ export default function ClienteModal({
                                                                                                                     });
 
                                                                                                                 }}
+                                                                                                                    onWheel={(e) => e.currentTarget.blur()}
+
                                                                                                             />
                                                                                                         ) : (
                                                                                                             formatCurrency(
@@ -1068,6 +1096,8 @@ export default function ClienteModal({
                                                                                                                                     }));
 
                                                                                                                                 }}
+                                                                                                                                    onWheel={(e) => e.currentTarget.blur()}
+
 
                                                                                                                             />
 
@@ -1775,45 +1805,6 @@ export default function ClienteModal({
 
 
                                                                                                                             // ==========================================
-                                                                                                                            // DEBUG
-                                                                                                                            // ==========================================
-
-                                                                                                                            console.log(
-                                                                                                                                "========== GUARDAR LIQUIDACIÓN =========="
-                                                                                                                            );
-
-                                                                                                                            console.log(
-                                                                                                                                "Monto cobrado:",
-                                                                                                                                montoCobrado
-                                                                                                                            );
-
-                                                                                                                            console.log(
-                                                                                                                                "Interés:",
-                                                                                                                                interesGenerado
-                                                                                                                            );
-
-                                                                                                                            console.log(
-                                                                                                                                "Base administración:",
-                                                                                                                                baseAdministracion
-                                                                                                                            );
-
-                                                                                                                            console.log(
-                                                                                                                                "% comisión:",
-                                                                                                                                porcentajeComision
-                                                                                                                            );
-
-                                                                                                                            console.log(
-                                                                                                                                "Monto comisión:",
-                                                                                                                                montoComision
-                                                                                                                            );
-
-                                                                                                                            console.log(
-                                                                                                                                "Total:",
-                                                                                                                                montoLiquidado
-                                                                                                                            );
-
-
-                                                                                                                            // ==========================================
                                                                                                                             // DATOS A GUARDAR
                                                                                                                             // ==========================================
 
@@ -1823,12 +1814,19 @@ export default function ClienteModal({
 
                                                                                                                                 interesGenerado,
 
-                                                                                                                                // 🔥 GUARDAMOS TAMBIÉN EL %
+                                                                                                                               
                                                                                                                                 porcentajeComision,
 
                                                                                                                                 montoComision,
 
                                                                                                                                 montoLiquidado,
+
+periodoNumero:
+    liqForm?.periodoNumero !== undefined &&
+    liqForm?.periodoNumero !== ""
+        ? Number(liqForm.periodoNumero)
+        : Number(liq?.periodoNumero || 0),
+
 
                                                                                                                                 interesAutomatico:
                                                                                                                                     estadoNuevo === "pagado"
@@ -2066,44 +2064,7 @@ export default function ClienteModal({
                                                                                                                             baseAdministracion -
                                                                                                                             montoComision;
 
-
-                                                                                                                        // ==========================================
-                                                                                                                        // DEBUG
-                                                                                                                        // ==========================================
-
-                                                                                                                        console.log(
-                                                                                                                            "========== EDITAR LIQUIDACIÓN =========="
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "Monto cobrado:",
-                                                                                                                            montoCobrado
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "Interés:",
-                                                                                                                            interesGenerado
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "Base administración:",
-                                                                                                                            baseAdministracion
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "% comisión:",
-                                                                                                                            porcentajeComision
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "Administración:",
-                                                                                                                            montoComision
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "Total:",
-                                                                                                                            montoLiquidado
-                                                                                                                        );
+                                                                                                                        
 
 
                                                                                                                         // ==========================================
@@ -2114,9 +2075,7 @@ export default function ClienteModal({
 
                                                                                                                             montoCobrado,
 
-                                                                                                                            // 🔥 YA NO CARGAMOS EL MONTO VIEJO
-                                                                                                                            // DE FIRESTORE.
-                                                                                                                            // CARGAMOS EL 8% CALCULADO.
+                                                                        
 
                                                                                                                             montoComision,
 
@@ -2129,6 +2088,8 @@ export default function ClienteModal({
                                                                                                                             interesMoraDiario,
 
                                                                                                                             porcentajeComision,
+
+                                                                                                                            periodoNumero: liq.periodoNumero,
 
                                                                                                                             estado:
                                                                                                                                 liq.estado || "pendiente"
@@ -2435,53 +2396,7 @@ export default function ClienteModal({
                                                                                                                         };
 
 
-                                                                                                                        // =====================================================
-                                                                                                                        // DEBUG
-                                                                                                                        // =====================================================
-
-                                                                                                                        console.log(
-                                                                                                                            "========== ABRIR LIQUIDACIÓN =========="
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "Monto cobrado:",
-                                                                                                                            montoCobrado
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "Interés diario:",
-                                                                                                                            interesMoraDiario
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "Interés generado:",
-                                                                                                                            interesGenerado
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "Base administración:",
-                                                                                                                            baseAdministracion
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "% comisión:",
-                                                                                                                            porcentajeComision
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "Administración:",
-                                                                                                                            montoComision
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "Total neto:",
-                                                                                                                            montoLiquidado
-                                                                                                                        );
-
-                                                                                                                        console.log(
-                                                                                                                            "DATOS MODAL:",
-                                                                                                                            liquidacionData
-                                                                                                                        );
+                                                                                                                        
 
 
                                                                                                                         // =====================================================
@@ -2698,12 +2613,28 @@ export default function ClienteModal({
                                                                                             return (
                                                                                                 <tr key={pago.id}>
 
-                                                                                                    {/* PERIODO */}
-                                                                                                    <td>
-                                                                                                        <span className="fw-bold">
-                                                                                                            #{pago.periodoNumero || "-"}
-                                                                                                        </span>
-                                                                                                    </td>
+{/* PERIODO */}
+<td>
+    {editando ? (
+        <input
+            type="number"
+            min="1"
+            className="form-control form-control-sm"
+            value={pagoForm?.periodoNumero ?? pago.periodoNumero ?? ""}
+            onChange={(e) =>
+                setPagoForm({
+                    ...pagoForm,
+                    periodoNumero: Number(e.target.value) || ""
+                })
+            }
+            onWheel={(e) => e.currentTarget.blur()}
+        />
+    ) : (
+        <span className="fw-bold">
+            #{pago.periodoNumero || "-"}
+        </span>
+    )}
+</td>
 
                                                                                                     {/* FECHA */}
                                                                                                     <td>
@@ -2760,6 +2691,8 @@ export default function ClienteModal({
                                                                                                                             Number(pagoForm?.interesGenerado || 0),
                                                                                                                     });
                                                                                                                 }}
+                                                                                                                onWheel={(e) => e.currentTarget.blur()}
+
                                                                                                             />
 
                                                                                                         ) : (
@@ -2795,6 +2728,8 @@ export default function ClienteModal({
                                                                                                                             servicios,
                                                                                                                     });
                                                                                                                 }}
+                                                                                                                  onWheel={(e) => e.currentTarget.blur()}
+
                                                                                                             />
 
                                                                                                         ) : (
@@ -2880,6 +2815,8 @@ export default function ClienteModal({
                                                                                                                                             val
                                                                                                                                     });
                                                                                                                                 }}
+                                                                                                                                   onWheel={(e) => e.currentTarget.blur()}
+
                                                                                                                             />
 
                                                                                                                             {/* RESET */}
@@ -2955,6 +2892,8 @@ export default function ClienteModal({
                                                                                                                         montoFinal: Number(e.target.value)
                                                                                                                     })
                                                                                                                 }
+                                                                                                                   onWheel={(e) => e.currentTarget.blur()}
+
                                                                                                             />
 
                                                                                                         ) : (
@@ -3025,6 +2964,8 @@ export default function ClienteModal({
                                                                                                                             doc(db, "Pagos", pago.id),
                                                                                                                             {
                                                                                                                                 ...pagoForm,
+                                                                                                                                periodoNumero: Number(pagoForm.periodoNumero),
+
                                                                                                                                 updatedAt: serverTimestamp(),
                                                                                                                             }
                                                                                                                         );
@@ -3336,6 +3277,7 @@ export default function ClienteModal({
                                                                                                                 });
 
                                                                                                             }}
+                                                                                                            onWheel={(e) => e.currentTarget.blur()}
                                                                                                         />
 
                                                                                                     </div>
@@ -3467,6 +3409,7 @@ export default function ClienteModal({
                                                                                                                 });
 
                                                                                                             }}
+                                                                                                            onWheel={(e) => e.currentTarget.blur()}
                                                                                                         />
 
                                                                                                     </div>
