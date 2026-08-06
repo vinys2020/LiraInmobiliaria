@@ -2174,9 +2174,9 @@ const fechaFin = crearFechaLocal(formData.fechaFin);
               <p className="text-uppercase text-secondary fw-semibold small mb-1">
                 IPC
               </p>
-              <h4 className="fw-bold text-dark mb-2">33,20%</h4>
+              <h4 className="fw-bold text-dark mb-2">33,55%</h4>
               <span className="badge bg-success-subtle text-success rounded-pill px-3 py-2">
-                Mayo 2026
+                Junio 2026
               </span>
             </div>
           </div>
@@ -2238,9 +2238,9 @@ const fechaFin = crearFechaLocal(formData.fechaFin);
               <p className="text-uppercase text-secondary fw-semibold small mb-1">
                 ICL
               </p>
-              <h4 className="fw-bold text-dark mb-2">32,02%</h4>
+              <h4 className="fw-bold text-dark mb-2">31,52%</h4>
               <span className="badge bg-dark-subtle text-dark rounded-pill px-3 py-2">
-                Junio 2026
+                Agosto 2026
               </span>
             </div>
           </div>

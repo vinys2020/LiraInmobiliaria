@@ -1,7 +1,7 @@
 export default function CalculadoraAlquiler({
   theme = "light",
   backgroundColor = "ffffff",
-  height = 450
+  height = 600
 }) {
   return (
     <div className="border-0 shadow-sm border rounded-4 overflow-hidden">
