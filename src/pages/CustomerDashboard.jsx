@@ -206,224 +206,328 @@ export default function CustomerDashboard() {
     cargarCantidadProximosPeriodos();
   }, []);
 
-  const cargarCantidadProximosPeriodos = async () => {
+const cargarCantidadProximosPeriodos = async () => {
 
-    try {
+  try {
 
-      const hoy = new Date();
+    const hoy = new Date();
 
-      const mesActual = hoy.getMonth() + 1;
-      const anioActual = hoy.getFullYear();
+    const mesActual = hoy.getMonth() + 1;
+    const anioActual = hoy.getFullYear();
 
-      const pagosSnap = await getDocs(
-        collection(db, "Pagos")
+    // ==========================================
+    // TRAER PAGOS Y CONTRATOS
+    // ==========================================
+
+    const [pagosSnap, contratosSnap] =
+      await Promise.all([
+        getDocs(collection(db, "Pagos")),
+        getDocs(collection(db, "Contratos"))
+      ]);
+
+
+    // ==========================================
+    // MAPA DE CONTRATOS
+    // ==========================================
+
+    const contratosMap = {};
+
+    contratosSnap.docs.forEach((doc) => {
+
+      contratosMap[doc.id] = {
+        id: doc.id,
+        ...doc.data()
+      };
+
+    });
+
+
+    // ==========================================
+    // TODOS LOS PAGOS
+    // IMPORTANTE:
+    // NO MIRAMOS estado
+    // ==========================================
+
+    const pagosTodos = pagosSnap.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      .filter(
+        (pago) => pago.contratoId
       );
 
-      const contratosSnap = await getDocs(
-        collection(db, "Contratos")
+
+    // ==========================================
+    // AGRUPAR POR CONTRATO
+    // ==========================================
+
+    const pagosPorContrato = {};
+
+    pagosTodos.forEach((pago) => {
+
+      if (
+        !pagosPorContrato[pago.contratoId]
+      ) {
+
+        pagosPorContrato[pago.contratoId] = [];
+
+      }
+
+      pagosPorContrato[pago.contratoId].push(
+        pago
       );
 
-      // ==========================================
-      // MAPA DE CONTRATOS
-      // ==========================================
+    });
 
-      const contratosMap = {};
 
-      contratosSnap.docs.forEach((doc) => {
+    // ==========================================
+    // RESULTADOS
+    // ==========================================
 
-        contratosMap[doc.id] = {
-          id: doc.id,
-          ...doc.data()
-        };
+    const resultados = [];
 
-      });
 
-      // ==========================================
-      // RESULTADOS
-      // MISMA LÓGICA QUE PROXIMOSPERIODOS
-      // ==========================================
+    // ==========================================
+    // REVISAR CADA CONTRATO
+    // ==========================================
 
-      const resultados = [];
-
-      pagosSnap.docs.forEach((doc) => {
-
-        const pago = {
-          id: doc.id,
-          ...doc.data()
-        };
-
-        // ==========================================
-        // VALIDACIONES
-        // ==========================================
-
-        if (!pago.contratoId) {
-          return;
-        }
-
-        if (
-          String(
-            pago.estado || ""
-          ).toLowerCase() === "pagado"
-        ) {
-          return;
-        }
-
-        // ==========================================
-        // BUSCAR CONTRATO
-        // ==========================================
+    Object.entries(
+      pagosPorContrato
+    ).forEach(
+      ([contratoId, pagosContrato]) => {
 
         const contrato =
-          contratosMap[pago.contratoId];
+          contratosMap[contratoId];
+
 
         if (!contrato) {
           return;
         }
 
-        // ==========================================
-        // PERÍODO DE ACTUALIZACIÓN
-        // ==========================================
-
-        const periodoActualizacion =
-          Number(
-            contrato.periodoActualizacion || 0
-          );
-
-        if (!periodoActualizacion) {
-          return;
-        }
 
         // ==========================================
-        // CUOTA ACTUAL
+        // ORDENAR POR NÚMERO DE CUOTA
         // ==========================================
 
-        const cuotaActual =
-          Number(
-            pago.numeroCuota || 0
-          );
+        pagosContrato.sort(
+          (a, b) => {
 
-        if (!cuotaActual) {
-          return;
-        }
+            const cuotaA =
+              Number(a.numeroCuota || 0);
+
+            const cuotaB =
+              Number(b.numeroCuota || 0);
+
+            return cuotaA - cuotaB;
+
+          }
+        );
+
 
         // ==========================================
-        // PRÓXIMA CUOTA
+        // COMPARAR PAGO CON PAGO SIGUIENTE
         // ==========================================
 
-        const proximaCuota =
-          cuotaActual + 1;
-
-        // ==========================================
-        // ¿LA PRÓXIMA CUOTA CAMBIA DE PERÍODO?
-        // ==========================================
-
-        if (
-          proximaCuota %
-          periodoActualizacion !==
-          0
+        for (
+          let i = 0;
+          i < pagosContrato.length - 1;
+          i++
         ) {
-          return;
-        }
 
-        // ==========================================
-        // FECHA BASE
-        // ==========================================
+          const pagoActual =
+            pagosContrato[i];
 
-        const fechaBase =
-          pago.fechaVencimiento
-            ?.toDate?.() ||
-          pago.fecha
-            ?.toDate?.() ||
-          null;
+          const pagoSiguiente =
+            pagosContrato[i + 1];
 
-        let fechaCambio;
 
-        if (fechaBase) {
+          // ==========================================
+          // NÚMERO DE CUOTA
+          // ==========================================
 
-          fechaCambio =
-            new Date(fechaBase);
-
-          fechaCambio.setMonth(
-            fechaCambio.getMonth() + 1
-          );
-
-        } else {
-
-          const anioPago =
+          const cuotaActual =
             Number(
-              pago.anio ||
-              anioActual
+              pagoActual.numeroCuota || 0
             );
 
-          const mesPago =
+          const cuotaSiguiente =
             Number(
-              pago.mes ||
-              mesActual
+              pagoSiguiente.numeroCuota || 0
             );
 
-          fechaCambio =
-            new Date(
-              anioPago,
-              mesPago - 1,
-              1
+
+          // ==========================================
+          // PERÍODOS
+          // ==========================================
+
+          const periodoActual =
+            Number(
+              pagoActual.periodoNumero || 0
             );
 
-          fechaCambio.setMonth(
-            fechaCambio.getMonth() + 1
-          );
+          const periodoSiguiente =
+            Number(
+              pagoSiguiente.periodoNumero || 0
+            );
 
-        }
 
-        // ==========================================
-        // ¿ES DEL MES ACTUAL?
-        // ==========================================
+          // ==========================================
+          // VALIDAR DATOS
+          // ==========================================
 
-        if (
-          fechaCambio.getMonth() + 1 ===
-          mesActual &&
-          fechaCambio.getFullYear() ===
-          anioActual
-        ) {
+          if (
+            !cuotaActual ||
+            !cuotaSiguiente ||
+            !periodoActual ||
+            !periodoSiguiente
+          ) {
+
+            continue;
+
+          }
+
+
+          // ==========================================
+          // TIENE QUE SER LA CUOTA INMEDIATAMENTE
+          // SIGUIENTE
+          // ==========================================
+
+          if (
+            cuotaSiguiente !==
+            cuotaActual + 1
+          ) {
+
+            continue;
+
+          }
+
+
+          // ==========================================
+          // SI EL PERÍODO ES IGUAL
+          // NO HAY CAMBIO
+          // ==========================================
+
+          if (
+            periodoActual ===
+            periodoSiguiente
+          ) {
+
+            continue;
+
+          }
+
+
+          // ==========================================
+          // FECHA DEL CAMBIO
+          // ==========================================
+
+          const fechaCambio =
+            pagoSiguiente
+              .fechaVencimiento
+              ?.toDate?.() ||
+            pagoSiguiente
+              .fecha
+              ?.toDate?.() ||
+            null;
+
+
+          // ==========================================
+          // GUARDAR CAMBIO
+          // ==========================================
 
           resultados.push({
-            ...pago,
+
+            ...pagoActual,
+
             contrato,
-            fechaCambio
+
+            periodoActual:
+              periodoActual,
+
+            proximoPeriodo:
+              periodoSiguiente,
+
+            cuotaCambio:
+              cuotaSiguiente,
+
+            fechaCambio,
+
+            pagoCambio:
+              pagoSiguiente
+
           });
 
         }
 
+      }
+    );
+
+
+    // ==========================================
+    // FILTRAR EXACTAMENTE IGUAL QUE
+    // pagosFiltrados DE ProximosPeriodos
+    // ==========================================
+
+    const resultadosFiltrados =
+      resultados.filter((pago) => {
+
+        if (!pago.fechaCambio) {
+          return false;
+        }
+
+        const fecha =
+          pago.fechaCambio;
+
+        const coincideFecha =
+          fecha.getMonth() + 1 ===
+            mesActual &&
+          fecha.getFullYear() ===
+            anioActual;
+
+        return coincideFecha;
+
       });
 
-      // ==========================================
-      // CANTIDAD FINAL
-      // ==========================================
 
-      setCantidadProximosPeriodos(
-        resultados.length
-      );
+    // ==========================================
+    // CANTIDAD FINAL
+    // ==========================================
 
-      console.log(
-        "CANTIDAD PRÓXIMOS PERÍODOS:",
-        resultados.length
-      );
+    const cantidad =
+      resultadosFiltrados.length;
 
-      console.log(
-        "CONTRATOS QUE ACTUALIZAN ESTE MES:",
-        resultados
-      );
 
-    } catch (error) {
+    setCantidadProximosPeriodos(
+      cantidad
+    );
 
-      console.error(
-        "Error obteniendo próximos períodos:",
-        error
-      );
 
-      setCantidadProximosPeriodos(0);
+    console.log(
+      "CANTIDAD EXACTA DE PRÓXIMOS PERÍODOS:",
+      cantidad
+    );
 
-    }
 
-  };
+    console.log(
+      "CAMBIOS ESTE MES:",
+      resultadosFiltrados
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      "Error obteniendo próximos períodos:",
+      error
+    );
+
+    setCantidadProximosPeriodos(0);
+
+  }
+
+};
+
   useEffect(() => {
 
     const cargarClientes = async () => {
@@ -957,6 +1061,22 @@ export default function CustomerDashboard() {
     }
   };
 
+  const crearFechaLocal = (fechaString) => {
+    if (!fechaString) return null;
+
+    const [anio, mes, dia] = fechaString.split("-").map(Number);
+
+    return new Date(
+        anio,
+        mes - 1,
+        dia,
+        12,
+        0,
+        0,
+        0
+    );
+};
+
 
   const handleSaveContract = async () => {
 
@@ -985,13 +1105,8 @@ export default function CustomerDashboard() {
       // FECHAS
       // =====================================================
 
-      const fechaInicio = new Date(formData.fechaInicio);
-      const fechaFin = new Date(formData.fechaFin);
-
-      // IMPORTANTE
-      // evita problemas por timezone
-      fechaInicio.setHours(12, 0, 0, 0);
-      fechaFin.setHours(12, 0, 0, 0);
+const fechaInicio = crearFechaLocal(formData.fechaInicio);
+const fechaFin = crearFechaLocal(formData.fechaFin);
 
       if (fechaInicio > fechaFin) {
         toast.error("La fecha de inicio no puede ser mayor a la fecha fin");

@@ -6,6 +6,7 @@ export default function ProximosPeriodos() {
 
   const [pagos, setPagos] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [busquedaNombre, setBusquedaNombre] = useState("");
 
 
 
@@ -34,78 +35,96 @@ export default function ProximosPeriodos() {
 
 
 
-  const cargarDatos = async () => {
+const cargarDatos = async () => {
 
-    try {
+  try {
 
-      setLoading(true);
+    setLoading(true);
 
-      const pagosSnap =
-        await getDocs(
-          collection(db, "Pagos")
-        );
+    // ==========================================
+    // TRAER PAGOS Y CONTRATOS
+    // ==========================================
 
-      const contratosSnap =
-        await getDocs(
-          collection(db, "Contratos")
-        );
-
-
-      // ==========================================
-      // MAPA DE CONTRATOS
-      // ==========================================
-
-      const contratosMap = {};
-
-      contratosSnap.docs.forEach((doc) => {
-
-        contratosMap[doc.id] = {
-          id: doc.id,
-          ...doc.data()
-        };
-
-      });
+    const [pagosSnap, contratosSnap] =
+      await Promise.all([
+        getDocs(collection(db, "Pagos")),
+        getDocs(collection(db, "Contratos"))
+      ]);
 
 
-      // ==========================================
-      // PAGOS PENDIENTES
-      // ==========================================
+    // ==========================================
+    // MAPA DE CONTRATOS
+    // ==========================================
 
-      const resultados = [];
+    const contratosMap = {};
 
+    contratosSnap.docs.forEach((doc) => {
 
-      pagosSnap.docs.forEach((doc) => {
+      contratosMap[doc.id] = {
+        id: doc.id,
+        ...doc.data()
+      };
 
-        const pago = {
-          id: doc.id,
-          ...doc.data()
-        };
-
-
-        // ==========================================
-        // VALIDACIONES
-        // ==========================================
-
-        if (!pago.contratoId) {
-          return;
-        }
+    });
 
 
-        if (
-          String(
-            pago.estado || ""
-          ).toLowerCase() === "pagado"
-        ) {
-          return;
-        }
+    // ==========================================
+    // TODOS LOS PAGOS
+    // IMPORTANTE:
+    // NO MIRAMOS estado
+    // ==========================================
+
+    const pagosTodos = pagosSnap.docs
+      .map((doc) => ({
+        id: doc.id,
+        ...doc.data()
+      }))
+      .filter(
+        (pago) => pago.contratoId
+      );
 
 
-        // ==========================================
-        // BUSCAR CONTRATO
-        // ==========================================
+    // ==========================================
+    // AGRUPAR POR CONTRATO
+    // ==========================================
+
+    const pagosPorContrato = {};
+
+    pagosTodos.forEach((pago) => {
+
+      if (
+        !pagosPorContrato[pago.contratoId]
+      ) {
+
+        pagosPorContrato[pago.contratoId] = [];
+
+      }
+
+      pagosPorContrato[pago.contratoId].push(
+        pago
+      );
+
+    });
+
+
+    // ==========================================
+    // RESULTADOS
+    // ==========================================
+
+    const resultados = [];
+
+
+    // ==========================================
+    // REVISAR CADA CONTRATO
+    // ==========================================
+
+    Object.entries(
+      pagosPorContrato
+    ).forEach(
+      ([contratoId, pagosContrato]) => {
 
         const contrato =
-          contratosMap[pago.contratoId];
+          contratosMap[contratoId];
 
 
         if (!contrato) {
@@ -114,227 +133,301 @@ export default function ProximosPeriodos() {
 
 
         // ==========================================
-        // PERÍODO DE ACTUALIZACIÓN
+        // ORDENAR POR NÚMERO DE CUOTA
         // ==========================================
 
-        const periodoActualizacion =
-          Number(
-            contrato.periodoActualizacion || 0
-          );
+        pagosContrato.sort(
+          (a, b) => {
 
+            const cuotaA =
+              Number(a.numeroCuota || 0);
 
-        if (!periodoActualizacion) {
-          return;
-        }
+            const cuotaB =
+              Number(b.numeroCuota || 0);
 
+            return cuotaA - cuotaB;
 
-        // ==========================================
-        // CUOTA ACTUAL
-        // ==========================================
-
-        const cuotaActual =
-          Number(
-            pago.numeroCuota || 0
-          );
-
-
-        if (!cuotaActual) {
-          return;
-        }
+          }
+        );
 
 
         // ==========================================
-        // PERÍODO ACTUAL
+        // COMPARAR PAGO CON PAGO SIGUIENTE
         // ==========================================
 
-        // Cada X cuotas corresponde a un período.
-        // Ejemplo:
-        // 1-4   = período 1
-        // 5-8   = período 2
-        // 9-12  = período 3
-        // 13-16 = período 4
-        // 17-20 = período 5
-
-        const periodoActual =
-          Math.floor(
-            (cuotaActual - 1) /
-            periodoActualizacion
-          ) + 1;
-
-
-        // ==========================================
-        // PRÓXIMO PERÍODO
-        // ==========================================
-
-        const proximoPeriodo =
-          periodoActual + 1;
-
-
-        // ==========================================
-        // PRÓXIMA CUOTA
-        // ==========================================
-
-        const proximaCuota =
-          cuotaActual + 1;
-
-
-        // ==========================================
-        // ¿LA PRÓXIMA CUOTA ES DE ACTUALIZACIÓN?
-        // ==========================================
-
-        if (
-          proximaCuota %
-          periodoActualizacion !==
-          0
+        for (
+          let i = 0;
+          i < pagosContrato.length - 1;
+          i++
         ) {
-          return;
-        }
+
+          const pagoActual =
+            pagosContrato[i];
+
+          const pagoSiguiente =
+            pagosContrato[i + 1];
 
 
-        // ==========================================
-        // FECHA BASE
-        // ==========================================
+          // ==========================================
+          // NÚMERO DE CUOTA
+          // ==========================================
 
-        const fechaBase =
-          pago.fechaVencimiento
-            ?.toDate?.() ||
-          pago.fecha
-            ?.toDate?.() ||
-          null;
-
-
-        let fechaCambio;
-
-
-        if (fechaBase) {
-
-          fechaCambio =
-            new Date(fechaBase);
-
-          fechaCambio.setMonth(
-            fechaCambio.getMonth() + 1
-          );
-
-        } else {
-
-          const anioPago =
+          const cuotaActual =
             Number(
-              pago.anio ||
-              hoy.getFullYear()
+              pagoActual.numeroCuota || 0
             );
 
-          const mesPago =
+          const cuotaSiguiente =
             Number(
-              pago.mes ||
-              hoy.getMonth() + 1
+              pagoSiguiente.numeroCuota || 0
             );
 
 
-          fechaCambio =
-            new Date(
-              anioPago,
-              mesPago - 1,
-              1
+          // ==========================================
+          // PERÍODOS
+          // ==========================================
+
+          const periodoActual =
+            Number(
+              pagoActual.periodoNumero || 0
             );
 
-          fechaCambio.setMonth(
-            fechaCambio.getMonth() + 1
-          );
+          const periodoSiguiente =
+            Number(
+              pagoSiguiente.periodoNumero || 0
+            );
+
+
+          // ==========================================
+          // VALIDAR DATOS
+          // ==========================================
+
+          if (
+            !cuotaActual ||
+            !cuotaSiguiente ||
+            !periodoActual ||
+            !periodoSiguiente
+          ) {
+
+            continue;
+
+          }
+
+
+          // ==========================================
+          // SOLO NOS INTERESA EL SIGUIENTE PAGO
+          // REALMENTE SIGUIENTE
+          // ==========================================
+
+          if (
+            cuotaSiguiente !==
+            cuotaActual + 1
+          ) {
+
+            continue;
+
+          }
+
+
+          // ==========================================
+          // SI EL PERÍODO ES IGUAL
+          // NO HAY CAMBIO
+          // ==========================================
+
+          if (
+            periodoActual ===
+            periodoSiguiente
+          ) {
+
+            continue;
+
+          }
+
+
+          // ==========================================
+          // ENCONTRAMOS CAMBIO
+          //
+          // Ejemplo:
+          //
+          // Cuota 4 → período 1
+          // Cuota 5 → período 2
+          //
+          // Entonces:
+          // período actual = 1
+          // próximo período = 2
+          // cuota cambio = 5
+          // ==========================================
+
+          const fechaCambio =
+            pagoSiguiente
+              .fechaVencimiento
+              ?.toDate?.() ||
+            pagoSiguiente
+              .fecha
+              ?.toDate?.() ||
+            null;
+
+
+          // ==========================================
+          // GUARDAR
+          // ==========================================
+
+          resultados.push({
+
+            // Datos del pago anterior
+            ...pagoActual,
+
+            // Contrato
+            contrato,
+
+            // Información del cambio
+            periodoActual:
+              periodoActual,
+
+            proximoPeriodo:
+              periodoSiguiente,
+
+            cuotaCambio:
+              cuotaSiguiente,
+
+            fechaCambio,
+
+            // Pago donde comienza
+            // el nuevo período
+            pagoCambio:
+              pagoSiguiente
+
+          });
+
+
+          // ==========================================
+          // IMPORTANTE:
+          // NO HAY BREAK
+          //
+          // Así sigue revisando:
+          //
+          // 1 → 2
+          // 2 → 3
+          // 3 → 4
+          // 4 → 5
+          //
+          // etc.
+          // ==========================================
 
         }
 
-
-        // ==========================================
-        // GUARDAR RESULTADO
-        // ==========================================
-
-        resultados.push({
+      }
+    );
 
 
-          ...pago,
+    // ==========================================
+    // ORDENAR POR FECHA
+    // ==========================================
 
-          contrato,
+    resultados.sort(
+      (a, b) => {
 
-          cuotaCambio:
-            proximaCuota,
+        const fechaA =
+          a.fechaCambio?.getTime() || 0;
 
-          periodoActual,
+        const fechaB =
+          b.fechaCambio?.getTime() || 0;
 
-          proximoPeriodo,
+        return fechaA - fechaB;
 
-          fechaCambio
-
-        });
-
-      });
-
-
-      // ==========================================
-      // ORDENAR POR FECHA
-      // ==========================================
-
-      resultados.sort(
-        (a, b) => {
-
-          const fechaA =
-            a.fechaCambio?.getTime() || 0;
-
-          const fechaB =
-            b.fechaCambio?.getTime() || 0;
-
-          return fechaA - fechaB;
-
-        }
-      );
+      }
+    );
 
 
-      console.log(
-        "TODOS LOS PRÓXIMOS CAMBIOS:",
-        resultados
-      );
+    // ==========================================
+    // DEBUG
+    // ==========================================
+
+    console.log(
+      "TODOS LOS CAMBIOS DE PERÍODO:",
+      resultados.map((pago) => ({
+
+        contratoId:
+          pago.contratoId,
+
+        cliente:
+          pago.clienteNombre,
+
+        cuotaActual:
+          pago.numeroCuota,
+
+        periodoActual:
+          pago.periodoActual,
+
+        cuotaCambio:
+          pago.cuotaCambio,
+
+        proximoPeriodo:
+          pago.proximoPeriodo,
+
+        fechaCambio:
+          pago.fechaCambio
+
+      }))
+    );
 
 
-      setPagos(resultados);
+    // ==========================================
+    // GUARDAR
+    // ==========================================
 
-    } catch (error) {
+    setPagos(resultados);
 
-      console.error(
-        "Error cargando próximos períodos:",
-        error
-      );
 
-    } finally {
+  } catch (error) {
 
-      setLoading(false);
+    console.error(
+      "Error cargando próximos períodos:",
+      error
+    );
 
-    }
+  } finally {
 
-  };
+    setLoading(false);
+
+  }
+
+};
 
   // ==========================================
   // FILTRAR POR MES
   // ==========================================
 
-  const pagosFiltrados =
-    pagos.filter((pago) => {
+const pagosFiltrados =
+  pagos.filter((pago) => {
 
-      if (!pago.fechaCambio) {
-        return false;
-      }
+    if (!pago.fechaCambio) {
+      return false;
+    }
 
+    const fecha = pago.fechaCambio;
 
-      const fecha =
-        pago.fechaCambio;
-
-
-      return (
-        fecha.getMonth() + 1 ===
+    const coincideFecha =
+      fecha.getMonth() + 1 ===
         Number(mesSeleccionado) &&
-        fecha.getFullYear() ===
-        Number(anioSeleccionado)
+      fecha.getFullYear() ===
+        Number(anioSeleccionado);
+
+    const nombre =
+      String(
+        pago.clienteNombre ||
+        pago.locatarioNombre ||
+        ""
+      ).toLowerCase();
+
+    const coincideNombre =
+      nombre.includes(
+        busquedaNombre.toLowerCase().trim()
       );
 
-    });
+    return coincideFecha && coincideNombre;
+
+  });
 
 
   // ==========================================
@@ -422,6 +515,26 @@ export default function ProximosPeriodos() {
         <div className="card-body">
 
           <div className="row g-3 align-items-end">
+
+            {/* BUSCADOR */}
+
+<div className="col-md-5">
+
+  <label className="form-label fw-semibold">
+    Buscar por nombre
+  </label>
+
+  <input
+    type="text"
+    className="form-control"
+    placeholder="Nombre del cliente..."
+    value={busquedaNombre}
+    onChange={(e) =>
+      setBusquedaNombre(e.target.value)
+    }
+  />
+
+</div>
 
             {/* MES */}
 

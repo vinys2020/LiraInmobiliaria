@@ -2667,14 +2667,7 @@ periodoNumero:
                                                                                                             <input
                                                                                                                 type="text"
                                                                                                                 className="form-control form-control-sm"
-                                                                                                                value={
-                                                                                                                    pagoForm?.montoBase
-                                                                                                                        ? Number(pagoForm.montoBase).toLocaleString("es-AR", {
-                                                                                                                            minimumFractionDigits: 2,
-                                                                                                                            maximumFractionDigits: 2,
-                                                                                                                        })
-                                                                                                                        : ""
-                                                                                                                }
+                                                                                                              value={pagoForm?.montoBase ?? ""}
                                                                                                                 onChange={(e) => {
 
                                                                                                                     const valor = e.target.value
