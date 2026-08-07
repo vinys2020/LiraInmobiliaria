@@ -368,9 +368,10 @@ const GenerarRecibo = (pago, formatCurrency) => {
         "Diciembre"
     ];
 
-    const descripcionCuota =
-        `Alquiler Cuota ${p.numeroCuota || "-"} de ${p.totalCuotas || "-"} - ${meses[(p.mes || 1) - 1]}/${p.anio || ""} - Periodo #${p.periodoNumero || "-"}`;
+const descripcionCuota =
+    `Alquiler ${meses[(p.mes || 1) - 1]}/${p.anio || ""}`;
 
+    
     // =====================================================
     // TABLA
     // =====================================================
