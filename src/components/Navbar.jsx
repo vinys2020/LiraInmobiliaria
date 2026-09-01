@@ -2,9 +2,12 @@ import React, { useState, useEffect, useRef } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { FaPhoneAlt, FaBars, FaTimes } from "react-icons/fa";
 import { useAuth } from "../context/AuthContext";
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../config/firebase";
 import navbarlogo from "../assets/logoliranavblanc.png";
 import NavLinkItem from "./NavLinkItem";
 import navbarlogoRojo from "../assets/logo-lira-rojo.png";
+
 // ajustá la ruta si este componente está en otra carpeta
 
 
@@ -15,33 +18,67 @@ const Navbar = () => {
   const navbarRef = useRef(null);
   const [isTop, setIsTop] = useState(true);
   const [isVisible, setIsVisible] = useState(true);
+  const [nombreUsuario, setNombreUsuario] = useState("");
 
   const { user, rol, logout } = useAuth();
   const navigate = useNavigate();
 
-  // ✅ RUTAS CON NAVBAR BLANCO
-  const whiteNavbarRoutes = [
-    /^\/detalle-propiedad(\/.*)?$/, // Cualquier /detalle-propiedad o /detalle-propiedad/:id
-    "/alquileres",
-    "/PropiedadesEnVenta",
-    "/LotesEnVenta",
-    "/contacto",
-    "/admin",
-    "/propiedades",
-    "/TodasPropiedades",
-    "/propiedades-en-venta",
-    "/lotes-en-venta",
-    "/clientes",
-    "/propietarios",
-    "/inquilinos",
-    "/garantes",
-    "/estado",
-    "/reporte-morosos",
-    "/proximos-periodos"
+  useEffect(() => {
+  const obtenerNombreUsuario = async () => {
+    if (!user?.uid) {
+      setNombreUsuario("");
+      return;
+    }
 
+    try {
+      const usuarioRef = doc(db, "Usuarios", user.uid);
+      const usuarioSnap = await getDoc(usuarioRef);
 
+      if (usuarioSnap.exists()) {
+        const datos = usuarioSnap.data();
 
-  ];
+        setNombreUsuario(
+          datos.nombre ||
+          datos.nombreCompleto ||
+          datos.nombreUsuario ||
+          user.displayName ||
+          "Usuario"
+        );
+      } else {
+        setNombreUsuario(user.displayName || "Usuario");
+      }
+    } catch (error) {
+      console.error("Error obteniendo nombre del usuario:", error);
+      setNombreUsuario(user.displayName || "Usuario");
+    }
+  };
+
+  obtenerNombreUsuario();
+}, [user]);
+
+// ✅ RUTAS CON NAVBAR BLANCO
+const whiteNavbarRoutes = [
+  /^\/detalle-propiedad(\/.*)?$/,
+  "/alquileres",
+  "/PropiedadesEnVenta",
+  "/LotesEnVenta",
+  "/contacto",
+  "/admin",
+  "/propiedades",
+  "/TodasPropiedades",
+  "/propiedades-en-venta",
+  "/lotes-en-venta",
+  "/clientes",
+  "/propietarios",
+  "/inquilinos",
+  "/garantes",
+  "/estado",
+  "/reporte-morosos",
+  "/proximos-periodos",
+
+  // Cliente
+  /^\/cliente(\/.*)?$/,
+];
 
   const isWhiteNavbar = whiteNavbarRoutes.some(route => 
     route instanceof RegExp ? route.test(window.location.pathname) : route === window.location.pathname
@@ -192,8 +229,13 @@ const Navbar = () => {
 
                     <li className="nav-item align-items-center">
                       <NavLinkItem
-                        to={rol === "admin" ? "/admin" : "/empleado"}
-                        onClick={() => setMenuOpen(false)}
+to={
+  rol === "admin"
+    ? "/admin"
+    : rol === "cliente"
+      ? "/cliente"
+      : "/empleado"
+}                        onClick={() => setMenuOpen(false)}
                         isWhiteNavbar={isWhiteNavbar}
                         className="d-flex align-items-center"
                       >
@@ -206,8 +248,7 @@ const Navbar = () => {
                           className="avatar-img me-2 mb-0 align-items-top"
                           style={{ width: "28px", height: "25px", borderRadius: "50%" }}
                         />
-                        {user.displayName || user.email}
-                      </NavLinkItem>
+{nombreUsuario}                      </NavLinkItem>
                     </li>
                   </>
                 ) : (

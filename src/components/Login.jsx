@@ -1,13 +1,16 @@
+
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Login() {
   const { login } = useAuth();
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
+
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -15,22 +18,45 @@ export default function Login() {
     setError("");
 
     try {
-      await login(email, password);
-      navigate("/admin");
-    } catch {
+      const resultado = await login(email.trim(), password);
+
+      console.log("LOGIN EXITOSO:", resultado);
+
+      // Redirigir según el rol
+      if (resultado.rol === "admin") {
+        navigate("/admin");
+      } else if (resultado.rol === "empleado") {
+        navigate("/empleado");
+      } else if (resultado.rol === "cliente") {
+        navigate("/cliente");
+      } else {
+        setError("El usuario no tiene un rol asignado.");
+      }
+
+    } catch (err) {
+      console.error("ERROR LOGIN:", err);
       setError("Credenciales incorrectas");
     }
   };
 
   return (
     <form onSubmit={handleLogin} className="p-3">
-      <h3 className="mb-4">Iniciar Sesión</h3>
-      {error && <div className="alert alert-danger">{error}</div>}
+
+      <h3 className="mb-4">
+        Iniciar Sesión
+      </h3>
+
+      {error && (
+        <div className="alert alert-danger">
+          {error}
+        </div>
+      )}
 
       <div className="mb-3">
         <label htmlFor="email" className="form-label">
           Correo electrónico
         </label>
+
         <input
           type="email"
           id="email"
@@ -46,7 +72,9 @@ export default function Login() {
         <label htmlFor="password" className="form-label">
           Contraseña
         </label>
+
         <div className="input-group">
+
           <input
             type={showPassword ? "text" : "password"}
             id="password"
@@ -56,6 +84,7 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
+
           <button
             type="button"
             className="btn btn-outline-secondary"
@@ -65,14 +94,24 @@ export default function Login() {
               width: "45px",
             }}
           >
-            <i className={`bi ${showPassword ? "bi-eye-slash" : "bi-eye"}`}></i>
+            <i
+              className={`bi ${
+                showPassword ? "bi-eye-slash" : "bi-eye"
+              }`}
+            ></i>
           </button>
+
         </div>
       </div>
 
-      <button type="submit" className="btn btn-primary w-100">
+      <button
+        type="submit"
+        className="btn btn-primary w-100"
+      >
         Ingresar
       </button>
+
     </form>
   );
 }
+

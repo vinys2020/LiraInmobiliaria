@@ -27,7 +27,10 @@ import EstadoCajaPage from "./pages/EstadoCajaPage";
 import ReporteMorosos from "./pages/ReporteMorosos";
 import ProximosPeriodos from "./pages/ProximosPeriodos";
 import PrivateRoute from "./routes/PrivateRoute";
-
+import ClienteRoute from "./routes/ClienteRoute";
+import ClienteDashboard from "./pages/ClienteDashboard";
+import ClienteContrato from "./pages/ClienteContrato";
+import ClientePagos from "./pages/ClientePagos";
 
 import NormalizeTrailingSlash from "./components/NormalizeTrailingSlash";
 
@@ -129,6 +132,28 @@ function App() {
     </PrivateRoute>
   }
 />
+
+<Route
+  path="/cliente"
+  element={
+    <ClienteRoute>
+      <ClienteDashboard />
+    </ClienteRoute>
+  }
+/>
+
+
+<Route
+  path="/cliente/contrato/:contratoId"
+  element={
+    <ClienteRoute>
+      <ClienteContrato />
+    </ClienteRoute>
+  }
+/>
+
+<Route path="/cliente/contrato/:contratoId/pagos" element={ <ClienteRoute> <ClientePagos /> </ClienteRoute> } />
+
 
 
         <Route

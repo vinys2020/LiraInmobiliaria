@@ -13,27 +13,38 @@ const Login = () => {
   const navigate = useNavigate();
 
   // 🔹 Si el usuario ya está logueado y el rol está definido, redirigimos
-  useEffect(() => {
-    if (user && rol) {
-      if (rol === "admin") {
-        navigate("/admin");
-      } else if (rol === "empleado") {
-        navigate("/empleado");
-      }
+useEffect(() => {
+  if (user && rol) {
+    if (rol === "admin") {
+      navigate("/admin");
+    } else if (rol === "empleado") {
+      navigate("/empleado");
+    } else if (rol === "cliente") {
+      navigate("/cliente");
     }
-  }, [user, rol, navigate]);
+  }
+}, [user, rol, navigate]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
+const handleLogin = async (e) => {
+  e.preventDefault();
+  setError("");
 
-    try {
-      await login(email, password); // no redirigimos aquí, sino en el useEffect
-    } catch (err) {
-      console.error(err);
-      setError("Credenciales incorrectas");
-    }
-  };
+  try {
+    console.log("EMAIL ENVIADO:", email);
+    console.log("PASSWORD LENGTH:", password.length);
+
+    const resultado = await login(email.trim(), password);
+
+    console.log("LOGIN EXITOSO:", resultado);
+
+  } catch (err) {
+    console.error("ERROR COMPLETO:", err);
+    console.error("ERROR CODE:", err.code);
+    console.error("ERROR MESSAGE:", err.message);
+
+    setError(err.message);
+  }
+};
 
   return (
     <div
