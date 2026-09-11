@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import React, { useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
+
 import L from "leaflet";
 
 
@@ -12,6 +13,86 @@ const redIcon = new L.Icon({
   iconAnchor: [25, 51], // ajusta para que apunte correctamente
   popupAnchor: [1, -34],
 });
+
+const FullscreenControl = () => {
+  const map = useMap();
+
+  useEffect(() => {
+    const container = map.getContainer();
+
+    const FullscreenButton = L.Control.extend({
+      options: {
+        position: "bottomright",
+      },
+
+      onAdd: function () {
+        const button = L.DomUtil.create(
+          "button",
+          "leaflet-control-fullscreen"
+        );
+
+        button.type = "button";
+        button.title = "Pantalla completa";
+
+button.innerHTML = `
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 24 24"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M8 3H5C3.89543 3 3 3.89543 3 5V8"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+    />
+    <path
+      d="M16 3H19C20.1046 3 21 3.89543 21 5V8"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+    />
+    <path
+      d="M8 21H5C3.89543 21 3 20.1046 3 19V16"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+    />
+    <path
+      d="M16 21H19C20.1046 21 21 20.1046 21 19V16"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+    />
+  </svg>
+`;
+
+        L.DomEvent.disableClickPropagation(button);
+
+        L.DomEvent.on(button, "click", () => {
+          if (!document.fullscreenElement) {
+            container.requestFullscreen?.();
+          } else {
+            document.exitFullscreen?.();
+          }
+        });
+
+        return button;
+      },
+    });
+
+    const control = new FullscreenButton();
+    map.addControl(control);
+
+    return () => {
+      map.removeControl(control);
+    };
+  }, [map]);
+
+  return null;
+};
 
 const offsetLat = 0.04; // Ajustá este valor para mover más o menos
 
@@ -52,10 +133,13 @@ const MapaPropiedades = ({ propiedades }) => {
         borderRadius: "0 0 10px 10px",
       }}
     >
-      <TileLayer
-        url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
-        attribution="Propiedades &copy; Lira Inmobiliaria"
-      />
+
+      <FullscreenControl />
+<TileLayer
+  url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}"
+  attribution="&copy; Esri"
+  maxZoom={19}
+/>
 
 
 

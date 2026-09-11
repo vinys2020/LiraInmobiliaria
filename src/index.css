@@ -80,3 +80,54 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+
+
+.leaflet-control-fullscreen {
+  width: 40px !important;
+  height: 40px !important;
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 !important;
+
+  background: rgba(20, 20, 20, 0.9) !important;
+  color: #fff;
+
+  border: none !important;
+  border-radius: 50% !important;
+
+  cursor: pointer;
+
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+
+  transition:
+    background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.leaflet-control-fullscreen:hover {
+  background: rgba(0, 0, 0, 0.98) !important;
+
+  transform: scale(1.06);
+
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.4);
+}
+
+.leaflet-control-fullscreen:active {
+  transform: scale(0.94);
+}
+
+.leaflet-control-fullscreen svg {
+  width: 18px;
+  height: 18px;
+}
+
+.leaflet-container:fullscreen {
+  width: 100vw !important;
+  height: 100vh !important;
+  border-radius: 0 !important;
+}
