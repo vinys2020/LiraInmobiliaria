@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { collection, getDocs } from "firebase/firestore";
 import { db } from "../config/firebase";
+import * as XLSX from "xlsx";
 
 export default function ProximosPeriodos() {
 
@@ -32,6 +33,72 @@ export default function ProximosPeriodos() {
     cargarDatos();
   }, []);
 
+
+  // ==========================================
+// DESCARGAR RESUMEN EN EXCEL
+// ==========================================
+
+const descargarResumen = () => {
+  const datosExcel = pagosFiltrados.map((pago) => ({
+    "Cliente":
+      pago.clienteNombre ||
+      pago.locatarioNombre ||
+      "Cliente sin nombre",
+
+    "Propiedad":
+      pago.propiedadTitulo ||
+      pago.contrato?.propiedadTitulo ||
+      "Sin propiedad",
+
+    "Cuota de cambio":
+      pago.cuotaCambio,
+
+    "Período actual":
+      pago.periodoActual,
+
+    "Próximo período":
+      pago.proximoPeriodo,
+
+    "Actualización cada (meses)":
+      pago.contrato?.periodoActualizacion ?? "",
+
+    "Monto actual":
+      Number(pago.montoBase || 0),
+
+    "Fecha de actualización":
+      pago.fechaCambio
+        ? pago.fechaCambio.toLocaleDateString("es-AR")
+        : "",
+  }));
+
+  const hoja = XLSX.utils.json_to_sheet(datosExcel);
+
+  hoja["!cols"] = [
+    { wch: 30 },
+    { wch: 35 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 18 },
+    { wch: 25 },
+    { wch: 20 },
+    { wch: 25 },
+  ];
+
+  const libro = XLSX.utils.book_new();
+
+  XLSX.utils.book_append_sheet(
+    libro,
+    hoja,
+    "Resumen de períodos"
+  );
+
+  XLSX.writeFile(
+    libro,
+    `resumen-periodos-${anioSeleccionado}-${String(
+      mesSeleccionado
+    ).padStart(2, "0")}.xlsx`
+  );
+};
 
 
 
@@ -451,21 +518,21 @@ const pagosFiltrados =
   // LOADING
   // ==========================================
 
-  if (loading) {
-
-    return (
-
-      <div className="container py-5">
-
-        <h4>
-          Cargando próximos períodos...
-        </h4>
-
-      </div>
-
-    );
-
-  }
+if (loading) {
+  return (
+    <div
+      className="container py-5"
+      style={{
+        maxWidth: 1400,
+        marginTop: 80,
+      }}
+    >
+      <h4>
+        Cargando próximos períodos...
+      </h4>
+    </div>
+  );
+}
 
 
   return (
@@ -482,28 +549,37 @@ const pagosFiltrados =
       {/* HEADER */}
       {/* ========================================== */}
 
-      <div className="d-flex justify-content-between align-items-center mb-4">
+      <div className="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
 
-        <div>
+  <div>
+    <h3 className="mb-1">
+      Próximos Cambios de Período
+    </h3>
 
-          <h3 className="mb-1">
-            Próximos Cambios de Período
-          </h3>
+    <small className="text-muted">
+      Contratos que actualizan su alquiler
+    </small>
+  </div>
 
-          <small className="text-muted">
-            Contratos que actualizan su alquiler
-          </small>
+  <div className="d-flex align-items-center gap-2">
 
-        </div>
+    <button
+      type="button"
+      className="btn btn-success"
+      onClick={descargarResumen}
+      disabled={pagosFiltrados.length === 0}
+    >
+      <i className="bi bi-file-earmark-excel me-2"></i>
+      Descargar resumen
+    </button>
 
+    <span className="badge bg-danger fs-6">
+      {pagosFiltrados.length}
+    </span>
 
-        <span className="badge bg-danger fs-6">
+  </div>
 
-          {pagosFiltrados.length}
-
-        </span>
-
-      </div>
+</div>
 
 
       {/* ========================================== */}
